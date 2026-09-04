@@ -65,28 +65,28 @@ type Data = {
   overrides: Overrides;
 };
 
-const tabs = [
-  "Live Analytics",
-  "Enquiries",
-  "Workbench Videos",
-  "Contact & Info",
-  "Hero Section",
-  "Trust Bar",
-  "Manifesto",
-  "Products",
-  "Philosophy",
-  "Process Steps",
-  "Showroom Gallery",
-  "Reviews",
-  "FAQs",
-  "Footer",
+const tabDefs = [
+  { id: "Live Analytics", label: "Live Analytics", icon: "📊" },
+  { id: "Enquiries", label: "Inquiries", icon: "💬" },
+  { id: "Workbench Videos", label: "Video Reels", icon: "🎬" },
+  { id: "Contact & Info", label: "Contact & Info", icon: "📞" },
+  { id: "Hero Section", label: "Hero Banner", icon: "👑" },
+  { id: "Trust Bar", label: "Trust Marquee", icon: "⚡" },
+  { id: "Manifesto", label: "Brand Story", icon: "📖" },
+  { id: "Products", label: "Products Catalog", icon: "🏷️" },
+  { id: "Philosophy", label: "Philosophy", icon: "🏛️" },
+  { id: "Process Steps", label: "Process Steps", icon: "⚙️" },
+  { id: "Showroom Gallery", label: "Showroom Gallery", icon: "🖼️" },
+  { id: "Reviews", label: "Client Reviews", icon: "⭐" },
+  { id: "FAQs", label: "FAQs Accordion", icon: "❓" },
+  { id: "Footer", label: "Footer", icon: "⚓" },
 ] as const;
 
-type Tab = (typeof tabs)[number];
+type Tab = (typeof tabDefs)[number]["id"];
 
 const inputCls =
-  "w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-gold-deep focus:ring-1 focus:ring-gold-deep";
-const labelCls = "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-ink/60";
+  "w-full rounded-xl border border-ink/15 bg-white px-3.5 py-2.5 sm:px-4 sm:py-3 text-sm text-ink outline-none transition-all focus:border-gold-deep focus:ring-2 focus:ring-gold-deep/20 shadow-sm";
+const labelCls = "mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-ink/70";
 
 // Country Flag helper
 function getCountryFlag(code: string) {
@@ -100,8 +100,8 @@ function getCountryFlag(code: string) {
     KW: "🇰🇼 Kuwait",
     OM: "🇴🇲 Oman",
     BH: "🇧🇭 Bahrain",
-    GB: "🇬🇧 UK",
-    US: "🇺🇸 USA",
+    GB: "🇬🇧 United Kingdom",
+    US: "🇺🇸 United States",
     CA: "🇨🇦 Canada",
     DE: "🇩🇪 Germany",
     FR: "🇫🇷 France",
@@ -209,13 +209,13 @@ function ImageUploadField({
   };
 
   return (
-    <div className="rounded-xl border border-dashed border-ink/20 bg-amber-50/40 p-4 transition-colors hover:border-gold-deep">
+    <div className="rounded-2xl border border-dashed border-ink/20 bg-amber-50/30 p-3.5 sm:p-4 transition-colors hover:border-gold-deep">
       <span className={labelCls}>{label}</span>
 
       <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           {value && (
-            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-ink/15 bg-white shadow-sm">
+            <div className="relative h-14 w-14 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-xl border border-ink/15 bg-white shadow-sm">
               <Image
                 src={value}
                 alt="Preview"
@@ -240,19 +240,19 @@ function ImageUploadField({
               type="button"
               disabled={compressing}
               onClick={() => fileInputRef.current?.click()}
-              className="inline-flex items-center gap-2 rounded-lg bg-coal px-4 py-2 text-xs font-semibold text-ivory transition-transform hover:scale-[1.02] disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-coal px-3.5 py-2 text-xs font-semibold text-ivory shadow-sm transition-transform active:scale-95 disabled:opacity-50 hover:bg-gold-deep"
             >
-              {compressing ? "Compressing WebP..." : "Choose Image (Auto-Compress)"}
+              {compressing ? "⚡ Compressing..." : "📁 Choose Image (Auto-Compress)"}
             </button>
             <p className="mt-1 text-[11px] text-ink/50">
-              Large images are auto-compressed to modern WebP for high performance.
+              Auto-compressed to modern WebP for top performance.
             </p>
           </div>
         </div>
 
         {stats && (
-          <div className="rounded-lg bg-emerald-100/80 px-3 py-1.5 text-xs text-emerald-800">
-            Compressed: {stats.orig} ➔ <strong>{stats.comp}</strong> ({stats.savings}% saved!)
+          <div className="rounded-lg bg-emerald-100/90 px-2.5 py-1 text-[11px] font-semibold text-emerald-800">
+            {stats.orig} ➔ {stats.comp} ({stats.savings}% saved)
           </div>
         )}
       </div>
@@ -260,8 +260,8 @@ function ImageUploadField({
       <div className="mt-3">
         <input
           type="text"
-          className={cn(inputCls, "!py-2 text-xs text-ink/70")}
-          placeholder="Or enter existing path (e.g. /photos/rs-092-02.jpg)"
+          className={cn(inputCls, "!py-2 text-xs text-ink/75")}
+          placeholder="Or enter path / URL (e.g. /photos/rs-092-02.jpg)"
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />
@@ -314,7 +314,7 @@ export default function AdminApp() {
   useEffect(() => {
     load();
     loadAnalytics();
-    const interval = setInterval(loadAnalytics, 15000); // refresh analytics every 15s
+    const interval = setInterval(loadAnalytics, 15000);
     return () => clearInterval(interval);
   }, [load, loadAnalytics]);
 
@@ -337,10 +337,10 @@ export default function AdminApp() {
     }
   };
 
-  const saveOverrides = async (next: Overrides, msg = "Saved! All changes are live on the website.") => {
+  const saveOverrides = async (next: Overrides, msg = "Saved! Live site updated.") => {
     setOv(next);
     if (await post({ action: "save-overrides", overrides: next })) say(msg);
-    else say("Could not save. Check database configuration.");
+    else say("Could not save. Check database connection.");
   };
 
   const login = async (e: React.FormEvent) => {
@@ -386,19 +386,19 @@ export default function AdminApp() {
   if (state === "loading") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-ink font-display text-2xl italic text-gold">
-        Loading Rafiq Sons Admin Studio...
+        Loading Rafiq Sons Atelier Studio...
       </div>
     );
   }
 
   if (state === "login") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-ink px-5">
+      <div className="flex min-h-screen items-center justify-center bg-ink px-4">
         <motion.form
           onSubmit={login}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-dark w-full max-w-md rounded-3xl border border-ivory/15 p-8 shadow-2xl"
+          className="glass-dark w-full max-w-md rounded-3xl border border-ivory/15 p-7 sm:p-10 shadow-2xl"
         >
           <div className="text-center">
             <Image
@@ -406,14 +406,14 @@ export default function AdminApp() {
               alt="Rafiq Sons Labels"
               width={160}
               height={50}
-              className="mx-auto h-12 w-auto"
+              className="mx-auto h-11 w-auto"
             />
             <p className="eyebrow mt-4 text-gold">Management Atelier</p>
             <h1 className="font-display mt-2 text-2xl text-ivory">Admin Sign In</h1>
           </div>
 
-          <div className="mt-8">
-            <label className="text-xs uppercase tracking-wider text-ivory/60">Admin Password</label>
+          <div className="mt-7">
+            <label className="text-xs uppercase tracking-wider text-ivory/60 font-semibold">Admin Password</label>
             <input
               type="password"
               className="mt-2 w-full rounded-xl border border-ivory/20 bg-coal px-4 py-3 text-sm text-ivory outline-none focus:border-gold"
@@ -427,7 +427,7 @@ export default function AdminApp() {
 
           <button
             type="submit"
-            className="btn-sheen mt-6 w-full rounded-full bg-gold py-3.5 text-xs font-bold uppercase tracking-wider text-ink"
+            className="btn-sheen mt-6 w-full rounded-full bg-gold py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-98"
           >
             Access Studio
           </button>
@@ -437,35 +437,35 @@ export default function AdminApp() {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf8f4] text-ink">
+    <div className="min-h-screen bg-[#faf8f4] pb-24 text-ink antialiased">
       {/* Top Admin Header */}
-      <header className="sticky top-0 z-50 border-b border-ink/10 bg-white/90 px-6 py-4 shadow-sm backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <div className="flex items-center gap-4">
+      <header className="sticky top-0 z-50 border-b border-ink/10 bg-white/95 px-4 py-3.5 sm:px-8 shadow-sm backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
+          <div className="flex items-center gap-3 sm:gap-4">
             <Image
               src="/brand/logo-wide.png"
               alt="Rafiq Sons Labels"
-              width={140}
-              height={42}
-              className="h-8 w-auto"
+              width={130}
+              height={38}
+              className="h-7 w-auto sm:h-8"
             />
-            <span className="hidden rounded-full bg-amber-100 px-3 py-1 text-[11px] font-bold text-amber-900 sm:inline-block">
-              Content CMS & Live Analytics
+            <span className="hidden rounded-full bg-amber-100 px-3 py-1 text-[11px] font-bold text-amber-900 md:inline-block">
+              CMS Studio & Live Analytics
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <a
-              href="/"
+              href="https://www.rafiqsonslabels.com"
               target="_blank"
               rel="noreferrer"
-              className="rounded-full border border-ink/20 px-4 py-2 text-xs font-semibold text-ink transition-colors hover:bg-ink hover:text-ivory"
+              className="rounded-full border border-ink/20 px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold text-ink transition-colors hover:bg-ink hover:text-ivory"
             >
-              View Live Website ↗
+              Live Site ↗
             </a>
             <button
               onClick={logout}
-              className="rounded-full bg-ink/10 px-4 py-2 text-xs font-semibold text-ink transition-colors hover:bg-red-50 hover:text-red-700"
+              className="rounded-full bg-ink/5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold text-ink/80 transition-colors hover:bg-red-50 hover:text-red-700"
             >
               Sign Out
             </button>
@@ -474,77 +474,77 @@ export default function AdminApp() {
       </header>
 
       {/* Main Container */}
-      <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
-        {/* Navigation Tabs with Smooth Horizontal Swipe, Drag, and Arrows */}
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-8">
+        {/* Sleek Mobile & Desktop Tabs Navigation */}
         <AdminTabsNav
-          tabs={tabs}
+          tabs={tabDefs}
           activeTab={tab}
           onSelectTab={(t) => setTab(t)}
           newCount={newCount}
         />
 
         {/* Tab Content Panels */}
-        <div className="mt-4">
+        <div>
           {/* TAB 1: LIVE ANALYTICS */}
           {tab === "Live Analytics" && (
             <div className="space-y-6">
               {/* Top Stat Cards */}
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+              <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+                <div className="rounded-2xl border border-ink/10 bg-white p-4 sm:p-6 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-ink/50">Live Online Now</span>
+                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ink/50">Live Online</span>
                     <span className="flex h-3 w-3 relative">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#25D366] opacity-75" />
                       <span className="relative inline-flex rounded-full h-3 w-3 bg-[#25D366]" />
                     </span>
                   </div>
-                  <p className="font-display mt-3 text-4xl font-bold text-ink">
+                  <p className="font-display mt-2 text-3xl sm:text-4xl font-bold text-ink">
                     {analytics?.liveVisitors ?? 1}
                   </p>
-                  <p className="mt-1 text-[11px] text-[#128C7E]">Active visitors on website right now</p>
+                  <p className="mt-1 text-[11px] text-[#128C7E] font-medium">Active on site now</p>
                 </div>
 
-                <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
-                  <span className="text-xs font-bold uppercase tracking-wider text-ink/50">Views (24 Hours)</span>
-                  <p className="font-display mt-3 text-4xl font-bold text-ink">
+                <div className="rounded-2xl border border-ink/10 bg-white p-4 sm:p-6 shadow-sm">
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ink/50">24h Views</span>
+                  <p className="font-display mt-2 text-3xl sm:text-4xl font-bold text-ink">
                     {analytics?.views24h ?? 0}
                   </p>
                   <p className="mt-1 text-[11px] text-ink/50">
-                    Unique Visitors: {analytics?.unique24h ?? 0}
+                    Unique: {analytics?.unique24h ?? 0}
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
-                  <span className="text-xs font-bold uppercase tracking-wider text-ink/50">Total Page Views</span>
-                  <p className="font-display mt-3 text-4xl font-bold text-gold-deep">
+                <div className="rounded-2xl border border-ink/10 bg-white p-4 sm:p-6 shadow-sm">
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ink/50">Total Views</span>
+                  <p className="font-display mt-2 text-3xl sm:text-4xl font-bold text-gold-deep">
                     {analytics?.totalViews ?? 0}
                   </p>
-                  <p className="mt-1 text-[11px] text-ink/50">All-time lifetime pageviews</p>
+                  <p className="mt-1 text-[11px] text-ink/50">Lifetime pageviews</p>
                 </div>
 
-                <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
-                  <span className="text-xs font-bold uppercase tracking-wider text-ink/50">Total Unique Visitors</span>
-                  <p className="font-display mt-3 text-4xl font-bold text-ink">
+                <div className="rounded-2xl border border-ink/10 bg-white p-4 sm:p-6 shadow-sm">
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ink/50">Total Visitors</span>
+                  <p className="font-display mt-2 text-3xl sm:text-4xl font-bold text-ink">
                     {analytics?.uniqueVisitors ?? 0}
                   </p>
-                  <p className="mt-1 text-[11px] text-ink/50">Distinct devices / browsers</p>
+                  <p className="mt-1 text-[11px] text-ink/50">Distinct devices</p>
                 </div>
               </div>
 
               {/* Country Breakdown & Top Pages Grid */}
               <div className="grid gap-6 lg:grid-cols-2">
                 {/* Country Breakdown */}
-                <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+                <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
                   <div className="flex items-center justify-between border-b border-ink/10 pb-4">
                     <div>
-                      <h3 className="font-display text-xl text-ink">Visitors by Country</h3>
-                      <p className="text-xs text-ink/50">Geographic breakdown of website traffic</p>
+                      <h3 className="font-display text-xl text-ink">Traffic by Country</h3>
+                      <p className="text-xs text-ink/50">Geographic origin of visitors</p>
                     </div>
                     <button
                       onClick={loadAnalytics}
                       className="rounded-lg border border-ink/20 px-3 py-1 text-xs hover:bg-ink/5"
                     >
-                      {analyticsLoading ? "Refreshing..." : "Refresh"}
+                      {analyticsLoading ? "..." : "Refresh"}
                     </button>
                   </div>
 
@@ -555,14 +555,12 @@ export default function AdminApp() {
                         const pct = Math.round((c.count / total) * 100);
                         return (
                           <div key={idx} className="flex items-center justify-between py-3">
+                            <span className="font-semibold text-sm text-ink">{getCountryFlag(c.country)}</span>
                             <div className="flex items-center gap-3">
-                              <span className="font-semibold text-sm text-ink">{getCountryFlag(c.country)}</span>
-                            </div>
-                            <div className="flex items-center gap-4">
-                              <div className="w-24 h-2 rounded-full bg-amber-100 overflow-hidden hidden sm:block">
-                                <div className="h-full bg-gold-deep rounded-full" style={{ width: `${Math.min(100, pct * 2)}%` }} />
+                              <div className="w-20 sm:w-28 h-2 rounded-full bg-amber-100 overflow-hidden">
+                                <div className="h-full bg-gold-deep rounded-full" style={{ width: `${Math.min(100, Math.max(10, pct * 2))}%` }} />
                               </div>
-                              <span className="font-display text-sm font-bold text-ink">{c.count} views</span>
+                              <span className="font-display text-xs sm:text-sm font-bold text-ink min-w-14 text-right">{c.count} views</span>
                             </div>
                           </div>
                         );
@@ -575,13 +573,13 @@ export default function AdminApp() {
 
                 {/* Top Visited Pages & Devices */}
                 <div className="space-y-6">
-                  <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+                  <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
                     <h3 className="font-display text-xl text-ink border-b border-ink/10 pb-4">Top Pages</h3>
                     <div className="mt-4 divide-y divide-ink/10">
                       {analytics?.topPages && analytics.topPages.length > 0 ? (
                         analytics.topPages.map((p, idx) => (
                           <div key={idx} className="flex items-center justify-between py-2.5 text-xs">
-                            <span className="font-mono text-ink/80">{p.path}</span>
+                            <span className="font-mono text-ink/80 truncate max-w-[200px]">{p.path}</span>
                             <span className="font-bold text-ink">{p.count} views</span>
                           </div>
                         ))
@@ -591,13 +589,13 @@ export default function AdminApp() {
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
-                    <h3 className="font-display text-xl text-ink border-b border-ink/10 pb-4">Device Types</h3>
-                    <div className="mt-4 grid grid-cols-3 gap-3 text-center">
+                  <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+                    <h3 className="font-display text-xl text-ink border-b border-ink/10 pb-4">Device Breakdown</h3>
+                    <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3 text-center">
                       {analytics?.deviceStats?.map((d) => (
-                        <div key={d.device} className="rounded-xl bg-amber-50/40 p-3">
-                          <p className="text-[11px] uppercase tracking-wider text-ink/50">{d.device}</p>
-                          <p className="font-display mt-1 text-2xl font-bold text-ink">{d.count}</p>
+                        <div key={d.device} className="rounded-xl bg-amber-50/50 p-3">
+                          <p className="text-[10px] uppercase tracking-wider text-ink/50 font-bold">{d.device}</p>
+                          <p className="font-display mt-1 text-xl sm:text-2xl font-bold text-ink">{d.count}</p>
                         </div>
                       ))}
                     </div>
@@ -606,15 +604,15 @@ export default function AdminApp() {
               </div>
 
               {/* Live Recent Visitors Stream */}
-              <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+              <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
                 <div className="flex items-center justify-between border-b border-ink/10 pb-4">
                   <div>
-                    <h3 className="font-display text-xl text-ink">Recent Visitors Feed</h3>
-                    <p className="text-xs text-ink/50">Real-time log of incoming visitor sessions</p>
+                    <h3 className="font-display text-xl text-ink">Live Visitor Stream</h3>
+                    <p className="text-xs text-ink/50">Incoming visitor sessions log</p>
                   </div>
-                  <span className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                  <span className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
                     <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                    Live Feed Active
+                    Active
                   </span>
                 </div>
 
@@ -623,10 +621,10 @@ export default function AdminApp() {
                     <thead>
                       <tr className="border-b border-ink/10 text-ink/50 uppercase tracking-wider">
                         <th className="pb-3 font-semibold">Time</th>
-                        <th className="pb-3 font-semibold">Country & City</th>
-                        <th className="pb-3 font-semibold">Page Path</th>
+                        <th className="pb-3 font-semibold">Location</th>
+                        <th className="pb-3 font-semibold">Page</th>
                         <th className="pb-3 font-semibold">Device</th>
-                        <th className="pb-3 font-semibold">Referrer</th>
+                        <th className="pb-3 font-semibold">Source</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-ink/10">
@@ -634,9 +632,9 @@ export default function AdminApp() {
                         analytics.recentVisits.map((v) => (
                           <tr key={v.id} className="hover:bg-amber-50/20">
                             <td className="py-3 text-ink/60 whitespace-nowrap">
-                              {new Date(v.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                              {new Date(v.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                             </td>
-                            <td className="py-3 font-semibold text-ink">
+                            <td className="py-3 font-semibold text-ink whitespace-nowrap">
                               {getCountryFlag(v.country)} {v.city && v.city !== "Unknown" ? `(${v.city})` : ""}
                             </td>
                             <td className="py-3 font-mono text-ink/75">{v.path}</td>
@@ -656,24 +654,24 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 2: ENQUIRIES / LEADS */}
+          {/* TAB 2: INQUIRIES */}
           {tab === "Enquiries" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <div className="flex items-center justify-between border-b border-ink/10 pb-4">
                 <div>
-                  <h2 className="font-display text-2xl text-ink">Customer Enquiries</h2>
-                  <p className="text-xs text-ink/50">Quote requests submitted through the website</p>
+                  <h2 className="font-display text-2xl text-ink">Customer Inquiries</h2>
+                  <p className="text-xs text-ink/50">Quote requests submitted by clients</p>
                 </div>
                 <button
                   onClick={load}
-                  className="rounded-lg border border-ink/20 px-3 py-1.5 text-xs font-medium hover:bg-ink/5"
+                  className="rounded-lg border border-ink/20 px-3 py-1.5 text-xs font-semibold hover:bg-ink/5"
                 >
                   Refresh
                 </button>
               </div>
 
               {leads.length === 0 ? (
-                <div className="py-16 text-center text-sm text-ink/45">No enquiries yet.</div>
+                <div className="py-16 text-center text-sm text-ink/45">No inquiries yet.</div>
               ) : (
                 <div className="mt-6 divide-y divide-ink/10">
                   {leads.map((l) => (
@@ -683,7 +681,7 @@ export default function AdminApp() {
                           <span
                             className={cn(
                               "rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase",
-                              l.status === "new" ? "bg-amber-100 text-amber-900" : "bg-emerald-100 text-emerald-900"
+                              l.status === "new" ? "bg-amber-100 text-amber-900 ring-1 ring-amber-300" : "bg-emerald-100 text-emerald-900"
                             )}
                           >
                             {l.status}
@@ -720,7 +718,7 @@ export default function AdminApp() {
                           </button>
                           <button
                             onClick={async () => {
-                              if (confirm("Delete this enquiry?")) {
+                              if (confirm("Delete this inquiry?")) {
                                 await post({ action: "delete-lead", id: l.id });
                                 load();
                               }
@@ -732,7 +730,7 @@ export default function AdminApp() {
                         </div>
                       </div>
 
-                      <div className="mt-3 grid gap-2 rounded-xl bg-amber-50/40 p-4 text-xs sm:grid-cols-3">
+                      <div className="mt-3 grid gap-2 rounded-xl bg-amber-50/40 p-3.5 text-xs sm:grid-cols-3">
                         <div>
                           <span className="font-semibold text-ink/60">Product:</span> {l.product || "N/A"}
                         </div>
@@ -757,11 +755,11 @@ export default function AdminApp() {
 
           {/* TAB 3: WORKBENCH VIDEOS / REELS */}
           {tab === "Workbench Videos" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
                 <div>
                   <h2 className="font-display text-2xl text-ink">Workbench Video Reels</h2>
-                  <p className="text-xs text-ink/50">Manage video clips, poster thumbnails, and labels</p>
+                  <p className="text-xs text-ink/50">Manage video clips, auto-compressed poster images and titles</p>
                 </div>
                 <button
                   type="button"
@@ -825,7 +823,7 @@ export default function AdminApp() {
                         <input
                           className={inputCls}
                           value={r.src}
-                          placeholder="/videos/rs-003-video.mp4 or https://..."
+                          placeholder="/videos/rs-003-video.mp4"
                           onChange={(e) => {
                             const updated = [...reelsList];
                             updated[idx] = { ...r, src: e.target.value };
@@ -835,7 +833,7 @@ export default function AdminApp() {
                       </div>
 
                       <ImageUploadField
-                        label="Video Poster Image (Auto-Compressed)"
+                        label="Video Poster Image"
                         value={r.poster}
                         onChange={(val) => {
                           const updated = [...reelsList];
@@ -863,11 +861,11 @@ export default function AdminApp() {
 
           {/* TAB 4: CONTACT & COMPANY INFO */}
           {tab === "Contact & Info" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <h2 className="font-display text-2xl text-ink">Company & Contact Details</h2>
-              <p className="text-xs text-ink/50">Update company numbers, Instagram, location and information</p>
+              <p className="text-xs text-ink/50">Update company phone, WhatsApp, Instagram, location and information</p>
 
-              <div className="mt-6 grid gap-5 sm:grid-cols-2">
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className={labelCls}>Company Name</label>
                   <input
@@ -885,7 +883,7 @@ export default function AdminApp() {
                   />
                 </div>
                 <div>
-                  <label className={labelCls}>Phone (Display Format)</label>
+                  <label className={labelCls}>Phone Number (Display Format)</label>
                   <input
                     className={inputCls}
                     value={site.phoneDisplay}
@@ -909,7 +907,7 @@ export default function AdminApp() {
                   />
                 </div>
                 <div>
-                  <label className={labelCls}>Instagram Link</label>
+                  <label className={labelCls}>Instagram URL</label>
                   <input
                     className={inputCls}
                     value={site.instagram}
@@ -917,7 +915,7 @@ export default function AdminApp() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className={labelCls}>Location & Delivery Note</label>
+                  <label className={labelCls}>Location & Worldwide Note</label>
                   <input
                     className={inputCls}
                     value={site.location}
@@ -941,11 +939,11 @@ export default function AdminApp() {
 
           {/* TAB 5: HERO SECTION */}
           {tab === "Hero Section" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
-              <h2 className="font-display text-2xl text-ink">Hero Section Header</h2>
-              <p className="text-xs text-ink/50">Top banner headlines, subtitle, video, and CTA buttons</p>
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+              <h2 className="font-display text-2xl text-ink">Hero Banner Header</h2>
+              <p className="text-xs text-ink/50">Top headlines, gold accent text, video and primary call-to-actions</p>
 
-              <div className="mt-6 space-y-5">
+              <div className="mt-6 space-y-4">
                 <div>
                   <label className={labelCls}>Eyebrow Badge</label>
                   <input
@@ -975,14 +973,14 @@ export default function AdminApp() {
                 <div>
                   <label className={labelCls}>Subtitle Description</label>
                   <textarea
-                    className={cn(inputCls, "min-h-[5rem] resize-none")}
+                    className={cn(inputCls, "min-h-[4.5rem] resize-none")}
                     value={hero.sub}
                     onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, sub: e.target.value } })}
                   />
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className={labelCls}>Primary CTA Button Text</label>
+                    <label className={labelCls}>Primary CTA Button</label>
                     <input
                       className={inputCls}
                       value={hero.ctaPrimary}
@@ -990,7 +988,7 @@ export default function AdminApp() {
                     />
                   </div>
                   <div>
-                    <label className={labelCls}>Secondary CTA Button Text</label>
+                    <label className={labelCls}>Secondary CTA Button</label>
                     <input
                       className={inputCls}
                       value={hero.ctaSecondary}
@@ -1009,7 +1007,7 @@ export default function AdminApp() {
                 </div>
 
                 <ImageUploadField
-                  label="Hero Poster / Fallback Image (Auto-Compressed)"
+                  label="Hero Poster / Fallback Image"
                   value={hero.poster}
                   onChange={(val) => setOv({ ...ov, hero: { ...ov.hero, poster: val } })}
                 />
@@ -1028,13 +1026,13 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 6: TRUST BAR & MARQUEE */}
+          {/* TAB 6: TRUST MARQUEE */}
           {tab === "Trust Bar" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
-              <h2 className="font-display text-2xl text-ink">Trust Bar & Value Pillars</h2>
-              <p className="text-xs text-ink/50">Edit continuous marquee keywords and values</p>
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+              <h2 className="font-display text-2xl text-ink">Trust Bar & Marquee</h2>
+              <p className="text-xs text-ink/50">Edit scrolling words and key values</p>
 
-              <div className="mt-6 space-y-6">
+              <div className="mt-6 space-y-5">
                 <div>
                   <label className={labelCls}>Marquee Row 1 (Comma-separated)</label>
                   <textarea
@@ -1083,13 +1081,13 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 7: MANIFESTO / STORY */}
+          {/* TAB 7: MANIFESTO */}
           {tab === "Manifesto" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <h2 className="font-display text-2xl text-ink">The Studio Manifesto</h2>
-              <p className="text-xs text-ink/50">Why the label matters story, body text, and feature image</p>
+              <p className="text-xs text-ink/50">Brand story, body text, and feature image</p>
 
-              <div className="mt-6 space-y-5">
+              <div className="mt-6 space-y-4">
                 <div>
                   <label className={labelCls}>Eyebrow</label>
                   <input
@@ -1100,7 +1098,7 @@ export default function AdminApp() {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className={labelCls}>Big Title Part 1</label>
+                    <label className={labelCls}>Title Part 1</label>
                     <input
                       className={inputCls}
                       value={manifesto.big[0]}
@@ -1113,7 +1111,7 @@ export default function AdminApp() {
                     />
                   </div>
                   <div>
-                    <label className={labelCls}>Big Title Part 2 (Gold Accent)</label>
+                    <label className={labelCls}>Title Part 2 (Gold Accent)</label>
                     <input
                       className={inputCls}
                       value={manifesto.big[1]}
@@ -1136,7 +1134,7 @@ export default function AdminApp() {
                 </div>
 
                 <ImageUploadField
-                  label="Manifesto Story Photo (Auto-Compressed)"
+                  label="Manifesto Story Photo"
                   value={manifesto.image}
                   onChange={(val) => setOv({ ...ov, manifesto: { ...ov.manifesto, image: val } })}
                 />
@@ -1155,12 +1153,12 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 8: PRODUCTS & COLLECTIONS */}
+          {/* TAB 8: PRODUCTS CATALOG */}
           {tab === "Products" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
                 <div>
-                  <h2 className="font-display text-2xl text-ink">Products & Collections</h2>
+                  <h2 className="font-display text-2xl text-ink">Products Catalog</h2>
                   <p className="text-xs text-ink/50">Edit names, tags, specs, pricing, and upload product photos</p>
                 </div>
                 <button
@@ -1185,9 +1183,9 @@ export default function AdminApp() {
                 </button>
               </div>
 
-              <div className="mt-6 space-y-8">
+              <div className="mt-6 space-y-6">
                 {products.map((p, idx) => (
-                  <div key={p.slug} className="rounded-2xl border border-ink/15 bg-amber-50/20 p-5">
+                  <div key={p.slug} className="rounded-2xl border border-ink/15 bg-amber-50/20 p-4 sm:p-5">
                     <div className="flex items-center justify-between border-b border-ink/10 pb-3">
                       <span className="font-display text-lg font-bold text-ink">
                         #{idx + 1} {p.name}
@@ -1244,7 +1242,7 @@ export default function AdminApp() {
                         />
                       </div>
                       <div className="sm:col-span-2">
-                        <label className={labelCls}>Craft Specifications Detail</label>
+                        <label className={labelCls}>Craft Specifications</label>
                         <input
                           className={inputCls}
                           value={p.detail}
@@ -1297,13 +1295,13 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 9: THE ATELIER PHILOSOPHY */}
+          {/* TAB 9: PHILOSOPHY */}
           {tab === "Philosophy" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
-              <h2 className="font-display text-2xl text-ink">The Philosophy Section</h2>
-              <p className="text-xs text-ink/50">Parallax visual quote banner and gold typography</p>
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+              <h2 className="font-display text-2xl text-ink">The Craft Philosophy</h2>
+              <p className="text-xs text-ink/50">Visual quote banner and typography</p>
 
-              <div className="mt-6 space-y-5">
+              <div className="mt-6 space-y-4">
                 <div>
                   <label className={labelCls}>Eyebrow</label>
                   <input
@@ -1326,7 +1324,7 @@ export default function AdminApp() {
                     />
                   </div>
                   <div>
-                    <label className={labelCls}>Heading Line 2 (Gold Gradient)</label>
+                    <label className={labelCls}>Heading Line 2 (Gold)</label>
                     <input
                       className={inputCls}
                       value={philosophy.heading2}
@@ -1348,7 +1346,7 @@ export default function AdminApp() {
                 </div>
 
                 <ImageUploadField
-                  label="Philosophy Background Photo (Auto-Compressed)"
+                  label="Philosophy Background Photo"
                   value={philosophy.image}
                   onChange={(val) =>
                     setOv({ ...ov, philosophy: { ...philosophy, image: val } })
@@ -1371,9 +1369,9 @@ export default function AdminApp() {
 
           {/* TAB 10: PROCESS STEPS */}
           {tab === "Process Steps" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <h2 className="font-display text-2xl text-ink">Craft Process Steps</h2>
-              <p className="text-xs text-ink/50">Step-by-step production timeline on the Atelier section</p>
+              <p className="text-xs text-ink/50">Step-by-step production timeline</p>
 
               <div className="mt-6 space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -1460,7 +1458,7 @@ export default function AdminApp() {
                 </div>
 
                 <ImageUploadField
-                  label="Process Ambient Background Photo"
+                  label="Process Ambient Photo"
                   value={processImage}
                   onChange={(val) =>
                     setOv({
@@ -1486,11 +1484,11 @@ export default function AdminApp() {
 
           {/* TAB 11: SHOWROOM GALLERY */}
           {tab === "Showroom Gallery" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
                 <div>
                   <h2 className="font-display text-2xl text-ink">Showroom Gallery</h2>
-                  <p className="text-xs text-ink/50">Upload new gallery images (auto-compressed) and set category tags</p>
+                  <p className="text-xs text-ink/50">Upload new gallery images with automatic compression and tags</p>
                 </div>
                 <button
                   type="button"
@@ -1536,7 +1534,7 @@ export default function AdminApp() {
 
                     <div className="mt-3">
                       <ImageUploadField
-                        label="Change Photo (Auto-Compress)"
+                        label="Change Photo"
                         value={g.src}
                         onChange={(val) => {
                           const updated = [...gallery];
@@ -1557,7 +1555,7 @@ export default function AdminApp() {
                             setOv({ ...ov, gallery: updated });
                           }}
                         />
-                        Tall Masonry Format
+                        Tall Format
                       </label>
                       <button
                         type="button"
@@ -1587,9 +1585,9 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 12: REVIEWS / TESTIMONIALS */}
+          {/* TAB 12: REVIEWS */}
           {tab === "Reviews" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <div className="flex items-center justify-between border-b border-ink/10 pb-4">
                 <div>
                   <h2 className="font-display text-2xl text-ink">Client Reviews</h2>
@@ -1700,11 +1698,11 @@ export default function AdminApp() {
 
           {/* TAB 13: FAQS */}
           {tab === "FAQs" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <div className="flex items-center justify-between border-b border-ink/10 pb-4">
                 <div>
                   <h2 className="font-display text-2xl text-ink">Frequently Asked Questions</h2>
-                  <p className="text-xs text-ink/50">Add, edit, or delete accordion FAQ items</p>
+                  <p className="text-xs text-ink/50">Add, edit, or remove accordion FAQ items</p>
                 </div>
                 <button
                   type="button"
@@ -1783,11 +1781,11 @@ export default function AdminApp() {
 
           {/* TAB 14: FOOTER */}
           {tab === "Footer" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <h2 className="font-display text-2xl text-ink">Footer Section</h2>
               <p className="text-xs text-ink/50">Bottom call-to-action headlines and notes</p>
 
-              <div className="mt-6 space-y-5">
+              <div className="mt-6 space-y-4">
                 <div>
                   <label className={labelCls}>Big Footer Heading</label>
                   <input
@@ -1821,6 +1819,23 @@ export default function AdminApp() {
         </div>
       </div>
 
+      {/* Floating Sticky Save Button Bar on Mobile */}
+      {tab !== "Live Analytics" && tab !== "Enquiries" && (
+        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-ink/10 bg-white/95 p-3.5 shadow-2xl backdrop-blur-md md:hidden flex items-center justify-between gap-3">
+          <div className="text-[11px] text-ink/60">
+            {busy ? "Saving updates..." : "Unsaved changes apply instantly"}
+          </div>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => saveOverrides(ov)}
+            className="rounded-full bg-gold px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-ink shadow-md active:scale-95 transition-transform"
+          >
+            {busy ? "Saving..." : "Save Now ✓"}
+          </button>
+        </div>
+      )}
+
       {/* Floating Toast Notification */}
       <AnimatePresence>
         {toast && (
@@ -1828,9 +1843,9 @@ export default function AdminApp() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 30 }}
-            className="fixed bottom-8 left-1/2 z-[300] -translate-x-1/2 rounded-full bg-coal px-6 py-3 text-xs font-semibold text-ivory shadow-2xl"
+            className="fixed bottom-20 sm:bottom-8 left-1/2 z-[300] -translate-x-1/2 rounded-full bg-coal px-6 py-3 text-xs font-semibold text-ivory shadow-2xl flex items-center gap-2 border border-gold/40"
           >
-            ✓ {toast}
+            <span className="text-gold">✓</span> {toast}
           </motion.div>
         )}
       </AnimatePresence>

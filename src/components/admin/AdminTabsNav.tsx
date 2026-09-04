@@ -3,13 +3,20 @@
 import { useRef, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
+export interface TabItem<T extends string = string> {
+  id: T;
+  label: string;
+  icon: string;
+  badge?: number;
+}
+
 export default function AdminTabsNav<T extends string>({
   tabs,
   activeTab,
   onSelectTab,
   newCount = 0,
 }: {
-  tabs: readonly T[];
+  tabs: readonly { id: T; label: string; icon: string }[];
   activeTab: T;
   onSelectTab: (tab: T) => void;
   newCount?: number;
@@ -17,13 +24,14 @@ export default function AdminTabsNav<T extends string>({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Check scroll bounds
   const checkScroll = () => {
     const el = scrollRef.current;
     if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 5);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 5);
+    setCanScrollLeft(el.scrollLeft > 8);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 8);
   };
 
   useEffect(() => {
@@ -35,7 +43,7 @@ export default function AdminTabsNav<T extends string>({
   const scroll = (dir: "left" | "right") => {
     const el = scrollRef.current;
     if (!el) return;
-    const amount = dir === "left" ? -280 : 280;
+    const amount = dir === "left" ? -260 : 260;
     el.scrollBy({ left: amount, behavior: "smooth" });
     setTimeout(checkScroll, 300);
   };
@@ -62,25 +70,84 @@ export default function AdminTabsNav<T extends string>({
     const el = scrollRef.current;
     if (!el) return;
     const x = e.pageX - el.offsetLeft;
-    const walk = (x - startX) * 1.5;
+    const walk = (x - startX) * 1.6;
     el.scrollLeft = scrollLeftState - walk;
     checkScroll();
   };
 
+  const currentTabObj = tabs.find((t) => t.id === activeTab) || tabs[0];
+
   return (
     <div className="relative mb-6">
+      {/* Mobile Top Active Bar & Quick Switcher */}
+      <div className="mb-3 flex items-center justify-between rounded-2xl border border-ink/10 bg-white p-3 shadow-sm md:hidden">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-base shadow-inner">
+            {currentTabObj.icon}
+          </span>
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-ink/50">Current Section</p>
+            <p className="font-display text-sm font-bold text-ink">{currentTabObj.label}</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="flex items-center gap-1.5 rounded-full bg-coal px-3.5 py-1.5 text-xs font-semibold text-ivory shadow-sm active:scale-95 transition-transform"
+        >
+          <span>All Tabs</span>
+          <span className="text-[10px] opacity-70">▼</span>
+        </button>
+      </div>
+
+      {/* Mobile Dropdown Panel */}
+      {isMobileMenuOpen && (
+        <div className="mb-4 grid grid-cols-2 gap-2 rounded-2xl border border-ink/10 bg-white p-3 shadow-lg md:hidden animate-in fade-in zoom-in-95 duration-150">
+          {tabs.map((t) => {
+            const isActive = activeTab === t.id;
+            const hasNew = t.id === "Enquiries" && newCount > 0;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => {
+                  onSelectTab(t.id);
+                  setIsMobileMenuOpen(false);
+                }}
+                className={cn(
+                  "flex items-center gap-2 rounded-xl p-2.5 text-left text-xs font-semibold transition-all",
+                  isActive
+                    ? "bg-coal text-ivory ring-1 ring-gold shadow-sm"
+                    : "bg-amber-50/40 text-ink/80 hover:bg-amber-100/60"
+                )}
+              >
+                <span className="text-sm">{t.icon}</span>
+                <span className="truncate">{t.label}</span>
+                {hasNew && (
+                  <span className="ml-auto flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[9px] font-bold text-ink">
+                    {newCount}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Desktop & Tablet Swipable Navigation Track */}
       <div className="flex items-center gap-2">
-        {/* Left Arrow Button */}
+        {/* Left Arrow Button (hidden on very small screens, visible on md) */}
         <button
           type="button"
           onClick={() => scroll("left")}
           aria-label="Scroll tabs left"
           className={cn(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ink/15 bg-white text-ink shadow-sm transition-all hover:bg-coal hover:text-ivory",
-            !canScrollLeft && "opacity-40 pointer-events-none"
+            "hidden md:flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink/15 bg-white text-ink text-xs font-bold shadow-sm transition-all hover:bg-coal hover:text-ivory active:scale-95",
+            !canScrollLeft && "opacity-30 pointer-events-none"
           )}
         >
-          ←
+          ◀
         </button>
 
         {/* Scrollable / Draggable Track */}
@@ -93,21 +160,20 @@ export default function AdminTabsNav<T extends string>({
           onMouseMove={onMouseMove}
           style={{ WebkitOverflowScrolling: "touch" }}
           className={cn(
-            "flex flex-1 items-center gap-2 overflow-x-auto py-2 select-none",
+            "flex flex-1 items-center gap-2 overflow-x-auto py-1 select-none scroll-smooth",
             "cursor-grab active:cursor-grabbing",
-            "[scrollbar-width:thin] [scrollbar-color:#c6a15b_transparent]",
-            "[&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-amber-300/80 [&::-webkit-scrollbar-track]:bg-transparent"
+            "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           )}
         >
           {tabs.map((t) => {
-            const isActive = activeTab === t;
+            const isActive = activeTab === t.id;
+            const hasNew = t.id === "Enquiries" && newCount > 0;
             return (
               <button
-                key={t}
+                key={t.id}
                 type="button"
                 onClick={(e) => {
-                  onSelectTab(t);
-                  // Auto scroll clicked button into view
+                  onSelectTab(t.id);
                   (e.currentTarget as HTMLElement).scrollIntoView({
                     behavior: "smooth",
                     inline: "center",
@@ -115,15 +181,16 @@ export default function AdminTabsNav<T extends string>({
                   });
                 }}
                 className={cn(
-                  "relative shrink-0 whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-semibold tracking-wide transition-all shadow-sm",
+                  "group relative flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-200",
                   isActive
                     ? "bg-coal text-ivory shadow-md ring-2 ring-gold-deep"
-                    : "bg-white text-ink/75 hover:bg-amber-50 hover:text-ink border border-ink/10"
+                    : "bg-white text-ink/70 hover:bg-amber-50 hover:text-ink border border-ink/10"
                 )}
               >
-                {t}
-                {t === "Enquiries" && newCount > 0 && (
-                  <span className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gold text-[10px] font-bold text-ink">
+                <span className="text-sm opacity-90 group-hover:scale-110 transition-transform">{t.icon}</span>
+                <span>{t.label}</span>
+                {hasNew && (
+                  <span className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[10px] font-bold text-ink animate-pulse">
                     {newCount}
                   </span>
                 )}
@@ -138,27 +205,12 @@ export default function AdminTabsNav<T extends string>({
           onClick={() => scroll("right")}
           aria-label="Scroll tabs right"
           className={cn(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ink/15 bg-white text-ink shadow-sm transition-all hover:bg-coal hover:text-ivory",
-            !canScrollRight && "opacity-40 pointer-events-none"
+            "hidden md:flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink/15 bg-white text-ink text-xs font-bold shadow-sm transition-all hover:bg-coal hover:text-ivory active:scale-95",
+            !canScrollRight && "opacity-30 pointer-events-none"
           )}
         >
-          →
+          ▶
         </button>
-      </div>
-
-      {/* Mobile Quick Dropdown */}
-      <div className="mt-2 block sm:hidden">
-        <select
-          value={activeTab}
-          onChange={(e) => onSelectTab(e.target.value as T)}
-          className="w-full rounded-xl border border-ink/15 bg-white px-4 py-2.5 text-xs font-semibold text-ink shadow-sm outline-none focus:border-gold-deep"
-        >
-          {tabs.map((t) => (
-            <option key={t} value={t}>
-              Jump to tab: {t} {t === "Enquiries" && newCount > 0 ? `(${newCount} new)` : ""}
-            </option>
-          ))}
-        </select>
       </div>
     </div>
   );
