@@ -5,9 +5,13 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Eyebrow, FadeUp, RevealWords } from "./Reveal";
-import { manifesto } from "@/content/site";
+import { manifesto as defaultManifesto } from "@/content/site";
 
-export default function Manifesto() {
+export default function Manifesto({
+  manifesto = defaultManifesto,
+}: {
+  manifesto?: typeof defaultManifesto;
+}) {
   const imgWrap = useRef<HTMLDivElement>(null);
   const img = useRef<HTMLDivElement>(null);
 
@@ -56,14 +60,15 @@ export default function Manifesto() {
           <div ref={img} className="relative h-[26rem] will-change-transform sm:h-[32rem] lg:h-full lg:min-h-[34rem]">
             <Image
               src={manifesto.image}
-              alt="Gold embroidered satin labels arranged in flowing chains"
+              alt="Custom labels craftsmanship"
               fill
+              loading="lazy"
               sizes="(max-width: 1024px) 100vw, 44vw"
               className="object-cover"
             />
           </div>
           <div className="absolute bottom-4 left-4 right-4 glass-dark rounded-xl px-5 py-4">
-            <p className="font-display text-sm italic text-gold">Organza satin, gold embroidery</p>
+            <p className="font-display text-sm italic text-gold">Custom crafted for apparel brands</p>
             <p className="mt-0.5 text-[11px] uppercase tracking-[0.2em] text-ivory/60">Made to client artwork</p>
           </div>
         </div>

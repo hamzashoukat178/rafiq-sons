@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useScroll } from "framer-motion";
 import Image from "next/image";
 import { easeLuxe, cn } from "@/lib/utils";
 import Magnetic from "./Magnetic";
-import { site } from "@/content/site";
+import { site as defaultSite } from "@/content/site";
 
 const links = [
   { label: "Collections", href: "#collections" },
@@ -15,7 +15,7 @@ const links = [
   { label: "FAQ", href: "#faq" },
 ];
 
-export default function Nav() {
+export default function Nav({ site = defaultSite }: { site?: typeof defaultSite }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { scrollY } = useScroll();
@@ -44,16 +44,16 @@ export default function Nav() {
         transition={{ duration: 0.9, ease: easeLuxe, delay: 1.7 }}
         className={cn(
           "fixed inset-x-0 top-0 z-[110] transition-all duration-500",
-          scrolled ? "glass-dark py-3" : "bg-transparent py-5"
+          scrolled ? "glass-dark border-b border-ivory/10 py-3 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.8)]" : "bg-transparent py-5"
         )}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-8">
-          <button onClick={() => go("#top")} className="group flex items-center gap-3 text-left" aria-label="Rafiq Sons Labels, back to top">
+          <button onClick={() => go("#top")} className="group flex items-center gap-3 text-left" aria-label={`${site.name}, back to top`}>
             <Image
               src="/brand/logo-wide-light.png"
-              alt="Rafiq Sons logo"
-              width={120}
-              height={40}
+              alt={`${site.name} logo`}
+              width={140}
+              height={44}
               priority
               className="h-9 w-auto transition-transform duration-500 group-hover:scale-[1.03] sm:h-10"
             />
@@ -79,7 +79,7 @@ export default function Nav() {
             <Magnetic className="hidden sm:block">
               <button
                 onClick={() => go("#quote")}
-                className="btn-sheen rounded-full bg-gold px-5 py-2.5 text-[13px] font-semibold text-ink transition-transform"
+                className="btn-sheen rounded-full bg-gold px-5 py-2.5 text-[13px] font-semibold text-ink shadow-[0_4px_20px_rgba(198,161,91,0.4)] transition-transform hover:scale-[1.03]"
               >
                 Request a quote
               </button>
@@ -99,7 +99,7 @@ export default function Nav() {
       <AnimatePresence>
         {open && (
           <motion.div
-            className="fixed inset-0 z-[105] flex flex-col justify-between bg-ink/98 px-6 pb-10 pt-28 backdrop-blur-xl"
+            className="fixed inset-0 z-[105] flex flex-col justify-between bg-ink/98 px-6 pb-10 pt-28 backdrop-blur-2xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -111,25 +111,26 @@ export default function Nav() {
                   key={l.href + l.label}
                   initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.08 * i + 0.1, duration: 0.6, ease: easeLuxe }}
+                  transition={{ delay: 0.06 * i + 0.1, duration: 0.6, ease: easeLuxe }}
                   onClick={() => go(l.href)}
                   className="hairline-t flex items-baseline justify-between py-4 text-left"
                 >
-                  <span className="font-display text-4xl text-ivory">{l.label}</span>
-                  <span className="font-display text-sm italic text-gold">0{i + 1}</span>
+                  <span className="font-display text-3xl text-ivory">{l.label}</span>
+                  <span className="font-display text-xs italic text-gold">0{i + 1}</span>
                 </motion.button>
               ))}
             </nav>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="flex items-center justify-between text-xs text-smoke"
+              transition={{ delay: 0.4 }}
+              className="flex flex-col gap-3 border-t border-ivory/15 pt-6 text-xs text-smoke"
             >
-              <a href={site.whatsapp} target="_blank" rel="noreferrer" className="text-gold">
+              <a href={site.whatsapp} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm font-semibold text-gold">
+                <span className="h-2 w-2 rounded-full bg-[#25D366]" />
                 WhatsApp {site.phoneDisplay}
               </a>
-              <a href={site.instagram} target="_blank" rel="noreferrer">
+              <a href={site.instagram} target="_blank" rel="noreferrer" className="text-ivory/70 hover:text-gold">
                 Instagram
               </a>
             </motion.div>

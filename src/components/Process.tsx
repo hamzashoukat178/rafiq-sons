@@ -3,10 +3,14 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
-import { atelierProcess as process } from "@/content/site";
+import { atelierProcess as defaultProcess } from "@/content/site";
 import { Eyebrow, FadeUp } from "./Reveal";
 
-export default function Process() {
+export default function Process({
+  process = defaultProcess,
+}: {
+  process?: typeof defaultProcess;
+}) {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 70%", "end 65%"] });
   const line = useSpring(scrollYProgress, { stiffness: 90, damping: 24 });
@@ -20,6 +24,7 @@ export default function Process() {
           alt=""
           fill
           sizes="100vw"
+          loading="lazy"
           className="object-cover"
           aria-hidden
         />
