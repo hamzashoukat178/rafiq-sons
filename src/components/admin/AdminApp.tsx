@@ -19,6 +19,7 @@ import {
 } from "@/content/site";
 import { defaultContent, type Overrides } from "@/lib/content";
 import { cn } from "@/lib/utils";
+import AdminTabsNav from "./AdminTabsNav";
 
 type Lead = {
   id: number;
@@ -403,34 +404,16 @@ export default function AdminApp() {
 
       {/* Main Container */}
       <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
-        {/* Navigation Tabs */}
-        <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {tabs.map((t) => {
-            const isActive = tab === t;
-            return (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={cn(
-                  "relative shrink-0 rounded-full px-5 py-2.5 text-xs font-semibold tracking-wide transition-all",
-                  isActive
-                    ? "bg-coal text-ivory shadow-md"
-                    : "bg-white text-ink/70 hover:bg-ink/5 hover:text-ink"
-                )}
-              >
-                {t}
-                {t === "Enquiries" && newCount > 0 && (
-                  <span className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gold text-[10px] font-bold text-ink">
-                    {newCount}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
+        {/* Navigation Tabs with Smooth Horizontal Swipe, Drag, and Arrows */}
+        <AdminTabsNav
+          tabs={tabs}
+          activeTab={tab}
+          onSelectTab={(t) => setTab(t)}
+          newCount={newCount}
+        />
 
         {/* Tab Content Panels */}
-        <div className="mt-6">
+        <div className="mt-4">
           {/* TAB 1: ENQUIRIES / LEADS */}
           {tab === "Enquiries" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
