@@ -80,7 +80,12 @@ export const defaultContent: SiteContent = {
 
 export async function loadContent(): Promise<SiteContent> {
   const ov = (await getContent<Overrides>("overrides")) ?? {};
-  const site = { ...base.site, ...(ov.site ?? {}), ...(ov.contact ?? {}) };
+  const rawSite = { ...base.site, ...(ov.site ?? {}), ...(ov.contact ?? {}) };
+  const whatsapp =
+    rawSite.whatsapp && !rawSite.whatsapp.includes("wtspee")
+      ? rawSite.whatsapp
+      : "https://wa.me/923202025795";
+  const site = { ...rawSite, whatsapp };
   const products = ov.products?.length ? ov.products : base.products;
 
   return {

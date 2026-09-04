@@ -364,7 +364,12 @@ export default function AdminApp() {
   };
 
   // Safe merged accessors
-  const site = { ...defaultSite, ...(ov.site ?? {}), ...(ov.contact ?? {}) };
+  const rawSite = { ...defaultSite, ...(ov.site ?? {}), ...(ov.contact ?? {}) };
+  const whatsapp =
+    rawSite.whatsapp && !rawSite.whatsapp.includes("wtspee")
+      ? rawSite.whatsapp
+      : "https://wa.me/923202025795";
+  const site = { ...rawSite, whatsapp };
   const hero = { ...defaultHero, ...(ov.hero ?? {}) };
   const manifesto = { ...defaultManifesto, ...(ov.manifesto ?? {}) };
   const products = ov.products?.length ? ov.products : defaultProducts;
