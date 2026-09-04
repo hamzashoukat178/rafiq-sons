@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { reels, site } from "@/content/site";
+import { reels as defaultReels, site } from "@/content/site";
 import { Eyebrow, FadeUp, RevealWords } from "./Reveal";
 import { cn, easeLuxe } from "@/lib/utils";
 
@@ -62,7 +62,11 @@ function ReelCard({
   );
 }
 
-export default function Reels() {
+export default function Reels({
+  reels = defaultReels,
+}: {
+  reels?: typeof defaultReels;
+}) {
   const track = useRef<HTMLDivElement>(null);
   const [activeVideo, setActiveVideo] = useState<{ src: string; label: string } | null>(null);
 
@@ -111,7 +115,7 @@ export default function Reels() {
         >
           {reels.map((r) => (
             <ReelCard
-              key={r.src}
+              key={r.src + r.label}
               {...r}
               onOpen={() => setActiveVideo({ src: r.src, label: r.label })}
             />

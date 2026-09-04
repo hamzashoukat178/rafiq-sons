@@ -38,7 +38,7 @@ export default async function Home() {
         <Collections items={content.products} />
         <Philosophy philosophy={content.philosophy} />
         <Process process={content.atelierProcess} />
-        <Reels />
+        <Reels reels={content.reels} />
         <Stats />
         <Gallery items={content.gallery} />
         <Testimonials items={content.testimonials} />

@@ -12,6 +12,7 @@ import {
   gallery as defaultGallery,
   manifesto as defaultManifesto,
   atelierProcess as defaultProcess,
+  reels as defaultReels,
   footer as defaultFooter,
   type Product,
   type Testimonial,
@@ -35,6 +36,27 @@ type Lead = {
   created_at: string;
 };
 
+type AnalyticsData = {
+  totalViews: number;
+  views24h: number;
+  uniqueVisitors: number;
+  unique24h: number;
+  liveVisitors: number;
+  countryStats: { country: string; count: number }[];
+  deviceStats: { device: string; count: number }[];
+  topPages: { path: string; count: number }[];
+  dailyStats: { day: string; views: number; visitors: number }[];
+  recentVisits: {
+    id: number;
+    path: string;
+    country: string;
+    city: string;
+    device: string;
+    referrer: string;
+    created_at: string;
+  }[];
+};
+
 type Data = {
   ok: boolean;
   db: boolean;
@@ -44,7 +66,9 @@ type Data = {
 };
 
 const tabs = [
+  "Live Analytics",
   "Enquiries",
+  "Workbench Videos",
   "Contact & Info",
   "Hero Section",
   "Trust Bar",
@@ -63,6 +87,32 @@ type Tab = (typeof tabs)[number];
 const inputCls =
   "w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-gold-deep focus:ring-1 focus:ring-gold-deep";
 const labelCls = "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-ink/60";
+
+// Country Flag helper
+function getCountryFlag(code: string) {
+  if (!code || code === "Unknown") return "🌐 Global";
+  const c = code.toUpperCase();
+  const flagMap: Record<string, string> = {
+    PK: "🇵🇰 Pakistan",
+    SA: "🇸🇦 Saudi Arabia",
+    AE: "🇦🇪 UAE",
+    QA: "🇶🇦 Qatar",
+    KW: "🇰🇼 Kuwait",
+    OM: "🇴🇲 Oman",
+    BH: "🇧🇭 Bahrain",
+    GB: "🇬🇧 UK",
+    US: "🇺🇸 USA",
+    CA: "🇨🇦 Canada",
+    DE: "🇩🇪 Germany",
+    FR: "🇫🇷 France",
+    IT: "🇮🇹 Italy",
+    TR: "🇹🇷 Turkey",
+    IN: "🇮🇳 India",
+    BD: "🇧🇩 Bangladesh",
+    AU: "🇦🇺 Australia",
+  };
+  return flagMap[c] || `🌐 ${c}`;
+}
 
 // --- CLIENT-SIDE IMAGE COMPRESSOR FUNCTION ---
 async function compressImageFile(
@@ -225,7 +275,9 @@ export default function AdminApp() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [data, setData] = useState<Data | null>(null);
-  const [tab, setTab] = useState<Tab>("Enquiries");
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [tab, setTab] = useState<Tab>("Live Analytics");
   const [toast, setToast] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -244,9 +296,27 @@ export default function AdminApp() {
     setState("ready");
   }, []);
 
+  const loadAnalytics = useCallback(async () => {
+    setAnalyticsLoading(true);
+    try {
+      const res = await fetch("/api/analytics", { cache: "no-store" });
+      const json = await res.json();
+      if (json.ok && json.data) {
+        setAnalytics(json.data);
+      }
+    } catch (err) {
+      console.error("Failed to load analytics", err);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     load();
-  }, [load]);
+    loadAnalytics();
+    const interval = setInterval(loadAnalytics, 15000); // refresh analytics every 15s
+    return () => clearInterval(interval);
+  }, [load, loadAnalytics]);
 
   const say = (msg: string) => {
     setToast(msg);
@@ -303,6 +373,7 @@ export default function AdminApp() {
   const processImage = ov.atelierProcess?.image || defaultProcess.image;
   const processEyebrow = ov.atelierProcess?.eyebrow || defaultProcess.eyebrow;
   const processTitle = ov.atelierProcess?.title || defaultProcess.title;
+  const reelsList = ov.reels?.length ? ov.reels : defaultReels;
   const gallery = ov.gallery?.length ? ov.gallery : defaultGallery;
   const testimonialList = ov.testimonials?.length ? ov.testimonials : defaultTestimonials;
   const faqList = ov.faqs?.length ? ov.faqs : defaultFaqs;
@@ -379,7 +450,7 @@ export default function AdminApp() {
               className="h-8 w-auto"
             />
             <span className="hidden rounded-full bg-amber-100 px-3 py-1 text-[11px] font-bold text-amber-900 sm:inline-block">
-              Content CMS & Auto-Compressor
+              Content CMS & Live Analytics
             </span>
           </div>
 
@@ -414,7 +485,178 @@ export default function AdminApp() {
 
         {/* Tab Content Panels */}
         <div className="mt-4">
-          {/* TAB 1: ENQUIRIES / LEADS */}
+          {/* TAB 1: LIVE ANALYTICS */}
+          {tab === "Live Analytics" && (
+            <div className="space-y-6">
+              {/* Top Stat Cards */}
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-ink/50">Live Online Now</span>
+                    <span className="flex h-3 w-3 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#25D366] opacity-75" />
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-[#25D366]" />
+                    </span>
+                  </div>
+                  <p className="font-display mt-3 text-4xl font-bold text-ink">
+                    {analytics?.liveVisitors ?? 1}
+                  </p>
+                  <p className="mt-1 text-[11px] text-[#128C7E]">Active visitors on website right now</p>
+                </div>
+
+                <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+                  <span className="text-xs font-bold uppercase tracking-wider text-ink/50">Views (24 Hours)</span>
+                  <p className="font-display mt-3 text-4xl font-bold text-ink">
+                    {analytics?.views24h ?? 0}
+                  </p>
+                  <p className="mt-1 text-[11px] text-ink/50">
+                    Unique Visitors: {analytics?.unique24h ?? 0}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+                  <span className="text-xs font-bold uppercase tracking-wider text-ink/50">Total Page Views</span>
+                  <p className="font-display mt-3 text-4xl font-bold text-gold-deep">
+                    {analytics?.totalViews ?? 0}
+                  </p>
+                  <p className="mt-1 text-[11px] text-ink/50">All-time lifetime pageviews</p>
+                </div>
+
+                <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+                  <span className="text-xs font-bold uppercase tracking-wider text-ink/50">Total Unique Visitors</span>
+                  <p className="font-display mt-3 text-4xl font-bold text-ink">
+                    {analytics?.uniqueVisitors ?? 0}
+                  </p>
+                  <p className="mt-1 text-[11px] text-ink/50">Distinct devices / browsers</p>
+                </div>
+              </div>
+
+              {/* Country Breakdown & Top Pages Grid */}
+              <div className="grid gap-6 lg:grid-cols-2">
+                {/* Country Breakdown */}
+                <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+                  <div className="flex items-center justify-between border-b border-ink/10 pb-4">
+                    <div>
+                      <h3 className="font-display text-xl text-ink">Visitors by Country</h3>
+                      <p className="text-xs text-ink/50">Geographic breakdown of website traffic</p>
+                    </div>
+                    <button
+                      onClick={loadAnalytics}
+                      className="rounded-lg border border-ink/20 px-3 py-1 text-xs hover:bg-ink/5"
+                    >
+                      {analyticsLoading ? "Refreshing..." : "Refresh"}
+                    </button>
+                  </div>
+
+                  <div className="mt-4 divide-y divide-ink/10">
+                    {analytics?.countryStats && analytics.countryStats.length > 0 ? (
+                      analytics.countryStats.map((c, idx) => {
+                        const total = analytics.totalViews || 1;
+                        const pct = Math.round((c.count / total) * 100);
+                        return (
+                          <div key={idx} className="flex items-center justify-between py-3">
+                            <div className="flex items-center gap-3">
+                              <span className="font-semibold text-sm text-ink">{getCountryFlag(c.country)}</span>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <div className="w-24 h-2 rounded-full bg-amber-100 overflow-hidden hidden sm:block">
+                                <div className="h-full bg-gold-deep rounded-full" style={{ width: `${Math.min(100, pct * 2)}%` }} />
+                              </div>
+                              <span className="font-display text-sm font-bold text-ink">{c.count} views</span>
+                            </div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <p className="py-6 text-center text-xs text-ink/50">Collecting live traffic...</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Top Visited Pages & Devices */}
+                <div className="space-y-6">
+                  <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+                    <h3 className="font-display text-xl text-ink border-b border-ink/10 pb-4">Top Pages</h3>
+                    <div className="mt-4 divide-y divide-ink/10">
+                      {analytics?.topPages && analytics.topPages.length > 0 ? (
+                        analytics.topPages.map((p, idx) => (
+                          <div key={idx} className="flex items-center justify-between py-2.5 text-xs">
+                            <span className="font-mono text-ink/80">{p.path}</span>
+                            <span className="font-bold text-ink">{p.count} views</span>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="py-4 text-center text-xs text-ink/50">Collecting page stats...</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+                    <h3 className="font-display text-xl text-ink border-b border-ink/10 pb-4">Device Types</h3>
+                    <div className="mt-4 grid grid-cols-3 gap-3 text-center">
+                      {analytics?.deviceStats?.map((d) => (
+                        <div key={d.device} className="rounded-xl bg-amber-50/40 p-3">
+                          <p className="text-[11px] uppercase tracking-wider text-ink/50">{d.device}</p>
+                          <p className="font-display mt-1 text-2xl font-bold text-ink">{d.count}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Live Recent Visitors Stream */}
+              <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+                <div className="flex items-center justify-between border-b border-ink/10 pb-4">
+                  <div>
+                    <h3 className="font-display text-xl text-ink">Recent Visitors Feed</h3>
+                    <p className="text-xs text-ink/50">Real-time log of incoming visitor sessions</p>
+                  </div>
+                  <span className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                    Live Feed Active
+                  </span>
+                </div>
+
+                <div className="mt-4 overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-ink/10 text-ink/50 uppercase tracking-wider">
+                        <th className="pb-3 font-semibold">Time</th>
+                        <th className="pb-3 font-semibold">Country & City</th>
+                        <th className="pb-3 font-semibold">Page Path</th>
+                        <th className="pb-3 font-semibold">Device</th>
+                        <th className="pb-3 font-semibold">Referrer</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-ink/10">
+                      {analytics?.recentVisits && analytics.recentVisits.length > 0 ? (
+                        analytics.recentVisits.map((v) => (
+                          <tr key={v.id} className="hover:bg-amber-50/20">
+                            <td className="py-3 text-ink/60 whitespace-nowrap">
+                              {new Date(v.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                            </td>
+                            <td className="py-3 font-semibold text-ink">
+                              {getCountryFlag(v.country)} {v.city && v.city !== "Unknown" ? `(${v.city})` : ""}
+                            </td>
+                            <td className="py-3 font-mono text-ink/75">{v.path}</td>
+                            <td className="py-3 capitalize text-ink/70">{v.device}</td>
+                            <td className="py-3 text-ink/60">{v.referrer || "Direct"}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={5} className="py-6 text-center text-ink/50">No recent visitor logs yet.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: ENQUIRIES / LEADS */}
           {tab === "Enquiries" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between border-b border-ink/10 pb-4">
@@ -513,7 +755,113 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 2: CONTACT & COMPANY INFO */}
+          {/* TAB 3: WORKBENCH VIDEOS / REELS */}
+          {tab === "Workbench Videos" && (
+            <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
+                <div>
+                  <h2 className="font-display text-2xl text-ink">Workbench Video Reels</h2>
+                  <p className="text-xs text-ink/50">Manage video clips, poster thumbnails, and labels</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newReel = {
+                      src: "/videos/rs-003-video.mp4",
+                      poster: "/photos/rs-003-cover.jpg",
+                      label: "Custom Craft Reel",
+                    };
+                    setOv({ ...ov, reels: [...reelsList, newReel] });
+                  }}
+                  className="rounded-full bg-coal px-4 py-2 text-xs font-semibold text-ivory hover:bg-gold-deep"
+                >
+                  + Add New Video Reel
+                </button>
+              </div>
+
+              <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {reelsList.map((r, idx) => (
+                  <div key={idx} className="rounded-2xl border border-ink/15 bg-amber-50/20 p-4">
+                    <div className="flex items-center justify-between border-b border-ink/10 pb-2">
+                      <span className="font-bold text-xs uppercase tracking-wider text-ink">Reel #{idx + 1}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (confirm(`Remove Reel #${idx + 1}?`)) {
+                            const updated = reelsList.filter((_, i) => i !== idx);
+                            setOv({ ...ov, reels: updated });
+                          }
+                        }}
+                        className="text-xs text-red-600 hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+
+                    <div className="mt-3 relative aspect-[9/16] max-h-56 w-full overflow-hidden rounded-xl bg-coal shadow-inner">
+                      <video
+                        src={r.src}
+                        poster={r.poster}
+                        controls
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+
+                    <div className="mt-4 space-y-3">
+                      <div>
+                        <label className={labelCls}>Video Title / Label</label>
+                        <input
+                          className={inputCls}
+                          value={r.label}
+                          onChange={(e) => {
+                            const updated = [...reelsList];
+                            updated[idx] = { ...r, label: e.target.value };
+                            setOv({ ...ov, reels: updated });
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Video File URL / Path</label>
+                        <input
+                          className={inputCls}
+                          value={r.src}
+                          placeholder="/videos/rs-003-video.mp4 or https://..."
+                          onChange={(e) => {
+                            const updated = [...reelsList];
+                            updated[idx] = { ...r, src: e.target.value };
+                            setOv({ ...ov, reels: updated });
+                          }}
+                        />
+                      </div>
+
+                      <ImageUploadField
+                        label="Video Poster Image (Auto-Compressed)"
+                        value={r.poster}
+                        onChange={(val) => {
+                          const updated = [...reelsList];
+                          updated[idx] = { ...r, poster: val };
+                          setOv({ ...ov, reels: updated });
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 flex justify-end">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides(ov)}
+                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
+                >
+                  Save All Video Reels
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 4: CONTACT & COMPANY INFO */}
           {tab === "Contact & Info" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
               <h2 className="font-display text-2xl text-ink">Company & Contact Details</h2>
@@ -591,7 +939,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 3: HERO SECTION */}
+          {/* TAB 5: HERO SECTION */}
           {tab === "Hero Section" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
               <h2 className="font-display text-2xl text-ink">Hero Section Header</h2>
@@ -651,6 +999,15 @@ export default function AdminApp() {
                   </div>
                 </div>
 
+                <div>
+                  <label className={labelCls}>Hero Background Video URL / Path</label>
+                  <input
+                    className={inputCls}
+                    value={hero.video}
+                    onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, video: e.target.value } })}
+                  />
+                </div>
+
                 <ImageUploadField
                   label="Hero Poster / Fallback Image (Auto-Compressed)"
                   value={hero.poster}
@@ -671,7 +1028,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 4: TRUST BAR & MARQUEE */}
+          {/* TAB 6: TRUST BAR & MARQUEE */}
           {tab === "Trust Bar" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
               <h2 className="font-display text-2xl text-ink">Trust Bar & Value Pillars</h2>
@@ -726,7 +1083,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 5: MANIFESTO / STORY */}
+          {/* TAB 7: MANIFESTO / STORY */}
           {tab === "Manifesto" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
               <h2 className="font-display text-2xl text-ink">The Studio Manifesto</h2>
@@ -798,7 +1155,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 6: PRODUCTS & COLLECTIONS */}
+          {/* TAB 8: PRODUCTS & COLLECTIONS */}
           {tab === "Products" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
@@ -940,7 +1297,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 7: THE ATELIER PHILOSOPHY */}
+          {/* TAB 9: THE ATELIER PHILOSOPHY */}
           {tab === "Philosophy" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
               <h2 className="font-display text-2xl text-ink">The Philosophy Section</h2>
@@ -1012,7 +1369,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 8: PROCESS STEPS */}
+          {/* TAB 10: PROCESS STEPS */}
           {tab === "Process Steps" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
               <h2 className="font-display text-2xl text-ink">Craft Process Steps</h2>
@@ -1127,7 +1484,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 9: SHOWROOM GALLERY */}
+          {/* TAB 11: SHOWROOM GALLERY */}
           {tab === "Showroom Gallery" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
@@ -1230,7 +1587,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 10: REVIEWS / TESTIMONIALS */}
+          {/* TAB 12: REVIEWS / TESTIMONIALS */}
           {tab === "Reviews" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between border-b border-ink/10 pb-4">
@@ -1341,7 +1698,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 11: FAQS */}
+          {/* TAB 13: FAQS */}
           {tab === "FAQs" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between border-b border-ink/10 pb-4">
@@ -1424,7 +1781,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 12: FOOTER */}
+          {/* TAB 14: FOOTER */}
           {tab === "Footer" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-6 shadow-sm">
               <h2 className="font-display text-2xl text-ink">Footer Section</h2>

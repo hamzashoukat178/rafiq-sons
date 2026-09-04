@@ -3,6 +3,7 @@ import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
 import { site, hero } from "@/content/site";
 import TitleSwitcher from "@/components/TitleSwitcher";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -94,6 +95,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={`${fraunces.variable} ${manrope.variable}`}>
       <body>
+        <AnalyticsTracker />
         <JsonLd />
         <TitleSwitcher />
         {children}
