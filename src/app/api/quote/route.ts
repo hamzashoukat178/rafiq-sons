@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql, ensureTables } from "@/lib/db";
+import { sendLeadEmailNotification } from "@/lib/email";
 
 export async function POST(req: Request) {
   try {
@@ -12,6 +13,16 @@ export async function POST(req: Request) {
 
     if (!sql) {
       console.log("QUOTE (no database configured):", { product, quantity, brand, name, contact, message });
+      // Send email even without db
+      await sendLeadEmailNotification({
+        type: "quote",
+        name: String(name),
+        contact: String(contact),
+        brand: String(brand),
+        product: String(product),
+        quantity: String(quantity),
+        message: String(message),
+      });
       return NextResponse.json({ ok: true, stored: "log" });
     }
 
@@ -31,6 +42,17 @@ export async function POST(req: Request) {
       )
       RETURNING id`;
     await sql`INSERT INTO orders (lead_id, product, quantity, status) VALUES (${rows[0].id}, ${String(product).slice(0, 120)}, ${String(quantity).slice(0, 120)}, 'quote-requested')`;
+
+    // Trigger instant email notification
+    sendLeadEmailNotification({
+      type: "quote",
+      name: String(name),
+      contact: String(contact),
+      brand: String(brand),
+      product: String(product),
+      quantity: String(quantity),
+      message: String(message),
+    }).catch((err) => console.error("Email notification dispatch error:", err));
 
     return NextResponse.json({ ok: true, stored: "database" });
   } catch (e) {

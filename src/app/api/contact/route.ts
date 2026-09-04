@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql, ensureTables } from "@/lib/db";
+import { sendLeadEmailNotification } from "@/lib/email";
 
 export async function POST(req: Request) {
   try {
@@ -10,6 +11,12 @@ export async function POST(req: Request) {
     }
     if (!sql) {
       console.log("CONTACT (no database configured):", { name, contact, message });
+      await sendLeadEmailNotification({
+        type: "contact",
+        name: String(name),
+        contact: String(contact || "Not provided"),
+        message: String(message),
+      });
       return NextResponse.json({ ok: true, stored: "log" });
     }
     await ensureTables();
@@ -23,6 +30,15 @@ export async function POST(req: Request) {
         ${isEmail ? null : String(contact).slice(0, 60)},
         ${String(message).slice(0, 4000)}
       )`;
+
+    // Trigger instant email notification
+    sendLeadEmailNotification({
+      type: "contact",
+      name: String(name),
+      contact: String(contact || "Not provided"),
+      message: String(message),
+    }).catch((err) => console.error("Email notification dispatch error:", err));
+
     return NextResponse.json({ ok: true, stored: "database" });
   } catch (e) {
     console.error("Contact error", e);
