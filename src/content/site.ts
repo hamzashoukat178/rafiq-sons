@@ -16,7 +16,7 @@ export const site = {
   name: "Rafiq Sons Labels",
   shortName: "Rafiq Sons",
   legalNote: "Rafiq Sons Labels",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.rafiqsonslabels.com",
   instagram: process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? "https://www.instagram.com/rafiqsonslabelss",
   whatsapp: "https://wtspee.com/923202025795",
   phoneDisplay: "+92 320 2025795",
