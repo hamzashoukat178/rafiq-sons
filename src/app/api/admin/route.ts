@@ -74,8 +74,13 @@ export async function POST(req: Request) {
 
     if (action === "save-overrides") {
       const { overrides } = body as { overrides: Overrides };
-      await setContent("overrides", overrides, false);
-      return NextResponse.json({ ok: true });
+      try {
+        await setContent("overrides", overrides || {}, false);
+        return NextResponse.json({ ok: true, stored: "db" });
+      } catch (saveErr) {
+        console.error("Save overrides database error:", saveErr);
+        return NextResponse.json({ ok: false, error: String(saveErr) }, { status: 500 });
+      }
     }
 
     if (action === "lead-status") {

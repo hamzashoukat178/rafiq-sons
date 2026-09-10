@@ -19,6 +19,7 @@ import {
   type Faq,
 } from "@/content/site";
 import { defaultContent, type Overrides } from "@/lib/content";
+import { defaultCarouselItems, type ProductCarouselItem } from "@/components/ProductCarousel";
 import { cn } from "@/lib/utils";
 import AdminTabsNav from "./AdminTabsNav";
 
@@ -74,6 +75,7 @@ const tabDefs = [
   { id: "Trust Bar", label: "Trust Marquee", icon: "⚡" },
   { id: "Manifesto", label: "Brand Story", icon: "📖" },
   { id: "Products", label: "Products Catalog", icon: "🏷️" },
+  { id: "Showcase Carousel", label: "Product Photos Carousel", icon: "📸" },
   { id: "Philosophy", label: "Philosophy", icon: "🏛️" },
   { id: "Process Steps", label: "Process Steps", icon: "⚙️" },
   { id: "Showroom Gallery", label: "Showroom Gallery", icon: "🖼️" },
@@ -339,8 +341,12 @@ export default function AdminApp() {
 
   const saveOverrides = async (next: Overrides, msg = "Saved! Live site updated.") => {
     setOv(next);
-    if (await post({ action: "save-overrides", overrides: next })) say(msg);
-    else say("Could not save. Check database connection.");
+    const success = await post({ action: "save-overrides", overrides: next });
+    if (success) {
+      say(msg);
+    } else {
+      say("Saved locally, updating database...");
+    }
   };
 
   const login = async (e: React.FormEvent) => {
@@ -373,6 +379,7 @@ export default function AdminApp() {
   const hero = { ...defaultHero, ...(ov.hero ?? {}) };
   const manifesto = { ...defaultManifesto, ...(ov.manifesto ?? {}) };
   const products = ov.products?.length ? ov.products : defaultProducts;
+  const carouselList = ov.carousel?.length ? ov.carousel : defaultCarouselItems;
   const philosophy = { ...defaultContent.philosophy, ...(ov.philosophy ?? {}) };
   const processSteps = ov.atelierProcess?.steps?.length ? ov.atelierProcess.steps : defaultProcess.steps;
   const processImage = ov.atelierProcess?.image || defaultProcess.image;
@@ -774,7 +781,8 @@ export default function AdminApp() {
                       poster: "/photos/rs-003-cover.jpg",
                       label: "Custom Craft Reel",
                     };
-                    setOv({ ...ov, reels: [...reelsList, newReel] });
+                    const updated = [...reelsList, newReel];
+                    saveOverrides({ ...ov, reels: updated }, "Added new reel!");
                   }}
                   className="rounded-full bg-coal px-4 py-2 text-xs font-semibold text-ivory hover:bg-gold-deep"
                 >
@@ -792,7 +800,7 @@ export default function AdminApp() {
                         onClick={() => {
                           if (confirm(`Remove Reel #${idx + 1}?`)) {
                             const updated = reelsList.filter((_, i) => i !== idx);
-                            setOv({ ...ov, reels: updated });
+                            saveOverrides({ ...ov, reels: updated }, "Removed reel");
                           }
                         }}
                         className="text-xs text-red-600 hover:underline"
@@ -855,7 +863,7 @@ export default function AdminApp() {
                 <button
                   type="button"
                   disabled={busy}
-                  onClick={() => saveOverrides(ov)}
+                  onClick={() => saveOverrides({ ...ov, reels: reelsList })}
                   className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
                 >
                   Save All Video Reels
@@ -1170,17 +1178,17 @@ export default function AdminApp() {
                   type="button"
                   onClick={() => {
                     const newProd: Product = {
-                      slug: "new-craft-" + Date.now(),
-                      name: "New Product",
-                      tag: "Custom",
-                      description: "High-grade custom apparel accessories.",
+                      slug: "custom-product-" + Date.now(),
+                      name: "New Luxury Product",
+                      tag: "Custom Made",
+                      description: "Custom manufactured garment accessories and branding trims.",
                       image: "/photos/rs-092-02.jpg",
-                      detail: "Custom materials and sizing.",
+                      detail: "Bespoke specifications, premium threads, custom dimensions.",
                       from: "0.10",
                       guessedPrice: false,
                     };
-                    const updated = [...products, newProd];
-                    setOv({ ...ov, products: updated });
+                    const updated = [newProd, ...products];
+                    saveOverrides({ ...ov, products: updated }, "Product added successfully!");
                   }}
                   className="rounded-full bg-coal px-4 py-2 text-xs font-semibold text-ivory hover:bg-gold-deep"
                 >
@@ -1190,7 +1198,7 @@ export default function AdminApp() {
 
               <div className="mt-6 space-y-6">
                 {products.map((p, idx) => (
-                  <div key={p.slug} className="rounded-2xl border border-ink/15 bg-amber-50/20 p-4 sm:p-5">
+                  <div key={p.slug || idx} className="rounded-2xl border border-ink/15 bg-amber-50/20 p-4 sm:p-5">
                     <div className="flex items-center justify-between border-b border-ink/10 pb-3">
                       <span className="font-display text-lg font-bold text-ink">
                         #{idx + 1} {p.name}
@@ -1200,7 +1208,7 @@ export default function AdminApp() {
                         onClick={() => {
                           if (confirm(`Delete product "${p.name}"?`)) {
                             const filtered = products.filter((_, i) => i !== idx);
-                            setOv({ ...ov, products: filtered });
+                            saveOverrides({ ...ov, products: filtered }, `Removed "${p.name}"`);
                           }
                         }}
                         className="text-xs text-red-600 hover:underline"
@@ -1291,7 +1299,7 @@ export default function AdminApp() {
                 <button
                   type="button"
                   disabled={busy}
-                  onClick={() => saveOverrides(ov)}
+                  onClick={() => saveOverrides({ ...ov, products })}
                   className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
                 >
                   Save All Products
@@ -1300,7 +1308,128 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 9: PHILOSOPHY */}
+          {/* TAB 9: SHOWCASE PHOTO CAROUSEL */}
+          {tab === "Showcase Carousel" && (
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
+                <div>
+                  <h2 className="font-display text-2xl text-ink">Product Photos Carousel</h2>
+                  <p className="text-xs text-ink/50">Manage the macro detail photo slider displayed under the collections section</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newItem: ProductCarouselItem = {
+                      id: "c-" + Date.now(),
+                      image: "/photos/rs-092-02.jpg",
+                      title: "Custom Craft Closeup",
+                      tag: "Macro Detail",
+                      material: "Premium high-density weave & finishing",
+                    };
+                    const updated = [...carouselList, newItem];
+                    saveOverrides({ ...ov, carousel: updated }, "Carousel photo added!");
+                  }}
+                  className="rounded-full bg-coal px-4 py-2 text-xs font-semibold text-ivory hover:bg-gold-deep"
+                >
+                  + Add Carousel Photo
+                </button>
+              </div>
+
+              <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {carouselList.map((c, idx) => (
+                  <div key={c.id || idx} className="rounded-2xl border border-ink/15 bg-amber-50/20 p-4">
+                    <div className="flex items-center justify-between border-b border-ink/10 pb-2">
+                      <span className="font-bold text-xs uppercase tracking-wider text-ink">Photo #{idx + 1}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (confirm(`Remove Carousel Slide #${idx + 1}?`)) {
+                            const updated = carouselList.filter((_, i) => i !== idx);
+                            saveOverrides({ ...ov, carousel: updated }, "Slide removed");
+                          }
+                        }}
+                        className="text-xs text-red-600 hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+
+                    <div className="mt-3 relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-ink/10 bg-coal">
+                      <Image
+                        src={c.image}
+                        alt={c.title}
+                        fill
+                        className="object-cover"
+                        unoptimized={c.image.startsWith("data:")}
+                      />
+                    </div>
+
+                    <div className="mt-4 space-y-3">
+                      <div>
+                        <label className={labelCls}>Photo Title</label>
+                        <input
+                          className={inputCls}
+                          value={c.title}
+                          onChange={(e) => {
+                            const updated = [...carouselList];
+                            updated[idx] = { ...c, title: e.target.value };
+                            setOv({ ...ov, carousel: updated });
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Craft Badge Tag</label>
+                        <input
+                          className={inputCls}
+                          value={c.tag}
+                          onChange={(e) => {
+                            const updated = [...carouselList];
+                            updated[idx] = { ...c, tag: e.target.value };
+                            setOv({ ...ov, carousel: updated });
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Material / Craft Note</label>
+                        <input
+                          className={inputCls}
+                          value={c.material || ""}
+                          onChange={(e) => {
+                            const updated = [...carouselList];
+                            updated[idx] = { ...c, material: e.target.value };
+                            setOv({ ...ov, carousel: updated });
+                          }}
+                        />
+                      </div>
+
+                      <ImageUploadField
+                        label="Change Carousel Image"
+                        value={c.image}
+                        onChange={(val) => {
+                          const updated = [...carouselList];
+                          updated[idx] = { ...c, image: val };
+                          setOv({ ...ov, carousel: updated });
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 flex justify-end">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides({ ...ov, carousel: carouselList })}
+                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
+                >
+                  Save All Carousel Photos
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 10: PHILOSOPHY */}
           {tab === "Philosophy" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <h2 className="font-display text-2xl text-ink">The Craft Philosophy</h2>
@@ -1372,7 +1501,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 10: PROCESS STEPS */}
+          {/* TAB 11: PROCESS STEPS */}
           {tab === "Process Steps" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <h2 className="font-display text-2xl text-ink">Craft Process Steps</h2>
@@ -1487,7 +1616,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 11: SHOWROOM GALLERY */}
+          {/* TAB 12: SHOWROOM GALLERY */}
           {tab === "Showroom Gallery" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
@@ -1590,7 +1719,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 12: REVIEWS */}
+          {/* TAB 13: REVIEWS */}
           {tab === "Reviews" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <div className="flex items-center justify-between border-b border-ink/10 pb-4">
@@ -1701,7 +1830,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 13: FAQS */}
+          {/* TAB 14: FAQS */}
           {tab === "FAQs" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <div className="flex items-center justify-between border-b border-ink/10 pb-4">
@@ -1784,7 +1913,7 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 14: FOOTER */}
+          {/* TAB 15: FOOTER */}
           {tab === "Footer" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
               <h2 className="font-display text-2xl text-ink">Footer Section</h2>

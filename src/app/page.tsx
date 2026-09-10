@@ -8,6 +8,7 @@ import Hero from "@/components/Hero";
 import TrustBar from "@/components/TrustBar";
 import Manifesto from "@/components/Manifesto";
 import Collections from "@/components/Collections";
+import ProductCarousel from "@/components/ProductCarousel";
 import Philosophy from "@/components/Philosophy";
 import Process from "@/components/Process";
 import Reels from "@/components/Reels";
@@ -36,6 +37,7 @@ export default async function Home() {
         <TrustBar trustBar={content.trustBar} />
         <Manifesto manifesto={content.manifesto} />
         <Collections items={content.products} />
+        <ProductCarousel items={content.carousel} />
         <Philosophy philosophy={content.philosophy} />
         <Process process={content.atelierProcess} />
         <Reels reels={content.reels} />

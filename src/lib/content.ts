@@ -1,5 +1,6 @@
 import * as base from "@/content/site";
 import { getContent } from "@/lib/db";
+import { defaultCarouselItems, type ProductCarouselItem } from "@/components/ProductCarousel";
 
 export type Overrides = {
   site?: Partial<typeof base.site>;
@@ -12,6 +13,7 @@ export type Overrides = {
   };
   manifesto?: Partial<typeof base.manifesto>;
   products?: base.Product[];
+  carousel?: ProductCarouselItem[];
   atelierProcess?: Partial<typeof base.atelierProcess>;
   philosophy?: {
     eyebrow?: string;
@@ -39,6 +41,7 @@ export type SiteContent = {
   };
   manifesto: typeof base.manifesto;
   products: base.Product[];
+  carousel: ProductCarouselItem[];
   atelierProcess: typeof base.atelierProcess;
   philosophy: {
     eyebrow: string;
@@ -61,6 +64,7 @@ export const defaultContent: SiteContent = {
   hero: base.hero,
   manifesto: base.manifesto,
   products: base.products,
+  carousel: defaultCarouselItems,
   atelierProcess: base.atelierProcess,
   philosophy: {
     eyebrow: "The Atelier Standard",
@@ -94,6 +98,7 @@ export async function loadContent(): Promise<SiteContent> {
     trustBar: ov.trustBar,
     manifesto: { ...base.manifesto, ...(ov.manifesto ?? {}) },
     products,
+    carousel: ov.carousel?.length ? ov.carousel : defaultCarouselItems,
     atelierProcess: { ...base.atelierProcess, ...(ov.atelierProcess ?? {}) },
     philosophy: {
       ...defaultContent.philosophy,

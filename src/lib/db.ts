@@ -96,8 +96,20 @@ export async function getContent<T>(key: string): Promise<T | null> {
   try {
     await ensureTables();
     const rows = await sql`SELECT value FROM site_content WHERE key = ${key}`;
-    return rows.length ? (rows[0].value as T) : null;
-  } catch {
+    if (!rows || !rows.length || rows[0].value === undefined || rows[0].value === null) {
+      return null;
+    }
+    const val = rows[0].value;
+    if (typeof val === "string") {
+      try {
+        return JSON.parse(val) as T;
+      } catch {
+        return val as unknown as T;
+      }
+    }
+    return val as T;
+  } catch (err) {
+    console.error("getContent error:", err);
     return null;
   }
 }
@@ -105,9 +117,18 @@ export async function getContent<T>(key: string): Promise<T | null> {
 export async function setContent(key: string, value: unknown, guessed = false) {
   if (!sql) throw new Error("Database not configured");
   await ensureTables();
-  await sql`INSERT INTO site_content (key, value, guessed, updated_at)
-    VALUES (${key}, ${JSON.stringify(value)}, ${guessed}, now())
-    ON CONFLICT (key) DO UPDATE SET value = ${JSON.stringify(value)}, guessed = ${guessed}, updated_at = now()`;
+  const jsonStr = JSON.stringify(value);
+  try {
+    // Try inserting with explicit jsonb cast
+    await sql`INSERT INTO site_content (key, value, guessed, updated_at)
+      VALUES (${key}, ${jsonStr}::jsonb, ${guessed}, now())
+      ON CONFLICT (key) DO UPDATE SET value = ${jsonStr}::jsonb, guessed = ${guessed}, updated_at = now()`;
+  } catch (err) {
+    console.warn("Retrying setContent without jsonb cast...", err);
+    await sql`INSERT INTO site_content (key, value, guessed, updated_at)
+      VALUES (${key}, ${jsonStr}, ${guessed}, now())
+      ON CONFLICT (key) DO UPDATE SET value = ${jsonStr}, guessed = ${guessed}, updated_at = now()`;
+  }
 }
 
 export async function recordPageView(data: {
@@ -208,7 +229,7 @@ export async function getAnalyticsSummary() {
       views24h: views24hRes[0]?.count || 0,
       uniqueVisitors: uniqueVisitorsRes[0]?.count || 0,
       unique24h: unique24hRes[0]?.count || 0,
-      liveVisitors: Math.max(1, liveVisitorsRes[0]?.count || 0), // at least 1 live visitor
+      liveVisitors: Math.max(1, liveVisitorsRes[0]?.count || 0),
       countryStats,
       deviceStats,
       topPages,
