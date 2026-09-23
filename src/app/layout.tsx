@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
-import { site, hero, faqs, products } from "@/content/site";
+import { site, hero, faqs, defaultSeoSettings } from "@/content/site";
 import TitleSwitcher from "@/components/TitleSwitcher";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
+import { loadContent } from "@/lib/content";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -19,137 +20,134 @@ const manrope = Manrope({
 });
 
 const siteUrl = "https://www.rafiqsonslabels.com";
-const title = "Rafiq Sons Labels | Custom Woven Labels & Garment Trims Manufacturer (Worldwide Export)";
-const description =
-  "Global OEM manufacturer of premium custom damask woven labels, luxury embossed hang tags, satin wash care labels, leather denim patches, tagless heat transfers & bespoke clothing packaging. Low MOQ, 24h digital mockups, and fast express courier export to USA, UK, UAE, Europe, Canada, Australia & worldwide.";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: title,
-    template: "%s | Rafiq Sons Labels",
-  },
-  description,
-  applicationName: "Rafiq Sons Labels",
-  authors: [{ name: "Rafiq Sons Labels", url: siteUrl }],
-  creator: "Rafiq Sons Labels",
-  publisher: "Rafiq Sons Labels",
-  generator: "Next.js",
-  keywords: [
-    // Core Product Keywords
-    "custom woven labels",
-    "damask woven labels manufacturer",
-    "high density woven labels",
-    "custom clothing labels manufacturer",
-    "garment hang tags manufacturer",
-    "luxury embossed hang tags",
-    "custom satin care labels",
-    "printed wash care labels",
-    "heat transfer neck labels",
-    "tagless garment labels supplier",
-    "custom leather patches for jeans",
-    "embossed faux leather patches",
-    "woven patches with iron on backing",
-    "custom clothing packaging bags",
-    "frosted zipper garment bags",
-    "metallic lurex woven labels",
-    "laser cut woven labels",
-    "miter fold woven labels",
-    "center fold neck tags",
-    // Geo-targeted Worldwide B2B Export Keywords
-    "custom woven labels USA",
-    "clothing labels manufacturer UK",
-    "apparel tags supplier Dubai UAE",
-    "custom garment labels Canada",
-    "woven labels manufacturer Australia",
-    "clothing trims supplier Europe",
-    "garment labels factory Pakistan export",
-    "clothing labels manufacturer Saudi Arabia",
-    "apparel branding trims worldwide shipping",
-    "low MOQ custom clothing labels",
-    "clothing brand manufacturer trims",
-    "clothing brand packaging supplier",
-    "Rafiq Sons Labels",
-  ],
-  referrer: "origin-when-cross-origin",
-  formatDetection: {
-    email: true,
-    address: true,
-    telephone: true,
-  },
-  alternates: {
-    canonical: siteUrl,
-    languages: {
-      "en-US": siteUrl,
-      "en-GB": siteUrl,
-      "en-CA": siteUrl,
-      "en-AU": siteUrl,
-      "ar-AE": siteUrl,
-      "ar-SA": siteUrl,
-      "ur-PK": siteUrl,
-      "x-default": siteUrl,
+export async function generateMetadata(): Promise<Metadata> {
+  const content = await loadContent();
+  const seo = content.seoSettings || defaultSeoSettings;
+
+  const pageTitle = seo.metaTitle || defaultSeoSettings.metaTitle!;
+  const pageDesc = seo.metaDescription || defaultSeoSettings.metaDescription!;
+  const keywordsList = seo.targetKeywords
+    ? seo.targetKeywords.split(",").map((s) => s.trim()).filter(Boolean)
+    : [
+        "custom woven labels",
+        "damask woven labels manufacturer",
+        "high density woven labels",
+        "custom clothing labels manufacturer",
+        "garment hang tags manufacturer",
+        "luxury embossed hang tags",
+        "custom satin care labels",
+        "printed wash care labels",
+        "heat transfer neck labels",
+        "tagless garment labels supplier",
+        "custom leather patches for jeans",
+        "embossed faux leather patches",
+        "woven patches with iron on backing",
+        "custom clothing packaging bags",
+        "frosted zipper garment bags",
+        "metallic lurex woven labels",
+        "laser cut woven labels",
+        "custom woven labels USA",
+        "clothing labels manufacturer UK",
+        "apparel tags supplier Dubai UAE",
+        "custom garment labels Canada",
+        "woven labels manufacturer Australia",
+        "clothing trims supplier Europe",
+        "garment labels factory Pakistan export",
+        "low MOQ custom clothing labels",
+        "Rafiq Sons Labels",
+      ];
+
+  const ogImgUrl = seo.ogImage?.startsWith("http")
+    ? seo.ogImage
+    : `${siteUrl}${seo.ogImage || "/photos/rs-092-02.jpg"}`;
+
+  return {
+    metadataBase: new URL(siteUrl),
+    title: {
+      default: pageTitle,
+      template: "%s | Rafiq Sons Labels",
     },
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    alternateLocale: ["en_GB", "ar_AE", "ur_PK", "de_DE", "fr_FR"],
-    url: siteUrl,
-    siteName: "Rafiq Sons Labels",
-    title,
-    description,
-    images: [
-      {
-        url: `${siteUrl}/photos/rs-092-02.jpg`,
-        width: 1200,
-        height: 630,
-        alt: "Rafiq Sons Labels - Premium Custom Woven Labels & Garment Trims Manufacturer",
-        type: "image/jpeg",
+    description: pageDesc,
+    applicationName: content.site.name || "Rafiq Sons Labels",
+    authors: [{ name: content.site.name || "Rafiq Sons Labels", url: siteUrl }],
+    creator: content.site.name || "Rafiq Sons Labels",
+    publisher: content.site.name || "Rafiq Sons Labels",
+    generator: "Next.js",
+    keywords: keywordsList,
+    referrer: "origin-when-cross-origin",
+    formatDetection: {
+      email: true,
+      address: true,
+      telephone: true,
+    },
+    alternates: {
+      canonical: siteUrl,
+      languages: {
+        "en-US": siteUrl,
+        "en-GB": siteUrl,
+        "en-CA": siteUrl,
+        "en-AU": siteUrl,
+        "ar-AE": siteUrl,
+        "ar-SA": siteUrl,
+        "ur-PK": siteUrl,
+        "x-default": siteUrl,
       },
-      {
-        url: `${siteUrl}/photos/rs-057-00.jpg`,
-        width: 1200,
-        height: 630,
-        alt: "Luxury Embossed Hang Tags & Apparel Branding by Rafiq Sons Labels",
-        type: "image/jpeg",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title,
-    description,
-    images: [`${siteUrl}/photos/rs-092-02.jpg`],
-    creator: "@rafiqsonslabelss",
-    site: "@rafiqsonslabelss",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    nocache: false,
-    googleBot: {
+    },
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      alternateLocale: ["en_GB", "ar_AE", "ur_PK", "de_DE", "fr_FR"],
+      url: siteUrl,
+      siteName: content.site.name || "Rafiq Sons Labels",
+      title: pageTitle,
+      description: pageDesc,
+      images: [
+        {
+          url: ogImgUrl,
+          width: 1200,
+          height: 630,
+          alt: `${content.site.name} - Custom Woven Labels & Garment Trims Manufacturer`,
+          type: "image/jpeg",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: pageTitle,
+      description: pageDesc,
+      images: [ogImgUrl],
+      creator: "@rafiqsonslabelss",
+      site: "@rafiqsonslabelss",
+    },
+    robots: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      nocache: false,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
-  },
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/icon.png",
-    apple: "/apple-icon.png",
-  },
-  other: {
-    "geo.region": "PK-PB",
-    "geo.placename": "Pakistan",
-    "geo.position": "31.4504;73.1350",
-    ICBM: "31.4504, 73.1350",
-    "revisit-after": "1 days",
-    "rating": "General",
-    "distribution": "Global",
-  },
-};
+    icons: {
+      icon: "/favicon.ico",
+      shortcut: "/icon.png",
+      apple: "/apple-icon.png",
+    },
+    other: {
+      "geo.region": "PK-PB",
+      "geo.placename": "Pakistan",
+      "geo.position": "31.4504;73.1350",
+      ICBM: "31.4504, 73.1350",
+      "revisit-after": "1 days",
+      rating: "General",
+      distribution: "Global",
+    },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#0c0b09",
@@ -158,7 +156,10 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-function JsonLd() {
+async function JsonLd() {
+  const content = await loadContent();
+  const seo = content.seoSettings || defaultSeoSettings;
+
   const targetMarkets = [
     { "@type": "Country", name: "United States" },
     { "@type": "Country", name: "United Kingdom" },
@@ -183,7 +184,7 @@ function JsonLd() {
     "@context": "https://schema.org",
     "@type": ["Organization", "LocalBusiness"],
     "@id": `${siteUrl}/#organization`,
-    name: site.name,
+    name: content.site.name || site.name,
     alternateName: ["Rafiq Sons", "Rafiq Sons Woven Labels", "Rafiq Sons Apparel Trims"],
     legalName: "Rafiq Sons Labels & Trims Co.",
     url: siteUrl,
@@ -194,10 +195,10 @@ function JsonLd() {
       height: 168,
     },
     image: `${siteUrl}/photos/rs-092-02.jpg`,
-    description,
+    description: seo.metaDescription || defaultSeoSettings.metaDescription,
     slogan: hero.line1 + " " + hero.line2,
-    telephone: site.phoneDisplay,
-    email: site.email,
+    telephone: content.site.phoneDisplay || site.phoneDisplay,
+    email: content.site.email || site.email,
     priceRange: "$$",
     currenciesAccepted: "USD, EUR, GBP, AED, SAR, CAD, AUD, PKR",
     paymentAccepted: "Bank Transfer, Wire Transfer, Western Union, Digital Payments",
@@ -219,7 +220,7 @@ function JsonLd() {
         closes: "21:00",
       },
     ],
-    sameAs: [site.instagram],
+    sameAs: [content.site.instagram || site.instagram],
     areaServed: targetMarkets,
     knowsAbout: [
       "Custom Woven Labels",
@@ -237,7 +238,7 @@ function JsonLd() {
     contactPoint: [
       {
         "@type": "ContactPoint",
-        telephone: site.phoneIntl,
+        telephone: content.site.phoneIntl || site.phoneIntl,
         contactType: "sales and customer service",
         areaServed: "Worldwide",
         availableLanguage: ["English", "Urdu", "Arabic"],
@@ -245,8 +246,8 @@ function JsonLd() {
     ],
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: "4.9",
-      reviewCount: "186",
+      ratingValue: seo.ratingValue || "4.9",
+      reviewCount: seo.reviewCount || "186",
       bestRating: "5",
       worstRating: "1",
     },
@@ -263,7 +264,7 @@ function JsonLd() {
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: "Apparel Branding and Trims Manufacturing Catalog",
-      itemListElement: products.map((p, idx) => ({
+      itemListElement: content.products.map((p, idx) => ({
         "@type": "OfferCatalog",
         name: p.name,
         position: idx + 1,
@@ -275,7 +276,7 @@ function JsonLd() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${siteUrl}/#website`,
-    name: site.name,
+    name: content.site.name || site.name,
     url: siteUrl,
     inLanguage: "en-US",
     potentialAction: {
@@ -326,24 +327,24 @@ function JsonLd() {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "Rafiq Sons Custom Apparel Trims & Labels Collection",
-    itemListElement: products.map((p, idx) => ({
+    itemListElement: content.products.map((p, idx) => ({
       "@type": "ListItem",
       position: idx + 1,
       item: {
         "@type": "Product",
         name: `${p.name} - Custom Garment Trims`,
         description: p.description,
-        image: `${siteUrl}${p.image}`,
+        image: p.image?.startsWith("http") ? p.image : `${siteUrl}${p.image}`,
         sku: `RS-${p.slug}`,
         mpn: `RS-${p.slug}`,
         category: "Clothing Accessories > Garment Labels & Tags",
         brand: {
           "@type": "Brand",
-          name: site.name,
+          name: content.site.name || site.name,
         },
         manufacturer: {
           "@type": "Organization",
-          name: site.name,
+          name: content.site.name || site.name,
         },
         offers: {
           "@type": "Offer",
@@ -364,7 +365,7 @@ function JsonLd() {
   const faqData = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
+    mainEntity: (content.faqs || faqs).map((f) => ({
       "@type": "Question",
       name: f.q,
       acceptedAnswer: {
@@ -404,7 +405,7 @@ function JsonLd() {
   );
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

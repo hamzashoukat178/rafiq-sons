@@ -12,6 +12,42 @@ export type Product = {
 export type Faq = { q: string; a: string; guessed?: boolean };
 export type Testimonial = { quote: string; name: string; role: string; city: string; sample?: boolean };
 
+export type ExportRegion = {
+  id: string;
+  name: string;
+  flag: string;
+  hubs: string;
+  timeline: string;
+  popular: string[];
+  note: string;
+};
+
+export type TechnicalSpecCategory = {
+  category: string;
+  items: { name: string; desc: string }[];
+};
+
+export type GlobalExportContent = {
+  eyebrow: string;
+  titleLine1: string;
+  titleLine2: string;
+  sub: string;
+  regions: ExportRegion[];
+  technicalSpecs: TechnicalSpecCategory[];
+  ctaHeading: string;
+  ctaSub: string;
+  ctaButton: string;
+};
+
+export type SeoSettings = {
+  metaTitle?: string;
+  metaDescription?: string;
+  targetKeywords?: string;
+  ratingValue?: string;
+  reviewCount?: string;
+  ogImage?: string;
+};
+
 export const site = {
   name: "Rafiq Sons Labels",
   shortName: "Rafiq Sons",
@@ -137,6 +173,96 @@ export const products: Product[] = [
     guessedPrice: true,
   },
 ];
+
+export const defaultExportRegions: ExportRegion[] = [
+  {
+    id: "north-america",
+    name: "North America",
+    flag: "🇺🇸 🇨🇦",
+    hubs: "USA (New York, Los Angeles, Texas, Miami) & Canada (Toronto, Vancouver)",
+    timeline: "4 – 6 Business Days (DHL / FedEx Express)",
+    popular: ["High-Density Damask Woven Labels", "Custom Hang Tags with Foil", "Tagless Silicone Heat Transfers", "Frosted Zip Garment Bags"],
+    note: "Serving independent streetwear labels, denim studios, and luxury apparel startups with low MOQ sampling and door-to-door customs clearance.",
+  },
+  {
+    id: "uk-europe",
+    name: "United Kingdom & Europe",
+    flag: "🇬🇧 🇪🇺",
+    hubs: "UK (London, Manchester), Germany, France, Italy, Spain & Netherlands",
+    timeline: "3 – 5 Business Days (Air Express Courier)",
+    popular: ["Ultrasonic Soft-Edge Satin Labels", "Vegetable-Tanned Leather Patches", "400-800 GSM Velvet Hang Tags", "Recycled rPET Eco Woven Labels"],
+    note: "OEKO-TEX compliant yarns, fine micro-weave typography, and luxury finishes tailored for high-street brands and bespoke fashion houses.",
+  },
+  {
+    id: "middle-east",
+    name: "Middle East & GCC",
+    flag: "🇦🇪 🇸🇦",
+    hubs: "UAE (Dubai, Abu Dhabi), Saudi Arabia (Riyadh, Jeddah), Qatar & Kuwait",
+    timeline: "2 – 4 Business Days (Direct GCC Express)",
+    popular: ["Metallic Gold & Silver Lurex Labels", "Engraved Metal Plaques & Badges", "Luxury Abaya & Modest Wear Tags", "Embossed Duplex Thank You Cards"],
+    note: "High-temperature resistant metallic threads, rich gold foiling, and premium garment packaging trusted across GCC fashion boutiques.",
+  },
+  {
+    id: "australia-asia",
+    name: "Australia & Asia-Pacific",
+    flag: "🇦🇺 🇯🇵",
+    hubs: "Australia (Sydney, Melbourne), Japan, Singapore & Domestic Hubs",
+    timeline: "4 – 6 Business Days (Tracked International)",
+    popular: ["Woven Damask Neck Labels", "Waterproof Die-Cut Stickers", "Embroidered Merrowed Border Patches", "Custom Poly Mailers"],
+    note: "Fast sample proofing, piece-by-piece inspection, and streamlined reordering for sportswear, outdoor wear, and lifestyle brands.",
+  },
+];
+
+export const defaultTechnicalSpecs: TechnicalSpecCategory[] = [
+  {
+    category: "Weave Densities & Finishes",
+    items: [
+      { name: "50D High-Density Damask", desc: "Ultra-fine yarn count for intricate artwork, micro-text, and needle-sharp clarity." },
+      { name: "75D Standard Damask", desc: "Durable, high-tensile weave ideal for denim, outerwear, and everyday apparel." },
+      { name: "Metallic Lurex Threads", desc: "Sparkling Gold, Silver, Rose Gold, and Copper metallic threads for luxury brands." },
+      { name: "Laser & Ultrasonic Cut", desc: "Precision sealed edges that prevent fraying and remain 100% skin-soft." },
+    ],
+  },
+  {
+    category: "Fold Types & Applications",
+    items: [
+      { name: "Center Fold / Loop Fold", desc: "Classic neck seam tag with brand logo on front and care/size specs on reverse." },
+      { name: "End Fold", desc: "Folded on left and right edges for a clean, stitch-ready flat luxury look." },
+      { name: "Miter Fold", desc: "Angled 45° corner folds allowing garments to be hung with the label as a hook loop." },
+      { name: "Manhattan Fold", desc: "Top & bottom double folded for sleeve trims, pockets, and hemline branding." },
+    ],
+  },
+  {
+    category: "Eco & Quality Standards",
+    items: [
+      { name: "Piece-by-Piece Hand QC", desc: "Every single unit counted, inspected for color fidelity, and verified before packing." },
+      { name: "GRS Recycled Polyester", desc: "Sustainable yarns made from 100% post-consumer recycled plastic bottles." },
+      { name: "Wash & Friction Tested", desc: "Resistant to 50+ commercial laundry wash cycles without fading or shrinkage." },
+      { name: "Free Artwork Optimization", desc: "Complimentary vector conversion, Pantone matching, and 24h digital mockups." },
+    ],
+  },
+];
+
+export const defaultGlobalExport: GlobalExportContent = {
+  eyebrow: "Worldwide Supply & Manufacturing",
+  titleLine1: "Crafted in Pakistan.",
+  titleLine2: "Worn in 20+ countries.",
+  sub: "From emerging designer studios in London and New York to established fashion houses in Dubai and Riyadh, Rafiq Sons Labels delivers bespoke garment trims with door-to-door express air couriers.",
+  regions: defaultExportRegions,
+  technicalSpecs: defaultTechnicalSpecs,
+  ctaHeading: "Need custom samples delivered to your brand?",
+  ctaSub: "We provide free 24h digital mockups and worldwide physical sample packs upon request.",
+  ctaButton: "Get Free Digital Mockup",
+};
+
+export const defaultSeoSettings: SeoSettings = {
+  metaTitle: "Rafiq Sons Labels | Custom Woven Labels & Garment Trims Manufacturer (Worldwide Export)",
+  metaDescription: "Global OEM manufacturer of premium custom damask woven labels, luxury embossed hang tags, satin wash care labels, leather denim patches, tagless heat transfers & bespoke clothing packaging. Low MOQ, 24h digital mockups, and fast express courier export to USA, UK, UAE, Europe, Canada, Australia & worldwide.",
+  targetKeywords: "custom woven labels, damask woven labels manufacturer, clothing labels manufacturer UK, custom woven labels USA, apparel tags supplier Dubai UAE, garment labels factory Pakistan export, low MOQ custom clothing labels",
+  ratingValue: "4.9",
+  reviewCount: "186",
+  ogImage: "/photos/rs-092-02.jpg",
+};
 
 export const atelierProcess = {
   eyebrow: "From artwork to doorstep",

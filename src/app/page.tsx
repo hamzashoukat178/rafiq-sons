@@ -41,7 +41,7 @@ export default async function Home() {
         <Manifesto manifesto={content.manifesto} />
         <Collections items={content.products} />
         <ProductCarousel items={content.carousel} />
-        <GlobalExport />
+        <GlobalExport content={content.globalExport} />
         <Philosophy philosophy={content.philosophy} />
         <Process process={content.atelierProcess} />
         <Reels reels={content.reels} />

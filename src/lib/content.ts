@@ -14,6 +14,8 @@ export type Overrides = {
   manifesto?: Partial<typeof base.manifesto>;
   products?: base.Product[];
   carousel?: ProductCarouselItem[];
+  globalExport?: Partial<base.GlobalExportContent>;
+  seoSettings?: Partial<base.SeoSettings>;
   atelierProcess?: Partial<typeof base.atelierProcess>;
   philosophy?: {
     eyebrow?: string;
@@ -42,6 +44,8 @@ export type SiteContent = {
   manifesto: typeof base.manifesto;
   products: base.Product[];
   carousel: ProductCarouselItem[];
+  globalExport: base.GlobalExportContent;
+  seoSettings: base.SeoSettings;
   atelierProcess: typeof base.atelierProcess;
   philosophy: {
     eyebrow: string;
@@ -65,6 +69,8 @@ export const defaultContent: SiteContent = {
   manifesto: base.manifesto,
   products: base.products,
   carousel: defaultCarouselItems,
+  globalExport: base.defaultGlobalExport,
+  seoSettings: base.defaultSeoSettings,
   atelierProcess: base.atelierProcess,
   philosophy: {
     eyebrow: "The Atelier Standard",
@@ -99,6 +105,16 @@ export async function loadContent(): Promise<SiteContent> {
     manifesto: { ...base.manifesto, ...(ov.manifesto ?? {}) },
     products,
     carousel: ov.carousel?.length ? ov.carousel : defaultCarouselItems,
+    globalExport: {
+      ...base.defaultGlobalExport,
+      ...(ov.globalExport ?? {}),
+      regions: ov.globalExport?.regions?.length ? ov.globalExport.regions : base.defaultExportRegions,
+      technicalSpecs: ov.globalExport?.technicalSpecs?.length ? ov.globalExport.technicalSpecs : base.defaultTechnicalSpecs,
+    },
+    seoSettings: {
+      ...base.defaultSeoSettings,
+      ...(ov.seoSettings ?? {}),
+    },
     atelierProcess: { ...base.atelierProcess, ...(ov.atelierProcess ?? {}) },
     philosophy: {
       ...defaultContent.philosophy,

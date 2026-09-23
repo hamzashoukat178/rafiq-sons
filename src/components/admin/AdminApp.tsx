@@ -14,9 +14,14 @@ import {
   atelierProcess as defaultProcess,
   reels as defaultReels,
   footer as defaultFooter,
+  defaultGlobalExport,
+  defaultSeoSettings,
   type Product,
   type Testimonial,
   type Faq,
+  type ExportRegion,
+  type GlobalExportContent,
+  type SeoSettings,
 } from "@/content/site";
 import { defaultContent, type Overrides } from "@/lib/content";
 import { defaultCarouselItems, type ProductCarouselItem } from "@/components/ProductCarousel";
@@ -71,6 +76,8 @@ const tabDefs = [
   { id: "Enquiries", label: "Inquiries", icon: "💬" },
   { id: "Products", label: "Products Catalog", icon: "🏷️" },
   { id: "Showcase Carousel", label: "Product Photos Carousel", icon: "📸" },
+  { id: "Worldwide Export", label: "Worldwide Export & Hubs", icon: "🌍" },
+  { id: "SEO & Meta", label: "Global SEO & Meta", icon: "🚀" },
   { id: "Workbench Videos", label: "Video Reels", icon: "🎬" },
   { id: "Contact & Info", label: "Contact & Info", icon: "📞" },
   { id: "Hero Section", label: "Hero Banner", icon: "👑" },
@@ -415,6 +422,16 @@ export default function AdminApp() {
   const manifesto = { ...defaultManifesto, ...(ov.manifesto ?? {}) };
   const products = ov.products?.length ? ov.products : defaultProducts;
   const carouselList = ov.carousel?.length ? ov.carousel : defaultCarouselItems;
+  const globalExport: GlobalExportContent = {
+    ...defaultGlobalExport,
+    ...(ov.globalExport ?? {}),
+    regions: ov.globalExport?.regions?.length ? ov.globalExport.regions : defaultGlobalExport.regions,
+    technicalSpecs: ov.globalExport?.technicalSpecs?.length ? ov.globalExport.technicalSpecs : defaultGlobalExport.technicalSpecs,
+  };
+  const seoSettings: SeoSettings = {
+    ...defaultSeoSettings,
+    ...(ov.seoSettings ?? {}),
+  };
   const philosophy = { ...defaultContent.philosophy, ...(ov.philosophy ?? {}) };
   const processSteps = ov.atelierProcess?.steps?.length ? ov.atelierProcess.steps : defaultProcess.steps;
   const processImage = ov.atelierProcess?.image || defaultProcess.image;
@@ -1074,6 +1091,417 @@ export default function AdminApp() {
                   className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
                 >
                   {busy ? "Saving..." : "💾 Save All Carousel Photos"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: WORLDWIDE EXPORT & HUBS */}
+          {tab === "Worldwide Export" && (
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+              <SectionSaveBar
+                title="Worldwide Export & Manufacturing"
+                subtitle="Manage shipping destinations, express courier timelines, and technical weave specs"
+                busy={busy}
+                onSave={() => saveOverrides({ ...ov, globalExport })}
+                extraButton={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newRegion: ExportRegion = {
+                        id: "region-" + Date.now(),
+                        name: "New International Region",
+                        flag: "🌐",
+                        hubs: "Major fashion capitals & apparel hubs",
+                        timeline: "3 – 5 Business Days (Air Express)",
+                        popular: ["Custom Woven Damask Labels", "Luxury Embossed Hang Tags"],
+                        note: "Bespoke sampling and door-to-door courier clearance.",
+                      };
+                      const updated = [...globalExport.regions, newRegion];
+                      saveOverrides(
+                        { ...ov, globalExport: { ...globalExport, regions: updated } },
+                        "New export region added!"
+                      );
+                    }}
+                    className="rounded-full bg-coal px-4 py-2.5 text-xs font-semibold text-ivory hover:bg-gold-deep transition-colors shadow-sm"
+                  >
+                    + Add New Region
+                  </button>
+                }
+              />
+
+              {/* Section Header & Subtitle */}
+              <div className="mt-6 rounded-2xl border border-ink/15 bg-amber-50/20 p-4 sm:p-5">
+                <h3 className="font-display text-lg font-bold text-ink border-b border-ink/10 pb-2">
+                  Section Headers & Headlines
+                </h3>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <label className={labelCls}>Section Eyebrow</label>
+                    <input
+                      className={inputCls}
+                      value={globalExport.eyebrow}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          globalExport: { ...globalExport, eyebrow: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Title Line 1</label>
+                    <input
+                      className={inputCls}
+                      value={globalExport.titleLine1}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          globalExport: { ...globalExport, titleLine1: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Title Line 2 (Gold Accent)</label>
+                    <input
+                      className={inputCls}
+                      value={globalExport.titleLine2}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          globalExport: { ...globalExport, titleLine2: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className={labelCls}>Subtitle Description</label>
+                    <textarea
+                      className={cn(inputCls, "min-h-[4rem]")}
+                      value={globalExport.sub}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          globalExport: { ...globalExport, sub: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Regions Manager */}
+              <div className="mt-8 space-y-6">
+                <div className="flex items-center justify-between border-b border-ink/10 pb-2">
+                  <h3 className="font-display text-xl text-ink">International Delivery Destinations</h3>
+                  <span className="text-xs text-ink/50">{globalExport.regions.length} Active Regions</span>
+                </div>
+
+                {globalExport.regions.map((reg, rIdx) => (
+                  <div key={reg.id || rIdx} className="rounded-2xl border border-ink/15 bg-amber-50/30 p-4 sm:p-5">
+                    <div className="flex items-center justify-between border-b border-ink/10 pb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{reg.flag}</span>
+                        <span className="font-display text-lg font-bold text-ink">
+                          {reg.name}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() =>
+                            saveOverrides({ ...ov, globalExport }, `Saved "${reg.name}"!`)
+                          }
+                          className="rounded-full bg-coal/10 px-3 py-1 text-xs font-bold text-ink hover:bg-gold hover:text-ink transition-colors"
+                        >
+                          Save Region ✓
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (confirm(`Delete region "${reg.name}"?`)) {
+                              const updated = globalExport.regions.filter((_, i) => i !== rIdx);
+                              saveOverrides(
+                                { ...ov, globalExport: { ...globalExport, regions: updated } },
+                                `Removed "${reg.name}"`
+                              );
+                            }
+                          }}
+                          className="text-xs text-red-600 hover:underline"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                      <div>
+                        <label className={labelCls}>Region Name</label>
+                        <input
+                          className={inputCls}
+                          value={reg.name}
+                          onChange={(e) => {
+                            const updated = [...globalExport.regions];
+                            updated[rIdx] = { ...reg, name: e.target.value };
+                            setOv({
+                              ...ov,
+                              globalExport: { ...globalExport, regions: updated },
+                            });
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Flag / Emojis</label>
+                        <input
+                          className={inputCls}
+                          value={reg.flag}
+                          onChange={(e) => {
+                            const updated = [...globalExport.regions];
+                            updated[rIdx] = { ...reg, flag: e.target.value };
+                            setOv({
+                              ...ov,
+                              globalExport: { ...globalExport, regions: updated },
+                            });
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Express Timeline</label>
+                        <input
+                          className={inputCls}
+                          value={reg.timeline}
+                          onChange={(e) => {
+                            const updated = [...globalExport.regions];
+                            updated[rIdx] = { ...reg, timeline: e.target.value };
+                            setOv({
+                              ...ov,
+                              globalExport: { ...globalExport, regions: updated },
+                            });
+                          }}
+                        />
+                      </div>
+                      <div className="sm:col-span-3">
+                        <label className={labelCls}>Key Delivery Hubs</label>
+                        <input
+                          className={inputCls}
+                          value={reg.hubs}
+                          onChange={(e) => {
+                            const updated = [...globalExport.regions];
+                            updated[rIdx] = { ...reg, hubs: e.target.value };
+                            setOv({
+                              ...ov,
+                              globalExport: { ...globalExport, regions: updated },
+                            });
+                          }}
+                        />
+                      </div>
+                      <div className="sm:col-span-3">
+                        <label className={labelCls}>Regional Note / Market Capabilities</label>
+                        <textarea
+                          className={cn(inputCls, "min-h-[3.5rem]")}
+                          value={reg.note}
+                          onChange={(e) => {
+                            const updated = [...globalExport.regions];
+                            updated[rIdx] = { ...reg, note: e.target.value };
+                            setOv({
+                              ...ov,
+                              globalExport: { ...globalExport, regions: updated },
+                            });
+                          }}
+                        />
+                      </div>
+                      <div className="sm:col-span-3">
+                        <label className={labelCls}>Most Popular Crafts (Comma-separated)</label>
+                        <input
+                          className={inputCls}
+                          value={reg.popular?.join(", ") || ""}
+                          onChange={(e) => {
+                            const updated = [...globalExport.regions];
+                            updated[rIdx] = {
+                              ...reg,
+                              popular: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                            };
+                            setOv({
+                              ...ov,
+                              globalExport: { ...globalExport, regions: updated },
+                            });
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Bottom CTA Box Edit */}
+              <div className="mt-8 rounded-2xl border border-gold/30 bg-gold/10 p-5">
+                <h4 className="font-display text-lg text-ink">Bottom Sample Request Banner</h4>
+                <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className={labelCls}>Banner Heading</label>
+                    <input
+                      className={inputCls}
+                      value={globalExport.ctaHeading || ""}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          globalExport: { ...globalExport, ctaHeading: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Button Text</label>
+                    <input
+                      className={inputCls}
+                      value={globalExport.ctaButton || ""}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          globalExport: { ...globalExport, ctaButton: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className={labelCls}>Banner Subtitle</label>
+                    <input
+                      className={inputCls}
+                      value={globalExport.ctaSub || ""}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          globalExport: { ...globalExport, ctaSub: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides({ ...ov, globalExport })}
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
+                >
+                  {busy ? "Saving..." : "💾 Save Worldwide Export Settings"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: GLOBAL SEO & META TAGS */}
+          {tab === "SEO & Meta" && (
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+              <SectionSaveBar
+                title="Global SEO & Search Engine Metadata"
+                subtitle="Configure Google snippet title, description, targeted worldwide keywords and social share cards"
+                busy={busy}
+                onSave={() => saveOverrides({ ...ov, seoSettings })}
+              />
+
+              <div className="mt-6 space-y-5">
+                <div>
+                  <label className={labelCls}>Website Meta Title (Shows in Google & Browser Tabs)</label>
+                  <input
+                    className={inputCls}
+                    value={seoSettings.metaTitle || ""}
+                    onChange={(e) =>
+                      setOv({
+                        ...ov,
+                        seoSettings: { ...seoSettings, metaTitle: e.target.value },
+                      })
+                    }
+                  />
+                  <p className="mt-1 text-[11px] text-ink/50">Recommended length: 50-60 characters.</p>
+                </div>
+
+                <div>
+                  <label className={labelCls}>Website Meta Description (Shows below title on Google)</label>
+                  <textarea
+                    className={cn(inputCls, "min-h-[5rem]")}
+                    value={seoSettings.metaDescription || ""}
+                    onChange={(e) =>
+                      setOv({
+                        ...ov,
+                        seoSettings: { ...seoSettings, metaDescription: e.target.value },
+                      })
+                    }
+                  />
+                  <p className="mt-1 text-[11px] text-ink/50">Recommended length: 150-160 characters.</p>
+                </div>
+
+                <div>
+                  <label className={labelCls}>Target International B2B Keywords (Comma-separated)</label>
+                  <textarea
+                    className={cn(inputCls, "min-h-[4.5rem]")}
+                    value={seoSettings.targetKeywords || ""}
+                    onChange={(e) =>
+                      setOv({
+                        ...ov,
+                        seoSettings: { ...seoSettings, targetKeywords: e.target.value },
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className={labelCls}>Google Rich Snippet Review Rating (Out of 5.0)</label>
+                    <input
+                      className={inputCls}
+                      value={seoSettings.ratingValue || "4.9"}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          seoSettings: { ...seoSettings, ratingValue: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Total Verified Reviews Count</label>
+                    <input
+                      className={inputCls}
+                      value={seoSettings.reviewCount || "186"}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          seoSettings: { ...seoSettings, reviewCount: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <ImageUploadField
+                    label="OpenGraph / Social Media Share Preview Image"
+                    value={seoSettings.ogImage || "/photos/rs-092-02.jpg"}
+                    onChange={(val) =>
+                      setOv({
+                        ...ov,
+                        seoSettings: { ...seoSettings, ogImage: val },
+                      })
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides({ ...ov, seoSettings })}
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
+                >
+                  {busy ? "Saving..." : "💾 Save Global SEO Settings"}
                 </button>
               </div>
             </div>
