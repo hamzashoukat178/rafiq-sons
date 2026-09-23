@@ -9,6 +9,7 @@ import TrustBar from "@/components/TrustBar";
 import Manifesto from "@/components/Manifesto";
 import Collections from "@/components/Collections";
 import ProductCarousel from "@/components/ProductCarousel";
+import GlobalExport from "@/components/GlobalExport";
 import Philosophy from "@/components/Philosophy";
 import Process from "@/components/Process";
 import Reels from "@/components/Reels";
@@ -40,6 +41,7 @@ export default async function Home() {
         <Manifesto manifesto={content.manifesto} />
         <Collections items={content.products} />
         <ProductCarousel items={content.carousel} />
+        <GlobalExport />
         <Philosophy philosophy={content.philosophy} />
         <Process process={content.atelierProcess} />
         <Reels reels={content.reels} />

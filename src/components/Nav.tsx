@@ -9,6 +9,7 @@ import { site as defaultSite } from "@/content/site";
 
 const links = [
   { label: "Collections", href: "#collections" },
+  { label: "Export Hubs", href: "#worldwide-export" },
   { label: "Atelier", href: "#atelier" },
   { label: "Reels", href: "#reels" },
   { label: "Gallery", href: "#gallery" },
@@ -51,7 +52,7 @@ export default function Nav({ site = defaultSite }: { site?: typeof defaultSite 
           <button onClick={() => go("#top")} className="group flex items-center gap-3 text-left" aria-label={`${site.name}, back to top`}>
             <Image
               src="/brand/logo-wide-light.png"
-              alt={`${site.name} logo`}
+              alt={`${site.name} logo - Custom Woven Labels Manufacturer`}
               width={140}
               height={44}
               priority
@@ -62,7 +63,7 @@ export default function Nav({ site = defaultSite }: { site?: typeof defaultSite 
             </span>
           </button>
 
-          <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
             {links.map((l) => (
               <button
                 key={l.href}

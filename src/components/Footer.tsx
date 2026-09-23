@@ -5,6 +5,11 @@ import { site as defaultSite, footer as defaultFooter, marqueeItems } from "@/co
 import { FadeUp } from "./Reveal";
 import Magnetic from "./Magnetic";
 
+const globalExportDestinations = [
+  "United States (USA)", "United Kingdom (UK)", "United Arab Emirates (UAE)", "Saudi Arabia (KSA)",
+  "Canada", "Australia", "Germany", "France", "Italy", "Spain", "Turkey", "Qatar", "Kuwait"
+];
+
 export default function Footer({
   site = defaultSite,
   footer = defaultFooter,
@@ -55,21 +60,21 @@ export default function Footer({
           <div>
             <Image
               src="/brand/logo-wide-light.png"
-              alt={`${site.name} logo`}
+              alt={`${site.name} - Custom Woven Labels & Garment Accessories`}
               width={176}
               height={58}
               className="h-12 w-auto"
             />
             <p className="mt-4 text-[10px] uppercase tracking-[0.28em] text-smoke">Woven with intent</p>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-ivory/55">
-              Custom woven labels, satin labels, hang tags, stickers and packaging for clothing brands worldwide. {site.location}.
+              Custom high-density damask woven labels, satin wash care labels, embossed hang tags, leather patches, and bespoke packaging for apparel brands worldwide. {site.location}.
             </p>
           </div>
 
           <div>
             <p className="eyebrow text-[10px] text-smoke">Collections</p>
             <ul className="mt-5 space-y-3 text-sm text-ivory/60">
-              {marqueeItems.slice(0, 5).map((m) => (
+              {marqueeItems.slice(0, 6).map((m) => (
                 <li key={m}>
                   <button onClick={() => go("#collections")} className="transition-colors hover:text-gold">{m}</button>
                 </li>
@@ -78,13 +83,15 @@ export default function Footer({
           </div>
 
           <div>
-            <p className="eyebrow text-[10px] text-smoke">Studio</p>
+            <p className="eyebrow text-[10px] text-smoke">Studio & Export</p>
             <ul className="mt-5 space-y-3 text-sm text-ivory/60">
-              <li><button onClick={() => go("#atelier")} className="transition-colors hover:text-gold">The process</button></li>
-              <li><button onClick={() => go("#reels")} className="transition-colors hover:text-gold">Workbench reels</button></li>
+              <li><button onClick={() => go("#worldwide-export")} className="transition-colors hover:text-gold">Worldwide Export Hubs</button></li>
+              <li><button onClick={() => go("#atelier")} className="transition-colors hover:text-gold">The Process</button></li>
+              <li><button onClick={() => go("#showcase")} className="transition-colors hover:text-gold">Photo Showcase</button></li>
+              <li><button onClick={() => go("#reels")} className="transition-colors hover:text-gold">Workbench Reels</button></li>
               <li><button onClick={() => go("#gallery")} className="transition-colors hover:text-gold">Showroom</button></li>
               <li><button onClick={() => go("#faq")} className="transition-colors hover:text-gold">FAQ</button></li>
-              <li><button onClick={() => go("#quote")} className="transition-colors hover:text-gold">Request a quote</button></li>
+              <li><button onClick={() => go("#quote")} className="transition-colors hover:text-gold">Request a Quote</button></li>
             </ul>
           </div>
 
@@ -98,17 +105,29 @@ export default function Footer({
                 </a>
               </li>
               <li><a href={`mailto:${site.email}`} className="transition-colors hover:text-gold">{site.email}</a></li>
-              <li><a href={site.instagram} target="_blank" rel="noreferrer" className="transition-colors hover:text-gold">Instagram</a></li>
+              <li><a href={site.instagram} target="_blank" rel="noreferrer" className="transition-colors hover:text-gold">Instagram (@rafiqsonslabelss)</a></li>
               <li className="text-ivory/40">{site.location}</li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-ivory/10 pt-8 text-[11px] uppercase tracking-[0.2em] text-smoke sm:flex-row">
+        {/* Global Export Footprint SEO Tags Footer */}
+        <div className="mt-12 border-t border-ivory/10 pt-8">
+          <p className="eyebrow text-[10px] text-smoke">Worldwide Express Air Delivery</p>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs text-ivory/45">
+            {globalExportDestinations.map((dest) => (
+              <span key={dest} className="rounded-full border border-ivory/10 bg-ink/40 px-3 py-1">
+                {dest}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-ivory/10 pt-8 text-[11px] uppercase tracking-[0.2em] text-smoke sm:flex-row">
           <p>© {year} {site.legalNote}. All rights reserved.</p>
           <p className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-gold animate-pulse-dot" />
-            Delivering worldwide from Pakistan
+            Express Courier Dispatch Worldwide from Pakistan
           </p>
         </div>
       </div>
