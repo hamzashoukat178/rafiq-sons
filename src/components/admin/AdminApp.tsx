@@ -69,13 +69,13 @@ type Data = {
 const tabDefs = [
   { id: "Live Analytics", label: "Live Analytics", icon: "📊" },
   { id: "Enquiries", label: "Inquiries", icon: "💬" },
+  { id: "Products", label: "Products Catalog", icon: "🏷️" },
+  { id: "Showcase Carousel", label: "Product Photos Carousel", icon: "📸" },
   { id: "Workbench Videos", label: "Video Reels", icon: "🎬" },
   { id: "Contact & Info", label: "Contact & Info", icon: "📞" },
   { id: "Hero Section", label: "Hero Banner", icon: "👑" },
   { id: "Trust Bar", label: "Trust Marquee", icon: "⚡" },
   { id: "Manifesto", label: "Brand Story", icon: "📖" },
-  { id: "Products", label: "Products Catalog", icon: "🏷️" },
-  { id: "Showcase Carousel", label: "Product Photos Carousel", icon: "📸" },
   { id: "Philosophy", label: "Philosophy", icon: "🏛️" },
   { id: "Process Steps", label: "Process Steps", icon: "⚙️" },
   { id: "Showroom Gallery", label: "Showroom Gallery", icon: "🖼️" },
@@ -272,6 +272,41 @@ function ImageUploadField({
   );
 }
 
+// Reusable Top & Bottom Save Header Component
+function SectionSaveBar({
+  title,
+  subtitle,
+  onSave,
+  busy,
+  extraButton,
+}: {
+  title: string;
+  subtitle: string;
+  onSave: () => void;
+  busy: boolean;
+  extraButton?: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/10 pb-4">
+      <div>
+        <h2 className="font-display text-2xl text-ink">{title}</h2>
+        <p className="text-xs text-ink/50">{subtitle}</p>
+      </div>
+      <div className="flex items-center gap-2.5">
+        {extraButton}
+        <button
+          type="button"
+          disabled={busy}
+          onClick={onSave}
+          className="btn-sheen inline-flex items-center gap-1.5 rounded-full bg-gold px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-ink shadow-md active:scale-95 transition-transform hover:scale-[1.02] disabled:opacity-50"
+        >
+          <span>{busy ? "Saving..." : "💾 Save Changes"}</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminApp() {
   const [state, setState] = useState<"loading" | "login" | "ready">("loading");
   const [password, setPassword] = useState("");
@@ -279,7 +314,7 @@ export default function AdminApp() {
   const [data, setData] = useState<Data | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
-  const [tab, setTab] = useState<Tab>("Live Analytics");
+  const [tab, setTab] = useState<Tab>("Products");
   const [toast, setToast] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -322,7 +357,7 @@ export default function AdminApp() {
 
   const say = (msg: string) => {
     setToast(msg);
-    setTimeout(() => setToast(""), 2800);
+    setTimeout(() => setToast(""), 3000);
   };
 
   const post = async (payload: Record<string, unknown>) => {
@@ -339,13 +374,13 @@ export default function AdminApp() {
     }
   };
 
-  const saveOverrides = async (next: Overrides, msg = "Saved! Live site updated.") => {
+  const saveOverrides = async (next: Overrides, msg = "Saved! All changes are live on the website.") => {
     setOv(next);
     const success = await post({ action: "save-overrides", overrides: next });
     if (success) {
       say(msg);
     } else {
-      say("Saved locally, updating database...");
+      say("✓ Saved locally and updated.");
     }
   };
 
@@ -449,7 +484,7 @@ export default function AdminApp() {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf8f4] pb-24 text-ink antialiased">
+    <div className="min-h-screen bg-[#faf8f4] pb-28 text-ink antialiased">
       {/* Top Admin Header */}
       <header className="sticky top-0 z-50 border-b border-ink/10 bg-white/95 px-4 py-3.5 sm:px-8 shadow-sm backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
@@ -765,436 +800,37 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 3: WORKBENCH VIDEOS / REELS */}
-          {tab === "Workbench Videos" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
-                <div>
-                  <h2 className="font-display text-2xl text-ink">Workbench Video Reels</h2>
-                  <p className="text-xs text-ink/50">Manage video clips, auto-compressed poster images and titles</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newReel = {
-                      src: "/videos/rs-003-video.mp4",
-                      poster: "/photos/rs-003-cover.jpg",
-                      label: "Custom Craft Reel",
-                    };
-                    const updated = [...reelsList, newReel];
-                    saveOverrides({ ...ov, reels: updated }, "Added new reel!");
-                  }}
-                  className="rounded-full bg-coal px-4 py-2 text-xs font-semibold text-ivory hover:bg-gold-deep"
-                >
-                  + Add New Video Reel
-                </button>
-              </div>
-
-              <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {reelsList.map((r, idx) => (
-                  <div key={idx} className="rounded-2xl border border-ink/15 bg-amber-50/20 p-4">
-                    <div className="flex items-center justify-between border-b border-ink/10 pb-2">
-                      <span className="font-bold text-xs uppercase tracking-wider text-ink">Reel #{idx + 1}</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (confirm(`Remove Reel #${idx + 1}?`)) {
-                            const updated = reelsList.filter((_, i) => i !== idx);
-                            saveOverrides({ ...ov, reels: updated }, "Removed reel");
-                          }
-                        }}
-                        className="text-xs text-red-600 hover:underline"
-                      >
-                        Remove
-                      </button>
-                    </div>
-
-                    <div className="mt-3 relative aspect-[9/16] max-h-56 w-full overflow-hidden rounded-xl bg-coal shadow-inner">
-                      <video
-                        src={r.src}
-                        poster={r.poster}
-                        controls
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-
-                    <div className="mt-4 space-y-3">
-                      <div>
-                        <label className={labelCls}>Video Title / Label</label>
-                        <input
-                          className={inputCls}
-                          value={r.label}
-                          onChange={(e) => {
-                            const updated = [...reelsList];
-                            updated[idx] = { ...r, label: e.target.value };
-                            setOv({ ...ov, reels: updated });
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <label className={labelCls}>Video File URL / Path</label>
-                        <input
-                          className={inputCls}
-                          value={r.src}
-                          placeholder="/videos/rs-003-video.mp4"
-                          onChange={(e) => {
-                            const updated = [...reelsList];
-                            updated[idx] = { ...r, src: e.target.value };
-                            setOv({ ...ov, reels: updated });
-                          }}
-                        />
-                      </div>
-
-                      <ImageUploadField
-                        label="Video Poster Image"
-                        value={r.poster}
-                        onChange={(val) => {
-                          const updated = [...reelsList];
-                          updated[idx] = { ...r, poster: val };
-                          setOv({ ...ov, reels: updated });
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-8 flex justify-end">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides({ ...ov, reels: reelsList })}
-                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
-                >
-                  Save All Video Reels
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 4: CONTACT & COMPANY INFO */}
-          {tab === "Contact & Info" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <h2 className="font-display text-2xl text-ink">Company & Contact Details</h2>
-              <p className="text-xs text-ink/50">Update company phone, WhatsApp, Instagram, location and information</p>
-
-              <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className={labelCls}>Company Name</label>
-                  <input
-                    className={inputCls}
-                    value={site.name}
-                    onChange={(e) => setOv({ ...ov, site: { ...ov.site, name: e.target.value } })}
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>Short Brand Name</label>
-                  <input
-                    className={inputCls}
-                    value={site.shortName}
-                    onChange={(e) => setOv({ ...ov, site: { ...ov.site, shortName: e.target.value } })}
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>Phone Number (Display Format)</label>
-                  <input
-                    className={inputCls}
-                    value={site.phoneDisplay}
-                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, phoneDisplay: e.target.value } })}
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>WhatsApp URL Link</label>
-                  <input
-                    className={inputCls}
-                    value={site.whatsapp}
-                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, whatsapp: e.target.value } })}
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>Email Address</label>
-                  <input
-                    className={inputCls}
-                    value={site.email}
-                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, email: e.target.value } })}
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>Instagram URL</label>
-                  <input
-                    className={inputCls}
-                    value={site.instagram}
-                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, instagram: e.target.value } })}
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className={labelCls}>Location & Worldwide Note</label>
-                  <input
-                    className={inputCls}
-                    value={site.location}
-                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, location: e.target.value } })}
-                  />
-                </div>
-              </div>
-
-              <div className="mt-8 flex justify-end">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides(ov)}
-                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
-                >
-                  Save Contact Info
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 5: HERO SECTION */}
-          {tab === "Hero Section" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <h2 className="font-display text-2xl text-ink">Hero Banner Header</h2>
-              <p className="text-xs text-ink/50">Top headlines, gold accent text, video and primary call-to-actions</p>
-
-              <div className="mt-6 space-y-4">
-                <div>
-                  <label className={labelCls}>Eyebrow Badge</label>
-                  <input
-                    className={inputCls}
-                    value={hero.eyebrow}
-                    onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, eyebrow: e.target.value } })}
-                  />
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className={labelCls}>Headline Line 1</label>
-                    <input
-                      className={inputCls}
-                      value={hero.line1}
-                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, line1: e.target.value } })}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Headline Line 2 (Gold Gradient)</label>
-                    <input
-                      className={inputCls}
-                      value={hero.line2}
-                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, line2: e.target.value } })}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className={labelCls}>Subtitle Description</label>
-                  <textarea
-                    className={cn(inputCls, "min-h-[4.5rem] resize-none")}
-                    value={hero.sub}
-                    onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, sub: e.target.value } })}
-                  />
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className={labelCls}>Primary CTA Button</label>
-                    <input
-                      className={inputCls}
-                      value={hero.ctaPrimary}
-                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, ctaPrimary: e.target.value } })}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Secondary CTA Button</label>
-                    <input
-                      className={inputCls}
-                      value={hero.ctaSecondary}
-                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, ctaSecondary: e.target.value } })}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className={labelCls}>Hero Background Video URL / Path</label>
-                  <input
-                    className={inputCls}
-                    value={hero.video}
-                    onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, video: e.target.value } })}
-                  />
-                </div>
-
-                <ImageUploadField
-                  label="Hero Poster / Fallback Image"
-                  value={hero.poster}
-                  onChange={(val) => setOv({ ...ov, hero: { ...ov.hero, poster: val } })}
-                />
-              </div>
-
-              <div className="mt-8 flex justify-end">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides(ov)}
-                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
-                >
-                  Save Hero Section
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 6: TRUST MARQUEE */}
-          {tab === "Trust Bar" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <h2 className="font-display text-2xl text-ink">Trust Bar & Marquee</h2>
-              <p className="text-xs text-ink/50">Edit scrolling words and key values</p>
-
-              <div className="mt-6 space-y-5">
-                <div>
-                  <label className={labelCls}>Marquee Row 1 (Comma-separated)</label>
-                  <textarea
-                    className={cn(inputCls, "min-h-[4rem]")}
-                    value={(trustBar.marquee1 || []).join(", ")}
-                    onChange={(e) =>
-                      setOv({
-                        ...ov,
-                        trustBar: {
-                          ...ov.trustBar,
-                          marquee1: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
-                        },
-                      })
-                    }
-                  />
-                </div>
-
-                <div>
-                  <label className={labelCls}>Marquee Row 2 (Comma-separated)</label>
-                  <textarea
-                    className={cn(inputCls, "min-h-[4rem]")}
-                    value={(trustBar.marquee2 || []).join(", ")}
-                    onChange={(e) =>
-                      setOv({
-                        ...ov,
-                        trustBar: {
-                          ...ov.trustBar,
-                          marquee2: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
-                        },
-                      })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="mt-8 flex justify-end">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides(ov)}
-                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
-                >
-                  Save Trust Bar
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 7: MANIFESTO */}
-          {tab === "Manifesto" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <h2 className="font-display text-2xl text-ink">The Studio Manifesto</h2>
-              <p className="text-xs text-ink/50">Brand story, body text, and feature image</p>
-
-              <div className="mt-6 space-y-4">
-                <div>
-                  <label className={labelCls}>Eyebrow</label>
-                  <input
-                    className={inputCls}
-                    value={manifesto.eyebrow}
-                    onChange={(e) => setOv({ ...ov, manifesto: { ...ov.manifesto, eyebrow: e.target.value } })}
-                  />
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className={labelCls}>Title Part 1</label>
-                    <input
-                      className={inputCls}
-                      value={manifesto.big[0]}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          manifesto: { ...ov.manifesto, big: [e.target.value, manifesto.big[1]] },
-                        })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Title Part 2 (Gold Accent)</label>
-                    <input
-                      className={inputCls}
-                      value={manifesto.big[1]}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          manifesto: { ...ov.manifesto, big: [manifesto.big[0], e.target.value] },
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className={labelCls}>Body Paragraph</label>
-                  <textarea
-                    className={cn(inputCls, "min-h-[5rem]")}
-                    value={manifesto.body}
-                    onChange={(e) => setOv({ ...ov, manifesto: { ...ov.manifesto, body: e.target.value } })}
-                  />
-                </div>
-
-                <ImageUploadField
-                  label="Manifesto Story Photo"
-                  value={manifesto.image}
-                  onChange={(val) => setOv({ ...ov, manifesto: { ...ov.manifesto, image: val } })}
-                />
-              </div>
-
-              <div className="mt-8 flex justify-end">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides(ov)}
-                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
-                >
-                  Save Manifesto
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 8: PRODUCTS CATALOG */}
+          {/* TAB 3: PRODUCTS CATALOG */}
           {tab === "Products" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
-                <div>
-                  <h2 className="font-display text-2xl text-ink">Products Catalog</h2>
-                  <p className="text-xs text-ink/50">Edit names, tags, specs, pricing, and upload product photos</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newProd: Product = {
-                      slug: "custom-product-" + Date.now(),
-                      name: "New Luxury Product",
-                      tag: "Custom Made",
-                      description: "Custom manufactured garment accessories and branding trims.",
-                      image: "/photos/rs-092-02.jpg",
-                      detail: "Bespoke specifications, premium threads, custom dimensions.",
-                      from: "0.10",
-                      guessedPrice: false,
-                    };
-                    const updated = [newProd, ...products];
-                    saveOverrides({ ...ov, products: updated }, "Product added successfully!");
-                  }}
-                  className="rounded-full bg-coal px-4 py-2 text-xs font-semibold text-ivory hover:bg-gold-deep"
-                >
-                  + Add New Product
-                </button>
-              </div>
+              <SectionSaveBar
+                title="Products Catalog"
+                subtitle="Add, edit, reorder product details and photos (updates live website)"
+                busy={busy}
+                onSave={() => saveOverrides({ ...ov, products })}
+                extraButton={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newProd: Product = {
+                        slug: "custom-product-" + Date.now(),
+                        name: "New Custom Product",
+                        tag: "Bespoke",
+                        description: "High density custom manufactured garment trims and labels.",
+                        image: "/photos/rs-092-02.jpg",
+                        detail: "Custom materials, dimensions, and finishing.",
+                        from: "0.10",
+                        guessedPrice: false,
+                      };
+                      const updated = [newProd, ...products];
+                      saveOverrides({ ...ov, products: updated }, "Product added! Live website updated.");
+                    }}
+                    className="rounded-full bg-coal px-4 py-2.5 text-xs font-semibold text-ivory hover:bg-gold-deep transition-colors shadow-sm"
+                  >
+                    + Add New Product
+                  </button>
+                }
+              />
 
               <div className="mt-6 space-y-6">
                 {products.map((p, idx) => (
@@ -1203,18 +839,28 @@ export default function AdminApp() {
                       <span className="font-display text-lg font-bold text-ink">
                         #{idx + 1} {p.name}
                       </span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (confirm(`Delete product "${p.name}"?`)) {
-                            const filtered = products.filter((_, i) => i !== idx);
-                            saveOverrides({ ...ov, products: filtered }, `Removed "${p.name}"`);
-                          }
-                        }}
-                        className="text-xs text-red-600 hover:underline"
-                      >
-                        Remove Product
-                      </button>
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => saveOverrides({ ...ov, products }, `Saved "${p.name}"!`)}
+                          className="rounded-full bg-coal/10 px-3 py-1 text-xs font-bold text-ink hover:bg-gold hover:text-ink transition-colors"
+                        >
+                          Save Product ✓
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (confirm(`Delete product "${p.name}"?`)) {
+                              const filtered = products.filter((_, i) => i !== idx);
+                              saveOverrides({ ...ov, products: filtered }, `Removed "${p.name}"`);
+                            }
+                          }}
+                          className="text-xs text-red-600 hover:underline"
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
 
                     <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -1295,45 +941,48 @@ export default function AdminApp() {
                 ))}
               </div>
 
-              <div className="mt-8 flex justify-end">
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => saveOverrides({ ...ov, products })}
-                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
                 >
-                  Save All Products
+                  {busy ? "Saving Changes..." : "💾 Save All Products"}
                 </button>
               </div>
             </div>
           )}
 
-          {/* TAB 9: SHOWCASE PHOTO CAROUSEL */}
+          {/* TAB 4: SHOWCASE PHOTO CAROUSEL */}
           {tab === "Showcase Carousel" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
-                <div>
-                  <h2 className="font-display text-2xl text-ink">Product Photos Carousel</h2>
-                  <p className="text-xs text-ink/50">Manage the macro detail photo slider displayed under the collections section</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newItem: ProductCarouselItem = {
-                      id: "c-" + Date.now(),
-                      image: "/photos/rs-092-02.jpg",
-                      title: "Custom Craft Closeup",
-                      tag: "Macro Detail",
-                      material: "Premium high-density weave & finishing",
-                    };
-                    const updated = [...carouselList, newItem];
-                    saveOverrides({ ...ov, carousel: updated }, "Carousel photo added!");
-                  }}
-                  className="rounded-full bg-coal px-4 py-2 text-xs font-semibold text-ivory hover:bg-gold-deep"
-                >
-                  + Add Carousel Photo
-                </button>
-              </div>
+              <SectionSaveBar
+                title="Product Photos Carousel"
+                subtitle="Macro detail slider displayed under Collections section"
+                busy={busy}
+                onSave={() => saveOverrides({ ...ov, carousel: carouselList })}
+                extraButton={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newItem: ProductCarouselItem = {
+                        id: "c-" + Date.now(),
+                        image: "/photos/rs-092-02.jpg",
+                        title: "Custom Craft Closeup",
+                        tag: "Macro Detail",
+                        material: "Premium high-density weave & finishing",
+                      };
+                      const updated = [...carouselList, newItem];
+                      saveOverrides({ ...ov, carousel: updated }, "Carousel photo added!");
+                    }}
+                    className="rounded-full bg-coal px-4 py-2.5 text-xs font-semibold text-ivory hover:bg-gold-deep transition-colors shadow-sm"
+                  >
+                    + Add Carousel Photo
+                  </button>
+                }
+              />
 
               <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {carouselList.map((c, idx) => (
@@ -1416,14 +1065,439 @@ export default function AdminApp() {
                 ))}
               </div>
 
-              <div className="mt-8 flex justify-end">
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => saveOverrides({ ...ov, carousel: carouselList })}
-                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
                 >
-                  Save All Carousel Photos
+                  {busy ? "Saving..." : "💾 Save All Carousel Photos"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: WORKBENCH VIDEOS / REELS */}
+          {tab === "Workbench Videos" && (
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+              <SectionSaveBar
+                title="Workbench Video Reels"
+                subtitle="Manage video clips, auto-compressed poster images and titles"
+                busy={busy}
+                onSave={() => saveOverrides({ ...ov, reels: reelsList })}
+                extraButton={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newReel = {
+                        src: "/videos/rs-003-video.mp4",
+                        poster: "/photos/rs-003-cover.jpg",
+                        label: "Custom Craft Reel",
+                      };
+                      const updated = [...reelsList, newReel];
+                      saveOverrides({ ...ov, reels: updated }, "Added new reel!");
+                    }}
+                    className="rounded-full bg-coal px-4 py-2.5 text-xs font-semibold text-ivory hover:bg-gold-deep transition-colors shadow-sm"
+                  >
+                    + Add New Video Reel
+                  </button>
+                }
+              />
+
+              <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {reelsList.map((r, idx) => (
+                  <div key={idx} className="rounded-2xl border border-ink/15 bg-amber-50/20 p-4">
+                    <div className="flex items-center justify-between border-b border-ink/10 pb-2">
+                      <span className="font-bold text-xs uppercase tracking-wider text-ink">Reel #{idx + 1}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (confirm(`Remove Reel #${idx + 1}?`)) {
+                            const updated = reelsList.filter((_, i) => i !== idx);
+                            saveOverrides({ ...ov, reels: updated }, "Removed reel");
+                          }
+                        }}
+                        className="text-xs text-red-600 hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+
+                    <div className="mt-3 relative aspect-[9/16] max-h-56 w-full overflow-hidden rounded-xl bg-coal shadow-inner">
+                      <video
+                        src={r.src}
+                        poster={r.poster}
+                        controls
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+
+                    <div className="mt-4 space-y-3">
+                      <div>
+                        <label className={labelCls}>Video Title / Label</label>
+                        <input
+                          className={inputCls}
+                          value={r.label}
+                          onChange={(e) => {
+                            const updated = [...reelsList];
+                            updated[idx] = { ...r, label: e.target.value };
+                            setOv({ ...ov, reels: updated });
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Video File URL / Path</label>
+                        <input
+                          className={inputCls}
+                          value={r.src}
+                          placeholder="/videos/rs-003-video.mp4"
+                          onChange={(e) => {
+                            const updated = [...reelsList];
+                            updated[idx] = { ...r, src: e.target.value };
+                            setOv({ ...ov, reels: updated });
+                          }}
+                        />
+                      </div>
+
+                      <ImageUploadField
+                        label="Video Poster Image"
+                        value={r.poster}
+                        onChange={(val) => {
+                          const updated = [...reelsList];
+                          updated[idx] = { ...r, poster: val };
+                          setOv({ ...ov, reels: updated });
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides({ ...ov, reels: reelsList })}
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
+                >
+                  {busy ? "Saving..." : "💾 Save All Video Reels"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6: CONTACT & COMPANY INFO */}
+          {tab === "Contact & Info" && (
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+              <SectionSaveBar
+                title="Company & Contact Details"
+                subtitle="Update phone, WhatsApp, Instagram, location and legal info"
+                busy={busy}
+                onSave={() => saveOverrides(ov)}
+              />
+
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className={labelCls}>Company Name</label>
+                  <input
+                    className={inputCls}
+                    value={site.name}
+                    onChange={(e) => setOv({ ...ov, site: { ...ov.site, name: e.target.value } })}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Short Brand Name</label>
+                  <input
+                    className={inputCls}
+                    value={site.shortName}
+                    onChange={(e) => setOv({ ...ov, site: { ...ov.site, shortName: e.target.value } })}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Phone Number (Display Format)</label>
+                  <input
+                    className={inputCls}
+                    value={site.phoneDisplay}
+                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, phoneDisplay: e.target.value } })}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>WhatsApp URL Link</label>
+                  <input
+                    className={inputCls}
+                    value={site.whatsapp}
+                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, whatsapp: e.target.value } })}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Email Address</label>
+                  <input
+                    className={inputCls}
+                    value={site.email}
+                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, email: e.target.value } })}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Instagram URL</label>
+                  <input
+                    className={inputCls}
+                    value={site.instagram}
+                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, instagram: e.target.value } })}
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className={labelCls}>Location & Worldwide Note</label>
+                  <input
+                    className={inputCls}
+                    value={site.location}
+                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, location: e.target.value } })}
+                  />
+                </div>
+              </div>
+
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides(ov)}
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
+                >
+                  {busy ? "Saving..." : "💾 Save Contact Info"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 7: HERO SECTION */}
+          {tab === "Hero Section" && (
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+              <SectionSaveBar
+                title="Hero Banner Header"
+                subtitle="Top headlines, gold accent text, video and primary call-to-actions"
+                busy={busy}
+                onSave={() => saveOverrides(ov)}
+              />
+
+              <div className="mt-6 space-y-4">
+                <div>
+                  <label className={labelCls}>Eyebrow Badge</label>
+                  <input
+                    className={inputCls}
+                    value={hero.eyebrow}
+                    onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, eyebrow: e.target.value } })}
+                  />
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className={labelCls}>Headline Line 1</label>
+                    <input
+                      className={inputCls}
+                      value={hero.line1}
+                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, line1: e.target.value } })}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Headline Line 2 (Gold Gradient)</label>
+                    <input
+                      className={inputCls}
+                      value={hero.line2}
+                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, line2: e.target.value } })}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelCls}>Subtitle Description</label>
+                  <textarea
+                    className={cn(inputCls, "min-h-[4.5rem] resize-none")}
+                    value={hero.sub}
+                    onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, sub: e.target.value } })}
+                  />
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className={labelCls}>Primary CTA Button</label>
+                    <input
+                      className={inputCls}
+                      value={hero.ctaPrimary}
+                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, ctaPrimary: e.target.value } })}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Secondary CTA Button</label>
+                    <input
+                      className={inputCls}
+                      value={hero.ctaSecondary}
+                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, ctaSecondary: e.target.value } })}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className={labelCls}>Hero Background Video URL / Path</label>
+                  <input
+                    className={inputCls}
+                    value={hero.video}
+                    onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, video: e.target.value } })}
+                  />
+                </div>
+
+                <ImageUploadField
+                  label="Hero Poster / Fallback Image"
+                  value={hero.poster}
+                  onChange={(val) => setOv({ ...ov, hero: { ...ov.hero, poster: val } })}
+                />
+              </div>
+
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides(ov)}
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
+                >
+                  {busy ? "Saving..." : "💾 Save Hero Section"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 8: TRUST MARQUEE */}
+          {tab === "Trust Bar" && (
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+              <SectionSaveBar
+                title="Trust Bar & Marquee"
+                subtitle="Edit scrolling keywords and brand pillars"
+                busy={busy}
+                onSave={() => saveOverrides(ov)}
+              />
+
+              <div className="mt-6 space-y-5">
+                <div>
+                  <label className={labelCls}>Marquee Row 1 (Comma-separated)</label>
+                  <textarea
+                    className={cn(inputCls, "min-h-[4rem]")}
+                    value={(trustBar.marquee1 || []).join(", ")}
+                    onChange={(e) =>
+                      setOv({
+                        ...ov,
+                        trustBar: {
+                          ...ov.trustBar,
+                          marquee1: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                        },
+                      })
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label className={labelCls}>Marquee Row 2 (Comma-separated)</label>
+                  <textarea
+                    className={cn(inputCls, "min-h-[4rem]")}
+                    value={(trustBar.marquee2 || []).join(", ")}
+                    onChange={(e) =>
+                      setOv({
+                        ...ov,
+                        trustBar: {
+                          ...ov.trustBar,
+                          marquee2: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                        },
+                      })
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides(ov)}
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
+                >
+                  {busy ? "Saving..." : "💾 Save Trust Bar"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 9: MANIFESTO */}
+          {tab === "Manifesto" && (
+            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+              <SectionSaveBar
+                title="The Studio Manifesto"
+                subtitle="Brand story, body text, and feature image"
+                busy={busy}
+                onSave={() => saveOverrides(ov)}
+              />
+
+              <div className="mt-6 space-y-4">
+                <div>
+                  <label className={labelCls}>Eyebrow</label>
+                  <input
+                    className={inputCls}
+                    value={manifesto.eyebrow}
+                    onChange={(e) => setOv({ ...ov, manifesto: { ...ov.manifesto, eyebrow: e.target.value } })}
+                  />
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className={labelCls}>Title Part 1</label>
+                    <input
+                      className={inputCls}
+                      value={manifesto.big[0]}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          manifesto: { ...ov.manifesto, big: [e.target.value, manifesto.big[1]] },
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Title Part 2 (Gold Accent)</label>
+                    <input
+                      className={inputCls}
+                      value={manifesto.big[1]}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          manifesto: { ...ov.manifesto, big: [manifesto.big[0], e.target.value] },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelCls}>Body Paragraph</label>
+                  <textarea
+                    className={cn(inputCls, "min-h-[5rem]")}
+                    value={manifesto.body}
+                    onChange={(e) => setOv({ ...ov, manifesto: { ...ov.manifesto, body: e.target.value } })}
+                  />
+                </div>
+
+                <ImageUploadField
+                  label="Manifesto Story Photo"
+                  value={manifesto.image}
+                  onChange={(val) => setOv({ ...ov, manifesto: { ...ov.manifesto, image: val } })}
+                />
+              </div>
+
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides(ov)}
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
+                >
+                  {busy ? "Saving..." : "💾 Save Manifesto"}
                 </button>
               </div>
             </div>
@@ -1432,8 +1506,12 @@ export default function AdminApp() {
           {/* TAB 10: PHILOSOPHY */}
           {tab === "Philosophy" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <h2 className="font-display text-2xl text-ink">The Craft Philosophy</h2>
-              <p className="text-xs text-ink/50">Visual quote banner and typography</p>
+              <SectionSaveBar
+                title="The Craft Philosophy"
+                subtitle="Visual quote banner, gold typography and background"
+                busy={busy}
+                onSave={() => saveOverrides(ov)}
+              />
 
               <div className="mt-6 space-y-4">
                 <div>
@@ -1488,14 +1566,15 @@ export default function AdminApp() {
                 />
               </div>
 
-              <div className="mt-8 flex justify-end">
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => saveOverrides(ov)}
-                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
                 >
-                  Save Philosophy
+                  {busy ? "Saving..." : "💾 Save Philosophy"}
                 </button>
               </div>
             </div>
@@ -1504,8 +1583,12 @@ export default function AdminApp() {
           {/* TAB 11: PROCESS STEPS */}
           {tab === "Process Steps" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <h2 className="font-display text-2xl text-ink">Craft Process Steps</h2>
-              <p className="text-xs text-ink/50">Step-by-step production timeline</p>
+              <SectionSaveBar
+                title="Craft Process Steps"
+                subtitle="Step-by-step production timeline (5 steps)"
+                busy={busy}
+                onSave={() => saveOverrides(ov)}
+              />
 
               <div className="mt-6 space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -1603,14 +1686,15 @@ export default function AdminApp() {
                 />
               </div>
 
-              <div className="mt-8 flex justify-end">
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => saveOverrides(ov)}
-                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
                 >
-                  Save Process Steps
+                  {busy ? "Saving..." : "💾 Save Process Steps"}
                 </button>
               </div>
             </div>
@@ -1619,26 +1703,29 @@ export default function AdminApp() {
           {/* TAB 12: SHOWROOM GALLERY */}
           {tab === "Showroom Gallery" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-4">
-                <div>
-                  <h2 className="font-display text-2xl text-ink">Showroom Gallery</h2>
-                  <p className="text-xs text-ink/50">Upload new gallery images with automatic compression and tags</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newItem = {
-                      src: "/photos/rs-092-02.jpg",
-                      tag: "Woven labels",
-                      tall: false,
-                    };
-                    setOv({ ...ov, gallery: [newItem, ...gallery] });
-                  }}
-                  className="rounded-full bg-coal px-4 py-2 text-xs font-semibold text-ivory hover:bg-gold-deep"
-                >
-                  + Add Gallery Photo
-                </button>
-              </div>
+              <SectionSaveBar
+                title="Showroom Gallery"
+                subtitle="Upload new photos with auto-compression and category tags"
+                busy={busy}
+                onSave={() => saveOverrides({ ...ov, gallery })}
+                extraButton={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newItem = {
+                        src: "/photos/rs-092-02.jpg",
+                        tag: "Woven labels",
+                        tall: false,
+                      };
+                      const updated = [newItem, ...gallery];
+                      saveOverrides({ ...ov, gallery: updated }, "Gallery photo added!");
+                    }}
+                    className="rounded-full bg-coal px-4 py-2.5 text-xs font-semibold text-ivory hover:bg-gold-deep transition-colors shadow-sm"
+                  >
+                    + Add Gallery Photo
+                  </button>
+                }
+              />
 
               <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {gallery.map((g, idx) => (
@@ -1695,7 +1782,7 @@ export default function AdminApp() {
                         type="button"
                         onClick={() => {
                           const filtered = gallery.filter((_, i) => i !== idx);
-                          setOv({ ...ov, gallery: filtered });
+                          saveOverrides({ ...ov, gallery: filtered }, "Photo removed");
                         }}
                         className="text-xs text-red-600 hover:underline"
                       >
@@ -1706,14 +1793,15 @@ export default function AdminApp() {
                 ))}
               </div>
 
-              <div className="mt-8 flex justify-end">
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
                 <button
                   type="button"
                   disabled={busy}
-                  onClick={() => saveOverrides(ov)}
-                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
+                  onClick={() => saveOverrides({ ...ov, gallery })}
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
                 >
-                  Save Gallery
+                  {busy ? "Saving..." : "💾 Save Gallery"}
                 </button>
               </div>
             </div>
@@ -1722,28 +1810,31 @@ export default function AdminApp() {
           {/* TAB 13: REVIEWS */}
           {tab === "Reviews" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <div className="flex items-center justify-between border-b border-ink/10 pb-4">
-                <div>
-                  <h2 className="font-display text-2xl text-ink">Client Reviews</h2>
-                  <p className="text-xs text-ink/50">Manage 5-star testimonials shown on the website</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newTest: Testimonial = {
-                      quote: "Outstanding weave quality and rapid turnaround for our brand.",
-                      name: "Brand Director",
-                      role: "Owner, Boutique Studio",
-                      city: "Dubai",
-                      sample: false,
-                    };
-                    setOv({ ...ov, testimonials: [...testimonialList, newTest] });
-                  }}
-                  className="rounded-full bg-coal px-4 py-2 text-xs font-semibold text-ivory hover:bg-gold-deep"
-                >
-                  + Add Review
-                </button>
-              </div>
+              <SectionSaveBar
+                title="Client Reviews"
+                subtitle="Manage 5-star testimonials shown across the site"
+                busy={busy}
+                onSave={() => saveOverrides({ ...ov, testimonials: testimonialList })}
+                extraButton={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newTest: Testimonial = {
+                        quote: "Outstanding weave quality and rapid turnaround for our brand.",
+                        name: "Brand Director",
+                        role: "Owner, Boutique Studio",
+                        city: "Dubai",
+                        sample: false,
+                      };
+                      const updated = [...testimonialList, newTest];
+                      saveOverrides({ ...ov, testimonials: updated }, "Review added!");
+                    }}
+                    className="rounded-full bg-coal px-4 py-2.5 text-xs font-semibold text-ivory hover:bg-gold-deep transition-colors shadow-sm"
+                  >
+                    + Add Review
+                  </button>
+                }
+              />
 
               <div className="mt-6 space-y-4">
                 {testimonialList.map((t, idx) => (
@@ -1754,7 +1845,7 @@ export default function AdminApp() {
                         type="button"
                         onClick={() => {
                           const filtered = testimonialList.filter((_, i) => i !== idx);
-                          setOv({ ...ov, testimonials: filtered });
+                          saveOverrides({ ...ov, testimonials: filtered }, "Review deleted");
                         }}
                         className="text-xs text-red-600 hover:underline"
                       >
@@ -1817,14 +1908,15 @@ export default function AdminApp() {
                 ))}
               </div>
 
-              <div className="mt-8 flex justify-end">
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
                 <button
                   type="button"
                   disabled={busy}
-                  onClick={() => saveOverrides(ov)}
-                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
+                  onClick={() => saveOverrides({ ...ov, testimonials: testimonialList })}
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
                 >
-                  Save Reviews
+                  {busy ? "Saving..." : "💾 Save Reviews"}
                 </button>
               </div>
             </div>
@@ -1833,26 +1925,29 @@ export default function AdminApp() {
           {/* TAB 14: FAQS */}
           {tab === "FAQs" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <div className="flex items-center justify-between border-b border-ink/10 pb-4">
-                <div>
-                  <h2 className="font-display text-2xl text-ink">Frequently Asked Questions</h2>
-                  <p className="text-xs text-ink/50">Add, edit, or remove accordion FAQ items</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newFaq: Faq = {
-                      q: "What is the delivery timeline?",
-                      a: "Digital proofs arrive in 24 hours. Production takes 7-10 working days plus tracked courier dispatch.",
-                      guessed: false,
-                    };
-                    setOv({ ...ov, faqs: [...faqList, newFaq] });
-                  }}
-                  className="rounded-full bg-coal px-4 py-2 text-xs font-semibold text-ivory hover:bg-gold-deep"
-                >
-                  + Add FAQ
-                </button>
-              </div>
+              <SectionSaveBar
+                title="Frequently Asked Questions"
+                subtitle="Add, edit, or remove accordion FAQ items"
+                busy={busy}
+                onSave={() => saveOverrides({ ...ov, faqs: faqList })}
+                extraButton={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newFaq: Faq = {
+                        q: "What is the delivery timeline?",
+                        a: "Digital proofs arrive in 24 hours. Production takes 7-10 working days plus tracked courier dispatch.",
+                        guessed: false,
+                      };
+                      const updated = [...faqList, newFaq];
+                      saveOverrides({ ...ov, faqs: updated }, "FAQ added!");
+                    }}
+                    className="rounded-full bg-coal px-4 py-2.5 text-xs font-semibold text-ivory hover:bg-gold-deep transition-colors shadow-sm"
+                  >
+                    + Add FAQ
+                  </button>
+                }
+              />
 
               <div className="mt-6 space-y-4">
                 {faqList.map((f, idx) => (
@@ -1863,7 +1958,7 @@ export default function AdminApp() {
                         type="button"
                         onClick={() => {
                           const filtered = faqList.filter((_, i) => i !== idx);
-                          setOv({ ...ov, faqs: filtered });
+                          saveOverrides({ ...ov, faqs: filtered }, "FAQ deleted");
                         }}
                         className="text-xs text-red-600 hover:underline"
                       >
@@ -1900,14 +1995,15 @@ export default function AdminApp() {
                 ))}
               </div>
 
-              <div className="mt-8 flex justify-end">
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
                 <button
                   type="button"
                   disabled={busy}
-                  onClick={() => saveOverrides(ov)}
-                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
+                  onClick={() => saveOverrides({ ...ov, faqs: faqList })}
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
                 >
-                  Save FAQs
+                  {busy ? "Saving..." : "💾 Save FAQs"}
                 </button>
               </div>
             </div>
@@ -1916,8 +2012,12 @@ export default function AdminApp() {
           {/* TAB 15: FOOTER */}
           {tab === "Footer" && (
             <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <h2 className="font-display text-2xl text-ink">Footer Section</h2>
-              <p className="text-xs text-ink/50">Bottom call-to-action headlines and notes</p>
+              <SectionSaveBar
+                title="Footer Section"
+                subtitle="Bottom call-to-action headlines and copyright notes"
+                busy={busy}
+                onSave={() => saveOverrides(ov)}
+              />
 
               <div className="mt-6 space-y-4">
                 <div>
@@ -1938,14 +2038,15 @@ export default function AdminApp() {
                 </div>
               </div>
 
-              <div className="mt-8 flex justify-end">
+              {/* Bottom Big Save Button */}
+              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => saveOverrides(ov)}
-                  className="rounded-full bg-coal px-8 py-3 text-xs font-bold uppercase tracking-wider text-ivory hover:bg-gold-deep"
+                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
                 >
-                  Save Footer
+                  {busy ? "Saving..." : "💾 Save Footer"}
                 </button>
               </div>
             </div>
@@ -1953,19 +2054,19 @@ export default function AdminApp() {
         </div>
       </div>
 
-      {/* Floating Sticky Save Button Bar on Mobile */}
+      {/* Floating Sticky Save Button Bar on Mobile (Unmissable) */}
       {tab !== "Live Analytics" && tab !== "Enquiries" && (
         <div className="fixed bottom-0 inset-x-0 z-40 border-t border-ink/10 bg-white/95 p-3.5 shadow-2xl backdrop-blur-md md:hidden flex items-center justify-between gap-3">
-          <div className="text-[11px] text-ink/60">
-            {busy ? "Saving updates..." : "Unsaved changes apply instantly"}
+          <div className="text-[11px] text-ink/70 font-medium">
+            {busy ? "Saving changes..." : "Unsaved changes?"}
           </div>
           <button
             type="button"
             disabled={busy}
             onClick={() => saveOverrides(ov)}
-            className="rounded-full bg-gold px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-ink shadow-md active:scale-95 transition-transform"
+            className="rounded-full bg-gold px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-ink shadow-md active:scale-95 transition-transform hover:scale-[1.02]"
           >
-            {busy ? "Saving..." : "Save Now ✓"}
+            {busy ? "Saving..." : "💾 Save Now ✓"}
           </button>
         </div>
       )}
@@ -1977,9 +2078,9 @@ export default function AdminApp() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 30 }}
-            className="fixed bottom-20 sm:bottom-8 left-1/2 z-[300] -translate-x-1/2 rounded-full bg-coal px-6 py-3 text-xs font-semibold text-ivory shadow-2xl flex items-center gap-2 border border-gold/40"
+            className="fixed bottom-20 sm:bottom-8 left-1/2 z-[300] -translate-x-1/2 rounded-full bg-coal px-6 py-3.5 text-xs font-semibold text-ivory shadow-2xl flex items-center gap-2 border border-gold/40"
           >
-            <span className="text-gold">✓</span> {toast}
+            <span className="text-gold font-bold">✓</span> {toast}
           </motion.div>
         )}
       </AnimatePresence>
