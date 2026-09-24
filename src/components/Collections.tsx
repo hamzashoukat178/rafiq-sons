@@ -140,7 +140,9 @@ function ProductRow({
   onOpenModal: (p: Product) => void;
 }) {
   const even = index % 2 === 0;
-  const specs = productSpecs[product.slug] || productSpecs["woven-labels"];
+  const fallbackSpecs = productSpecs[product.slug] || productSpecs["woven-labels"];
+  const turnaround = product.turnaround || fallbackSpecs.leadTime;
+  const moq = product.moq || fallbackSpecs.moq;
 
   const quoteThis = () => {
     window.dispatchEvent(new CustomEvent("quote:product", { detail: product.name }));
@@ -176,16 +178,16 @@ function ProductRow({
           {product.detail}
         </FadeUp>
 
-        {/* Quick Specs Pill Box */}
+        {/* Quick Specs Pill Box (Editable via Admin) */}
         <FadeUp delay={0.2} className="glass-dark mt-6 max-w-lg rounded-xl border border-ivory/10 p-4">
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div>
               <span className="text-smoke">Turnaround:</span>
-              <p className="font-medium text-ivory">{specs.leadTime}</p>
+              <p className="font-medium text-ivory">{turnaround}</p>
             </div>
             <div>
               <span className="text-smoke">Minimum Order:</span>
-              <p className="font-medium text-ivory">{specs.moq}</p>
+              <p className="font-medium text-ivory">{moq}</p>
             </div>
           </div>
         </FadeUp>
@@ -224,7 +226,15 @@ export default function Collections({ items }: { items?: Product[] }) {
     return products.filter((p) => !labelSlugs.includes(p.slug) && !tagSlugs.includes(p.slug) || finishSlugs.includes(p.slug));
   }, [active, products]);
 
-  const specsForModal = selectedProduct ? (productSpecs[selectedProduct.slug] || productSpecs["woven-labels"]) : null;
+  const activeSpecs = selectedProduct
+    ? {
+        material: selectedProduct.material || (productSpecs[selectedProduct.slug] || productSpecs["woven-labels"]).material,
+        colors: selectedProduct.colors || (productSpecs[selectedProduct.slug] || productSpecs["woven-labels"]).colors,
+        folds: selectedProduct.folds || (productSpecs[selectedProduct.slug] || productSpecs["woven-labels"]).folds,
+        leadTime: selectedProduct.turnaround || (productSpecs[selectedProduct.slug] || productSpecs["woven-labels"]).leadTime,
+        moq: selectedProduct.moq || (productSpecs[selectedProduct.slug] || productSpecs["woven-labels"]).moq,
+      }
+    : null;
 
   const quoteSelected = () => {
     if (selectedProduct) {
@@ -292,7 +302,7 @@ export default function Collections({ items }: { items?: Product[] }) {
 
       {/* Interactive Product Details Lightbox / Modal */}
       <AnimatePresence>
-        {selectedProduct && specsForModal && (
+        {selectedProduct && activeSpecs && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -338,19 +348,23 @@ export default function Collections({ items }: { items?: Product[] }) {
                     <div className="mt-6 space-y-3 text-xs">
                       <div className="border-b border-ivory/10 pb-2">
                         <span className="text-smoke">Materials / Base:</span>
-                        <p className="font-medium text-ivory">{specsForModal.material}</p>
+                        <p className="font-medium text-ivory">{activeSpecs.material}</p>
                       </div>
                       <div className="border-b border-ivory/10 pb-2">
                         <span className="text-smoke">Color Capacity:</span>
-                        <p className="font-medium text-ivory">{specsForModal.colors}</p>
+                        <p className="font-medium text-ivory">{activeSpecs.colors}</p>
                       </div>
                       <div className="border-b border-ivory/10 pb-2">
                         <span className="text-smoke">Folding & Finishes:</span>
-                        <p className="font-medium text-ivory">{specsForModal.folds}</p>
+                        <p className="font-medium text-ivory">{activeSpecs.folds}</p>
                       </div>
                       <div className="border-b border-ivory/10 pb-2">
-                        <span className="text-smoke">Estimated Lead Time:</span>
-                        <p className="font-medium text-gold">{specsForModal.leadTime}</p>
+                        <span className="text-smoke">Estimated Turnaround:</span>
+                        <p className="font-medium text-gold">{activeSpecs.leadTime}</p>
+                      </div>
+                      <div className="border-b border-ivory/10 pb-2">
+                        <span className="text-smoke">Minimum Order:</span>
+                        <p className="font-medium text-ivory">{activeSpecs.moq}</p>
                       </div>
                     </div>
                   </div>

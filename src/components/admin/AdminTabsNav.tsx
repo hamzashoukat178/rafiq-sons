@@ -1,217 +1,143 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 
-export interface TabItem<T extends string = string> {
-  id: T;
+export type TabCategory = {
+  id: string;
   label: string;
   icon: string;
-  badge?: number;
-}
+  subTabs: { id: string; label: string; icon: string }[];
+};
 
-export default function AdminTabsNav<T extends string>({
-  tabs,
+export const tabCategories: TabCategory[] = [
+  {
+    id: "products-hub",
+    label: "Products & Media",
+    icon: "📦",
+    subTabs: [
+      { id: "Products", label: "Products Catalog", icon: "🏷️" },
+      { id: "Showcase Carousel", label: "Photo Carousel", icon: "📸" },
+      { id: "Showroom Gallery", label: "Showroom Gallery", icon: "🖼️" },
+      { id: "Workbench Videos", label: "Video Reels", icon: "🎬" },
+    ],
+  },
+  {
+    id: "global-hub",
+    label: "Global & SEO",
+    icon: "🌍",
+    subTabs: [
+      { id: "Worldwide Export", label: "Worldwide Export Hubs", icon: "🌐" },
+      { id: "SEO & Meta", label: "Global SEO & Meta", icon: "🚀" },
+      { id: "Trust Bar", label: "Trust Marquee", icon: "⚡" },
+    ],
+  },
+  {
+    id: "content-hub",
+    label: "Page Content",
+    icon: "✍️",
+    subTabs: [
+      { id: "Hero Section", label: "Hero Banner", icon: "👑" },
+      { id: "Manifesto", label: "Brand Story", icon: "📖" },
+      { id: "Philosophy", label: "Philosophy", icon: "🏛️" },
+      { id: "Process Steps", label: "Process Steps", icon: "⚙️" },
+      { id: "FAQs", label: "FAQs Accordion", icon: "❓" },
+      { id: "Reviews", label: "Client Reviews", icon: "⭐" },
+      { id: "Footer", label: "Footer", icon: "⚓" },
+    ],
+  },
+  {
+    id: "contact-hub",
+    label: "Contact & Info",
+    icon: "📞",
+    subTabs: [{ id: "Contact & Info", label: "Contact & Socials", icon: "📞" }],
+  },
+  {
+    id: "leads-hub",
+    label: "Inquiries",
+    icon: "💬",
+    subTabs: [{ id: "Enquiries", label: "Customer Inquiries", icon: "💬" }],
+  },
+  {
+    id: "analytics-hub",
+    label: "Live Analytics",
+    icon: "📊",
+    subTabs: [{ id: "Live Analytics", label: "Traffic Analytics", icon: "📊" }],
+  },
+];
+
+export default function AdminTabsNav({
   activeTab,
   onSelectTab,
   newCount = 0,
 }: {
-  tabs: readonly { id: T; label: string; icon: string }[];
-  activeTab: T;
-  onSelectTab: (tab: T) => void;
+  activeTab: string;
+  onSelectTab: (tab: string) => void;
   newCount?: number;
 }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Check scroll bounds
-  const checkScroll = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 8);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 8);
-  };
-
-  useEffect(() => {
-    checkScroll();
-    window.addEventListener("resize", checkScroll);
-    return () => window.removeEventListener("resize", checkScroll);
-  }, []);
-
-  const scroll = (dir: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const amount = dir === "left" ? -260 : 260;
-    el.scrollBy({ left: amount, behavior: "smooth" });
-    setTimeout(checkScroll, 300);
-  };
-
-  // Drag to scroll for desktop mouse users
-  const [isDown, setIsDown] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeftState, setScrollLeftState] = useState(0);
-
-  const onMouseDown = (e: React.MouseEvent) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setIsDown(true);
-    setStartX(e.pageX - el.offsetLeft);
-    setScrollLeftState(el.scrollLeft);
-  };
-
-  const onMouseLeave = () => setIsDown(false);
-  const onMouseUp = () => setIsDown(false);
-
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const el = scrollRef.current;
-    if (!el) return;
-    const x = e.pageX - el.offsetLeft;
-    const walk = (x - startX) * 1.6;
-    el.scrollLeft = scrollLeftState - walk;
-    checkScroll();
-  };
-
-  const currentTabObj = tabs.find((t) => t.id === activeTab) || tabs[0];
+  // Find which category contains the active subTab
+  const activeCategory = useMemo(() => {
+    return (
+      tabCategories.find((cat) => cat.subTabs.some((sub) => sub.id === activeTab)) ||
+      tabCategories[0]
+    );
+  }, [activeTab]);
 
   return (
-    <div className="relative mb-6">
-      {/* Mobile Top Active Bar & Quick Switcher */}
-      <div className="mb-3 flex items-center justify-between rounded-2xl border border-ink/10 bg-white p-3 shadow-sm md:hidden">
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-base shadow-inner">
-            {currentTabObj.icon}
-          </span>
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-ink/50">Current Section</p>
-            <p className="font-display text-sm font-bold text-ink">{currentTabObj.label}</p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="flex items-center gap-1.5 rounded-full bg-coal px-3.5 py-1.5 text-xs font-semibold text-ivory shadow-sm active:scale-95 transition-transform"
-        >
-          <span>All Tabs</span>
-          <span className="text-[10px] opacity-70">▼</span>
-        </button>
+    <div className="mb-6 space-y-3">
+      {/* Level 1: Clean Category Pills */}
+      <div className="flex items-center gap-1.5 overflow-x-auto rounded-2xl border border-gray-200/80 bg-white p-1.5 shadow-sm [scrollbar-width:none]">
+        {tabCategories.map((cat) => {
+          const isCatActive = cat.id === activeCategory.id;
+          const hasBadge = cat.id === "leads-hub" && newCount > 0;
+          return (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => onSelectTab(cat.subTabs[0].id)}
+              className={cn(
+                "flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200",
+                isCatActive
+                  ? "bg-slate-900 text-white shadow-sm"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              )}
+            >
+              <span>{cat.icon}</span>
+              <span>{cat.label}</span>
+              {hasBadge && (
+                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-400 px-1 text-[10px] font-black text-slate-950">
+                  {newCount}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Mobile Dropdown Panel */}
-      {isMobileMenuOpen && (
-        <div className="mb-4 grid grid-cols-2 gap-2 rounded-2xl border border-ink/10 bg-white p-3 shadow-lg md:hidden animate-in fade-in zoom-in-95 duration-150">
-          {tabs.map((t) => {
-            const isActive = activeTab === t.id;
-            const hasNew = t.id === "Enquiries" && newCount > 0;
+      {/* Level 2: Sub-tabs (Only show if category has more than 1 subTab) */}
+      {activeCategory.subTabs.length > 1 && (
+        <div className="flex items-center gap-2 overflow-x-auto rounded-xl bg-slate-100/80 p-1.5 [scrollbar-width:none]">
+          {activeCategory.subTabs.map((sub) => {
+            const isSubActive = sub.id === activeTab;
             return (
               <button
-                key={t.id}
+                key={sub.id}
                 type="button"
-                onClick={() => {
-                  onSelectTab(t.id);
-                  setIsMobileMenuOpen(false);
-                }}
+                onClick={() => onSelectTab(sub.id)}
                 className={cn(
-                  "flex items-center gap-2 rounded-xl p-2.5 text-left text-xs font-semibold transition-all",
-                  isActive
-                    ? "bg-coal text-ivory ring-1 ring-gold shadow-sm"
-                    : "bg-amber-50/40 text-ink/80 hover:bg-amber-100/60"
+                  "flex shrink-0 items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all duration-150",
+                  isSubActive
+                    ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-900/10"
+                    : "text-slate-500 hover:text-slate-900 hover:bg-white/50"
                 )}
               >
-                <span className="text-sm">{t.icon}</span>
-                <span className="truncate">{t.label}</span>
-                {hasNew && (
-                  <span className="ml-auto flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[9px] font-bold text-ink">
-                    {newCount}
-                  </span>
-                )}
+                <span>{sub.icon}</span>
+                <span>{sub.label}</span>
               </button>
             );
           })}
         </div>
       )}
-
-      {/* Desktop & Tablet Swipable Navigation Track */}
-      <div className="flex items-center gap-2">
-        {/* Left Arrow Button (hidden on very small screens, visible on md) */}
-        <button
-          type="button"
-          onClick={() => scroll("left")}
-          aria-label="Scroll tabs left"
-          className={cn(
-            "hidden md:flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink/15 bg-white text-ink text-xs font-bold shadow-sm transition-all hover:bg-coal hover:text-ivory active:scale-95",
-            !canScrollLeft && "opacity-30 pointer-events-none"
-          )}
-        >
-          ◀
-        </button>
-
-        {/* Scrollable / Draggable Track */}
-        <div
-          ref={scrollRef}
-          onScroll={checkScroll}
-          onMouseDown={onMouseDown}
-          onMouseLeave={onMouseLeave}
-          onMouseUp={onMouseUp}
-          onMouseMove={onMouseMove}
-          style={{ WebkitOverflowScrolling: "touch" }}
-          className={cn(
-            "flex flex-1 items-center gap-2 overflow-x-auto py-1 select-none scroll-smooth",
-            "cursor-grab active:cursor-grabbing",
-            "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-          )}
-        >
-          {tabs.map((t) => {
-            const isActive = activeTab === t.id;
-            const hasNew = t.id === "Enquiries" && newCount > 0;
-            return (
-              <button
-                key={t.id}
-                type="button"
-                onClick={(e) => {
-                  onSelectTab(t.id);
-                  (e.currentTarget as HTMLElement).scrollIntoView({
-                    behavior: "smooth",
-                    inline: "center",
-                    block: "nearest",
-                  });
-                }}
-                className={cn(
-                  "group relative flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-200",
-                  isActive
-                    ? "bg-coal text-ivory shadow-md ring-2 ring-gold-deep"
-                    : "bg-white text-ink/70 hover:bg-amber-50 hover:text-ink border border-ink/10"
-                )}
-              >
-                <span className="text-sm opacity-90 group-hover:scale-110 transition-transform">{t.icon}</span>
-                <span>{t.label}</span>
-                {hasNew && (
-                  <span className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[10px] font-bold text-ink animate-pulse">
-                    {newCount}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Right Arrow Button */}
-        <button
-          type="button"
-          onClick={() => scroll("right")}
-          aria-label="Scroll tabs right"
-          className={cn(
-            "hidden md:flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink/15 bg-white text-ink text-xs font-bold shadow-sm transition-all hover:bg-coal hover:text-ivory active:scale-95",
-            !canScrollRight && "opacity-30 pointer-events-none"
-          )}
-        >
-          ▶
-        </button>
-      </div>
     </div>
   );
 }

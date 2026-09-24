@@ -7,6 +7,11 @@ export type Product = {
   detail: string;
   from?: string;
   guessedPrice?: boolean;
+  turnaround?: string;
+  moq?: string;
+  material?: string;
+  colors?: string;
+  folds?: string;
 };
 
 export type Faq = { q: string; a: string; guessed?: boolean };

@@ -71,31 +71,9 @@ type Data = {
   overrides: Overrides;
 };
 
-const tabDefs = [
-  { id: "Live Analytics", label: "Live Analytics", icon: "📊" },
-  { id: "Enquiries", label: "Inquiries", icon: "💬" },
-  { id: "Products", label: "Products Catalog", icon: "🏷️" },
-  { id: "Showcase Carousel", label: "Product Photos Carousel", icon: "📸" },
-  { id: "Worldwide Export", label: "Worldwide Export & Hubs", icon: "🌍" },
-  { id: "SEO & Meta", label: "Global SEO & Meta", icon: "🚀" },
-  { id: "Workbench Videos", label: "Video Reels", icon: "🎬" },
-  { id: "Contact & Info", label: "Contact & Info", icon: "📞" },
-  { id: "Hero Section", label: "Hero Banner", icon: "👑" },
-  { id: "Trust Bar", label: "Trust Marquee", icon: "⚡" },
-  { id: "Manifesto", label: "Brand Story", icon: "📖" },
-  { id: "Philosophy", label: "Philosophy", icon: "🏛️" },
-  { id: "Process Steps", label: "Process Steps", icon: "⚙️" },
-  { id: "Showroom Gallery", label: "Showroom Gallery", icon: "🖼️" },
-  { id: "Reviews", label: "Client Reviews", icon: "⭐" },
-  { id: "FAQs", label: "FAQs Accordion", icon: "❓" },
-  { id: "Footer", label: "Footer", icon: "⚓" },
-] as const;
-
-type Tab = (typeof tabDefs)[number]["id"];
-
 const inputCls =
-  "w-full rounded-xl border border-ink/15 bg-white px-3.5 py-2.5 sm:px-4 sm:py-3 text-sm text-ink outline-none transition-all focus:border-gold-deep focus:ring-2 focus:ring-gold-deep/20 shadow-sm";
-const labelCls = "mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-ink/70";
+  "w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 outline-none transition-all focus:border-amber-500 focus:ring-2 focus:ring-amber-500/10 placeholder:text-slate-400";
+const labelCls = "mb-1 block text-[11px] font-bold uppercase tracking-wider text-slate-500";
 
 // Country Flag helper
 function getCountryFlag(code: string) {
@@ -185,7 +163,7 @@ async function compressImageFile(
   });
 }
 
-// --- IMAGE UPLOADER COMPONENT WITH AUTOMATIC COMPRESSION ---
+// --- CLEAN COMPACT IMAGE UPLOADER COMPONENT ---
 function ImageUploadField({
   value,
   onChange,
@@ -218,68 +196,61 @@ function ImageUploadField({
   };
 
   return (
-    <div className="rounded-2xl border border-dashed border-ink/20 bg-amber-50/30 p-3.5 sm:p-4 transition-colors hover:border-gold-deep">
-      <span className={labelCls}>{label}</span>
-
-      <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3 sm:gap-4">
-          {value && (
-            <div className="relative h-14 w-14 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-xl border border-ink/15 bg-white shadow-sm">
-              <Image
-                src={value}
-                alt="Preview"
-                fill
-                className="object-cover"
-                unoptimized={value.startsWith("data:")}
-              />
-            </div>
-          )}
-          <div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) handleFile(f);
-              }}
-            />
-            <button
-              type="button"
-              disabled={compressing}
-              onClick={() => fileInputRef.current?.click()}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-coal px-3.5 py-2 text-xs font-semibold text-ivory shadow-sm transition-transform active:scale-95 disabled:opacity-50 hover:bg-gold-deep"
-            >
-              {compressing ? "⚡ Compressing..." : "📁 Choose Image (Auto-Compress)"}
-            </button>
-            <p className="mt-1 text-[11px] text-ink/50">
-              Auto-compressed to modern WebP for top performance.
-            </p>
-          </div>
-        </div>
-
+    <div className="rounded-xl border border-gray-200/80 bg-slate-50/70 p-3">
+      <div className="flex items-center justify-between">
+        <span className={labelCls}>{label}</span>
         {stats && (
-          <div className="rounded-lg bg-emerald-100/90 px-2.5 py-1 text-[11px] font-semibold text-emerald-800">
-            {stats.orig} ➔ {stats.comp} ({stats.savings}% saved)
-          </div>
+          <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+            {stats.comp} ({stats.savings}% saved)
+          </span>
         )}
       </div>
 
-      <div className="mt-3">
-        <input
-          type="text"
-          className={cn(inputCls, "!py-2 text-xs text-ink/75")}
-          placeholder="Or enter path / URL (e.g. /photos/rs-092-02.jpg)"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        />
+      <div className="mt-2 flex items-center gap-3">
+        {value && (
+          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+            <Image
+              src={value}
+              alt="Preview"
+              fill
+              className="object-cover"
+              unoptimized={value.startsWith("data:")}
+            />
+          </div>
+        )}
+        <div className="flex-1 flex flex-wrap items-center gap-2">
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+            }}
+          />
+          <button
+            type="button"
+            disabled={compressing}
+            onClick={() => fileInputRef.current?.click()}
+            className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-amber-600 transition-colors disabled:opacity-50"
+          >
+            {compressing ? "Compressing..." : "📁 Choose Photo"}
+          </button>
+          <input
+            type="text"
+            className="flex-1 min-w-[140px] rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs text-slate-700 outline-none focus:border-amber-500"
+            placeholder="Or image path / URL"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        </div>
       </div>
     </div>
   );
 }
 
-// Reusable Top & Bottom Save Header Component
+// Clean Section Header with Save Button
 function SectionSaveBar({
   title,
   subtitle,
@@ -294,10 +265,10 @@ function SectionSaveBar({
   extraButton?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink/10 pb-4">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-200/80 pb-4 mb-6">
       <div>
-        <h2 className="font-display text-2xl text-ink">{title}</h2>
-        <p className="text-xs text-ink/50">{subtitle}</p>
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">{title}</h2>
+        <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>
       </div>
       <div className="flex items-center gap-2.5">
         {extraButton}
@@ -305,7 +276,7 @@ function SectionSaveBar({
           type="button"
           disabled={busy}
           onClick={onSave}
-          className="btn-sheen inline-flex items-center gap-1.5 rounded-full bg-gold px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-ink shadow-md active:scale-95 transition-transform hover:scale-[1.02] disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-amber-500 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400 disabled:opacity-50"
         >
           <span>{busy ? "Saving..." : "💾 Save Changes"}</span>
         </button>
@@ -321,11 +292,11 @@ export default function AdminApp() {
   const [data, setData] = useState<Data | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
-  const [tab, setTab] = useState<Tab>("Products");
+  const [tab, setTab] = useState<string>("Products");
   const [toast, setToast] = useState("");
   const [busy, setBusy] = useState(false);
 
-  // working copies
+  // working copy of overrides
   const [ov, setOv] = useState<Overrides>({});
 
   const load = useCallback(async () => {
@@ -449,7 +420,7 @@ export default function AdminApp() {
 
   if (state === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-ink font-display text-2xl italic text-gold">
+      <div className="flex min-h-screen items-center justify-center bg-slate-950 font-display text-2xl italic text-amber-400">
         Loading Rafiq Sons Atelier Studio...
       </div>
     );
@@ -457,12 +428,12 @@ export default function AdminApp() {
 
   if (state === "login") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-ink px-4">
+      <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
         <motion.form
           onSubmit={login}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-dark w-full max-w-md rounded-3xl border border-ivory/15 p-7 sm:p-10 shadow-2xl"
+          className="w-full max-w-md rounded-3xl border border-white/10 bg-slate-900 p-8 sm:p-10 shadow-2xl"
         >
           <div className="text-center">
             <Image
@@ -472,16 +443,16 @@ export default function AdminApp() {
               height={50}
               className="mx-auto h-11 w-auto"
             />
-            <p className="eyebrow mt-4 text-gold">Management Atelier</p>
-            <h1 className="font-display mt-2 text-2xl text-ivory">Admin Sign In</h1>
+            <p className="mt-4 text-xs font-bold uppercase tracking-widest text-amber-400">Management Studio</p>
+            <h1 className="mt-2 text-2xl font-bold text-white">Admin Sign In</h1>
           </div>
 
           <div className="mt-7">
-            <label className="text-xs uppercase tracking-wider text-ivory/60 font-semibold">Admin Password</label>
+            <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">Password</label>
             <input
               type="password"
-              className="mt-2 w-full rounded-xl border border-ivory/20 bg-coal px-4 py-3 text-sm text-ivory outline-none focus:border-gold"
-              placeholder="Enter your admin password"
+              className="mt-2 w-full rounded-xl border border-white/15 bg-slate-800 px-4 py-3 text-sm text-white outline-none focus:border-amber-400"
+              placeholder="Enter admin password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoFocus
@@ -491,7 +462,7 @@ export default function AdminApp() {
 
           <button
             type="submit"
-            className="btn-sheen mt-6 w-full rounded-full bg-gold py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-98"
+            className="mt-6 w-full rounded-xl bg-amber-400 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-lg active:scale-98 hover:bg-amber-300 transition-colors"
           >
             Access Studio
           </button>
@@ -501,11 +472,11 @@ export default function AdminApp() {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf8f4] pb-28 text-ink antialiased">
-      {/* Top Admin Header */}
-      <header className="sticky top-0 z-50 border-b border-ink/10 bg-white/95 px-4 py-3.5 sm:px-8 shadow-sm backdrop-blur-md">
+    <div className="min-h-screen bg-[#f8fafc] pb-28 text-slate-900 antialiased font-sans">
+      {/* Top Header */}
+      <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 px-4 py-3 sm:px-8 shadow-xs backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-3">
             <Image
               src="/brand/logo-wide.png"
               alt="Rafiq Sons Labels"
@@ -513,8 +484,8 @@ export default function AdminApp() {
               height={38}
               className="h-7 w-auto sm:h-8"
             />
-            <span className="hidden rounded-full bg-amber-100 px-3 py-1 text-[11px] font-bold text-amber-900 md:inline-block">
-              CMS Studio & Live Analytics
+            <span className="hidden rounded-full bg-slate-100 px-3 py-1 text-[11px] font-bold text-slate-700 md:inline-block">
+              CMS Studio
             </span>
           </div>
 
@@ -523,13 +494,13 @@ export default function AdminApp() {
               href="https://www.rafiqsonslabels.com"
               target="_blank"
               rel="noreferrer"
-              className="rounded-full border border-ink/20 px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold text-ink transition-colors hover:bg-ink hover:text-ivory"
+              className="rounded-xl border border-gray-200 px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
             >
-              Live Site ↗
+              Live Website ↗
             </a>
             <button
               onClick={logout}
-              className="rounded-full bg-ink/5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold text-ink/80 transition-colors hover:bg-red-50 hover:text-red-700"
+              className="rounded-xl bg-slate-100 px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-red-50 hover:text-red-700 transition-colors"
             >
               Sign Out
             </button>
@@ -537,292 +508,19 @@ export default function AdminApp() {
         </div>
       </header>
 
-      {/* Main Container */}
+      {/* Main Content Area */}
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-8">
-        {/* Sleek Mobile & Desktop Tabs Navigation */}
-        <AdminTabsNav
-          tabs={tabDefs}
-          activeTab={tab}
-          onSelectTab={(t) => setTab(t)}
-          newCount={newCount}
-        />
+        {/* Clean 2-Level Categorized Navigation */}
+        <AdminTabsNav activeTab={tab} onSelectTab={(t) => setTab(t)} newCount={newCount} />
 
-        {/* Tab Content Panels */}
-        <div>
-          {/* TAB 1: LIVE ANALYTICS */}
-          {tab === "Live Analytics" && (
-            <div className="space-y-6">
-              {/* Top Stat Cards */}
-              <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
-                <div className="rounded-2xl border border-ink/10 bg-white p-4 sm:p-6 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ink/50">Live Online</span>
-                    <span className="flex h-3 w-3 relative">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#25D366] opacity-75" />
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-[#25D366]" />
-                    </span>
-                  </div>
-                  <p className="font-display mt-2 text-3xl sm:text-4xl font-bold text-ink">
-                    {analytics?.liveVisitors ?? 1}
-                  </p>
-                  <p className="mt-1 text-[11px] text-[#128C7E] font-medium">Active on site now</p>
-                </div>
-
-                <div className="rounded-2xl border border-ink/10 bg-white p-4 sm:p-6 shadow-sm">
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ink/50">24h Views</span>
-                  <p className="font-display mt-2 text-3xl sm:text-4xl font-bold text-ink">
-                    {analytics?.views24h ?? 0}
-                  </p>
-                  <p className="mt-1 text-[11px] text-ink/50">
-                    Unique: {analytics?.unique24h ?? 0}
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-ink/10 bg-white p-4 sm:p-6 shadow-sm">
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ink/50">Total Views</span>
-                  <p className="font-display mt-2 text-3xl sm:text-4xl font-bold text-gold-deep">
-                    {analytics?.totalViews ?? 0}
-                  </p>
-                  <p className="mt-1 text-[11px] text-ink/50">Lifetime pageviews</p>
-                </div>
-
-                <div className="rounded-2xl border border-ink/10 bg-white p-4 sm:p-6 shadow-sm">
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-ink/50">Total Visitors</span>
-                  <p className="font-display mt-2 text-3xl sm:text-4xl font-bold text-ink">
-                    {analytics?.uniqueVisitors ?? 0}
-                  </p>
-                  <p className="mt-1 text-[11px] text-ink/50">Distinct devices</p>
-                </div>
-              </div>
-
-              {/* Country Breakdown & Top Pages Grid */}
-              <div className="grid gap-6 lg:grid-cols-2">
-                {/* Country Breakdown */}
-                <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-                  <div className="flex items-center justify-between border-b border-ink/10 pb-4">
-                    <div>
-                      <h3 className="font-display text-xl text-ink">Traffic by Country</h3>
-                      <p className="text-xs text-ink/50">Geographic origin of visitors</p>
-                    </div>
-                    <button
-                      onClick={loadAnalytics}
-                      className="rounded-lg border border-ink/20 px-3 py-1 text-xs hover:bg-ink/5"
-                    >
-                      {analyticsLoading ? "..." : "Refresh"}
-                    </button>
-                  </div>
-
-                  <div className="mt-4 divide-y divide-ink/10">
-                    {analytics?.countryStats && analytics.countryStats.length > 0 ? (
-                      analytics.countryStats.map((c, idx) => {
-                        const total = analytics.totalViews || 1;
-                        const pct = Math.round((c.count / total) * 100);
-                        return (
-                          <div key={idx} className="flex items-center justify-between py-3">
-                            <span className="font-semibold text-sm text-ink">{getCountryFlag(c.country)}</span>
-                            <div className="flex items-center gap-3">
-                              <div className="w-20 sm:w-28 h-2 rounded-full bg-amber-100 overflow-hidden">
-                                <div className="h-full bg-gold-deep rounded-full" style={{ width: `${Math.min(100, Math.max(10, pct * 2))}%` }} />
-                              </div>
-                              <span className="font-display text-xs sm:text-sm font-bold text-ink min-w-14 text-right">{c.count} views</span>
-                            </div>
-                          </div>
-                        );
-                      })
-                    ) : (
-                      <p className="py-6 text-center text-xs text-ink/50">Collecting live traffic...</p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Top Visited Pages & Devices */}
-                <div className="space-y-6">
-                  <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-                    <h3 className="font-display text-xl text-ink border-b border-ink/10 pb-4">Top Pages</h3>
-                    <div className="mt-4 divide-y divide-ink/10">
-                      {analytics?.topPages && analytics.topPages.length > 0 ? (
-                        analytics.topPages.map((p, idx) => (
-                          <div key={idx} className="flex items-center justify-between py-2.5 text-xs">
-                            <span className="font-mono text-ink/80 truncate max-w-[200px]">{p.path}</span>
-                            <span className="font-bold text-ink">{p.count} views</span>
-                          </div>
-                        ))
-                      ) : (
-                        <p className="py-4 text-center text-xs text-ink/50">Collecting page stats...</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-                    <h3 className="font-display text-xl text-ink border-b border-ink/10 pb-4">Device Breakdown</h3>
-                    <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3 text-center">
-                      {analytics?.deviceStats?.map((d) => (
-                        <div key={d.device} className="rounded-xl bg-amber-50/50 p-3">
-                          <p className="text-[10px] uppercase tracking-wider text-ink/50 font-bold">{d.device}</p>
-                          <p className="font-display mt-1 text-xl sm:text-2xl font-bold text-ink">{d.count}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Live Recent Visitors Stream */}
-              <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-                <div className="flex items-center justify-between border-b border-ink/10 pb-4">
-                  <div>
-                    <h3 className="font-display text-xl text-ink">Live Visitor Stream</h3>
-                    <p className="text-xs text-ink/50">Incoming visitor sessions log</p>
-                  </div>
-                  <span className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                    Active
-                  </span>
-                </div>
-
-                <div className="mt-4 overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead>
-                      <tr className="border-b border-ink/10 text-ink/50 uppercase tracking-wider">
-                        <th className="pb-3 font-semibold">Time</th>
-                        <th className="pb-3 font-semibold">Location</th>
-                        <th className="pb-3 font-semibold">Page</th>
-                        <th className="pb-3 font-semibold">Device</th>
-                        <th className="pb-3 font-semibold">Source</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-ink/10">
-                      {analytics?.recentVisits && analytics.recentVisits.length > 0 ? (
-                        analytics.recentVisits.map((v) => (
-                          <tr key={v.id} className="hover:bg-amber-50/20">
-                            <td className="py-3 text-ink/60 whitespace-nowrap">
-                              {new Date(v.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                            </td>
-                            <td className="py-3 font-semibold text-ink whitespace-nowrap">
-                              {getCountryFlag(v.country)} {v.city && v.city !== "Unknown" ? `(${v.city})` : ""}
-                            </td>
-                            <td className="py-3 font-mono text-ink/75">{v.path}</td>
-                            <td className="py-3 capitalize text-ink/70">{v.device}</td>
-                            <td className="py-3 text-ink/60">{v.referrer || "Direct"}</td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan={5} className="py-6 text-center text-ink/50">No recent visitor logs yet.</td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 2: INQUIRIES */}
-          {tab === "Enquiries" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <div className="flex items-center justify-between border-b border-ink/10 pb-4">
-                <div>
-                  <h2 className="font-display text-2xl text-ink">Customer Inquiries</h2>
-                  <p className="text-xs text-ink/50">Quote requests submitted by clients</p>
-                </div>
-                <button
-                  onClick={load}
-                  className="rounded-lg border border-ink/20 px-3 py-1.5 text-xs font-semibold hover:bg-ink/5"
-                >
-                  Refresh
-                </button>
-              </div>
-
-              {leads.length === 0 ? (
-                <div className="py-16 text-center text-sm text-ink/45">No inquiries yet.</div>
-              ) : (
-                <div className="mt-6 divide-y divide-ink/10">
-                  {leads.map((l) => (
-                    <div key={l.id} className="py-5">
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <span
-                            className={cn(
-                              "rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase",
-                              l.status === "new" ? "bg-amber-100 text-amber-900 ring-1 ring-amber-300" : "bg-emerald-100 text-emerald-900"
-                            )}
-                          >
-                            {l.status}
-                          </span>
-                          <span className="font-display text-lg font-semibold text-ink">{l.name || "Anonymous"}</span>
-                          {l.meta?.brand && (
-                            <span className="text-xs text-ink/60">({l.meta.brand})</span>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          {l.phone && (
-                            <a
-                              href={`https://wa.me/${l.phone.replace(/[^0-9]/g, "")}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="rounded-full bg-[#25D366]/15 px-3 py-1 text-xs font-semibold text-[#128C7E] hover:bg-[#25D366]/30"
-                            >
-                              WhatsApp Reply ↗
-                            </a>
-                          )}
-                          <button
-                            onClick={async () => {
-                              await post({
-                                action: "lead-status",
-                                id: l.id,
-                                status: l.status === "new" ? "replied" : "new",
-                              });
-                              load();
-                            }}
-                            className="rounded-full border border-ink/15 px-3 py-1 text-xs text-ink/70 hover:bg-ink/5"
-                          >
-                            Mark as {l.status === "new" ? "Replied" : "New"}
-                          </button>
-                          <button
-                            onClick={async () => {
-                              if (confirm("Delete this inquiry?")) {
-                                await post({ action: "delete-lead", id: l.id });
-                                load();
-                              }
-                            }}
-                            className="rounded-full px-2 text-xs text-red-600 hover:bg-red-50"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="mt-3 grid gap-2 rounded-xl bg-amber-50/40 p-3.5 text-xs sm:grid-cols-3">
-                        <div>
-                          <span className="font-semibold text-ink/60">Product:</span> {l.product || "N/A"}
-                        </div>
-                        <div>
-                          <span className="font-semibold text-ink/60">Quantity:</span> {l.quantity || "N/A"}
-                        </div>
-                        <div>
-                          <span className="font-semibold text-ink/60">Contact:</span> {l.phone || l.email || l.meta?.contact || "N/A"}
-                        </div>
-                        {l.message && (
-                          <div className="sm:col-span-3">
-                            <span className="font-semibold text-ink/60">Notes / Artwork:</span> {l.message}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* TAB 3: PRODUCTS CATALOG */}
+        {/* Tab Panels */}
+        <div className="rounded-2xl border border-gray-200/90 bg-white p-5 sm:p-7 shadow-xs">
+          {/* TAB: PRODUCTS CATALOG (WITH FULL TURNAROUND & MOQ EDITING) */}
           {tab === "Products" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+            <div>
               <SectionSaveBar
                 title="Products Catalog"
-                subtitle="Add, edit, reorder product details and photos (updates live website)"
+                subtitle="Manage product names, turnarounds, minimum orders, descriptions, and photos"
                 busy={busy}
                 onSave={() => saveOverrides({ ...ov, products })}
                 extraButton={
@@ -831,37 +529,45 @@ export default function AdminApp() {
                     onClick={() => {
                       const newProd: Product = {
                         slug: "custom-product-" + Date.now(),
-                        name: "New Custom Product",
+                        name: "New Custom Item",
                         tag: "Bespoke",
-                        description: "High density custom manufactured garment trims and labels.",
+                        description: "High density custom garment trims and labels.",
                         image: "/photos/rs-092-02.jpg",
                         detail: "Custom materials, dimensions, and finishing.",
                         from: "0.10",
+                        turnaround: "7 – 10 working days",
+                        moq: "Starts from 100 pcs",
+                        material: "Custom fabric or board",
+                        colors: "Full color",
+                        folds: "Standard fold",
                         guessedPrice: false,
                       };
                       const updated = [newProd, ...products];
-                      saveOverrides({ ...ov, products: updated }, "Product added! Live website updated.");
+                      saveOverrides({ ...ov, products: updated }, "Product added!");
                     }}
-                    className="rounded-full bg-coal px-4 py-2.5 text-xs font-semibold text-ivory hover:bg-gold-deep transition-colors shadow-sm"
+                    className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs"
                   >
                     + Add New Product
                   </button>
                 }
               />
 
-              <div className="mt-6 space-y-6">
+              <div className="space-y-6">
                 {products.map((p, idx) => (
-                  <div key={p.slug || idx} className="rounded-2xl border border-ink/15 bg-amber-50/20 p-4 sm:p-5">
-                    <div className="flex items-center justify-between border-b border-ink/10 pb-3">
-                      <span className="font-display text-lg font-bold text-ink">
-                        #{idx + 1} {p.name}
-                      </span>
-                      <div className="flex items-center gap-3">
+                  <div key={p.slug || idx} className="rounded-2xl border border-gray-200/90 bg-slate-50/50 p-4 sm:p-6 transition-all hover:border-gray-300">
+                    <div className="flex items-center justify-between border-b border-gray-200/80 pb-3">
+                      <div className="flex items-center gap-2.5">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-amber-400 text-xs font-bold text-slate-950">
+                          {idx + 1}
+                        </span>
+                        <span className="text-base font-bold text-slate-900">{p.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
                         <button
                           type="button"
                           disabled={busy}
                           onClick={() => saveOverrides({ ...ov, products }, `Saved "${p.name}"!`)}
-                          className="rounded-full bg-coal/10 px-3 py-1 text-xs font-bold text-ink hover:bg-gold hover:text-ink transition-colors"
+                          className="rounded-lg bg-white border border-gray-200 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-amber-400 hover:border-amber-400 transition-colors shadow-xs"
                         >
                           Save Product ✓
                         </button>
@@ -873,15 +579,15 @@ export default function AdminApp() {
                               saveOverrides({ ...ov, products: filtered }, `Removed "${p.name}"`);
                             }
                           }}
-                          className="text-xs text-red-600 hover:underline"
+                          className="text-xs text-red-600 hover:underline px-2 py-1"
                         >
                           Delete
                         </button>
                       </div>
                     </div>
 
-                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                      <div>
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                      <div className="lg:col-span-2">
                         <label className={labelCls}>Product Name</label>
                         <input
                           className={inputCls}
@@ -905,32 +611,8 @@ export default function AdminApp() {
                           }}
                         />
                       </div>
-                      <div className="sm:col-span-2">
-                        <label className={labelCls}>Description</label>
-                        <textarea
-                          className={cn(inputCls, "min-h-[3.5rem]")}
-                          value={p.description}
-                          onChange={(e) => {
-                            const updated = [...products];
-                            updated[idx] = { ...p, description: e.target.value };
-                            setOv({ ...ov, products: updated });
-                          }}
-                        />
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label className={labelCls}>Craft Specifications</label>
-                        <input
-                          className={inputCls}
-                          value={p.detail}
-                          onChange={(e) => {
-                            const updated = [...products];
-                            updated[idx] = { ...p, detail: e.target.value };
-                            setOv({ ...ov, products: updated });
-                          }}
-                        />
-                      </div>
                       <div>
-                        <label className={labelCls}>Guide Price From ($ / piece)</label>
+                        <label className={labelCls}>Price From ($)</label>
                         <input
                           className={inputCls}
                           value={p.from || ""}
@@ -941,11 +623,69 @@ export default function AdminApp() {
                           }}
                         />
                       </div>
+
+                      {/* TURNAROUND & MINIMUM ORDER FIELDS (REQUESTED IN USER ATTACHMENT) */}
+                      <div className="lg:col-span-2 bg-amber-50/70 p-3 rounded-xl border border-amber-200/60">
+                        <label className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-amber-900">
+                          ⏱️ Turnaround / Making Time
+                        </label>
+                        <input
+                          className={cn(inputCls, "border-amber-200 focus:border-amber-500")}
+                          placeholder="e.g. 7 – 10 working days (or 8 to 10 Days Making Time)"
+                          value={p.turnaround || ""}
+                          onChange={(e) => {
+                            const updated = [...products];
+                            updated[idx] = { ...p, turnaround: e.target.value };
+                            setOv({ ...ov, products: updated });
+                          }}
+                        />
+                      </div>
+
+                      <div className="lg:col-span-2 bg-amber-50/70 p-3 rounded-xl border border-amber-200/60">
+                        <label className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-amber-900">
+                          📦 Minimum Order (MOQ)
+                        </label>
+                        <input
+                          className={cn(inputCls, "border-amber-200 focus:border-amber-500")}
+                          placeholder="e.g. Starts from 100 pcs (bulk savings at 500+)"
+                          value={p.moq || ""}
+                          onChange={(e) => {
+                            const updated = [...products];
+                            updated[idx] = { ...p, moq: e.target.value };
+                            setOv({ ...ov, products: updated });
+                          }}
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2 lg:col-span-4">
+                        <label className={labelCls}>Short Description</label>
+                        <textarea
+                          className={cn(inputCls, "min-h-[3rem] resize-none")}
+                          value={p.description}
+                          onChange={(e) => {
+                            const updated = [...products];
+                            updated[idx] = { ...p, description: e.target.value };
+                            setOv({ ...ov, products: updated });
+                          }}
+                        />
+                      </div>
+                      <div className="sm:col-span-2 lg:col-span-4">
+                        <label className={labelCls}>Technical Detail Note</label>
+                        <input
+                          className={inputCls}
+                          value={p.detail}
+                          onChange={(e) => {
+                            const updated = [...products];
+                            updated[idx] = { ...p, detail: e.target.value };
+                            setOv({ ...ov, products: updated });
+                          }}
+                        />
+                      </div>
                     </div>
 
                     <div className="mt-4">
                       <ImageUploadField
-                        label={`Upload Photo for ${p.name}`}
+                        label={`Photo for ${p.name}`}
                         value={p.image}
                         onChange={(val) => {
                           const updated = [...products];
@@ -958,26 +698,25 @@ export default function AdminApp() {
                 ))}
               </div>
 
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => saveOverrides({ ...ov, products })}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
                 >
-                  {busy ? "Saving Changes..." : "💾 Save All Products"}
+                  {busy ? "Saving..." : "💾 Save All Products"}
                 </button>
               </div>
             </div>
           )}
 
-          {/* TAB 4: SHOWCASE PHOTO CAROUSEL */}
+          {/* TAB: SHOWCASE CAROUSEL */}
           {tab === "Showcase Carousel" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+            <div>
               <SectionSaveBar
                 title="Product Photos Carousel"
-                subtitle="Macro detail slider displayed under Collections section"
+                subtitle="Macro detail slider displayed below products collection"
                 busy={busy}
                 onSave={() => saveOverrides({ ...ov, carousel: carouselList })}
                 extraButton={
@@ -989,23 +728,23 @@ export default function AdminApp() {
                         image: "/photos/rs-092-02.jpg",
                         title: "Custom Craft Closeup",
                         tag: "Macro Detail",
-                        material: "Premium high-density weave & finishing",
+                        material: "High density weave & finishing",
                       };
                       const updated = [...carouselList, newItem];
                       saveOverrides({ ...ov, carousel: updated }, "Carousel photo added!");
                     }}
-                    className="rounded-full bg-coal px-4 py-2.5 text-xs font-semibold text-ivory hover:bg-gold-deep transition-colors shadow-sm"
+                    className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs"
                   >
-                    + Add Carousel Photo
+                    + Add Slide Photo
                   </button>
                 }
               />
 
-              <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {carouselList.map((c, idx) => (
-                  <div key={c.id || idx} className="rounded-2xl border border-ink/15 bg-amber-50/20 p-4">
-                    <div className="flex items-center justify-between border-b border-ink/10 pb-2">
-                      <span className="font-bold text-xs uppercase tracking-wider text-ink">Photo #{idx + 1}</span>
+                  <div key={c.id || idx} className="rounded-xl border border-gray-200 bg-slate-50/50 p-4">
+                    <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+                      <span className="font-bold text-xs text-slate-700">Slide #{idx + 1}</span>
                       <button
                         type="button"
                         onClick={() => {
@@ -1020,7 +759,7 @@ export default function AdminApp() {
                       </button>
                     </div>
 
-                    <div className="mt-3 relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-ink/10 bg-coal">
+                    <div className="mt-3 relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-gray-200 bg-white">
                       <Image
                         src={c.image}
                         alt={c.title}
@@ -1030,7 +769,7 @@ export default function AdminApp() {
                       />
                     </div>
 
-                    <div className="mt-4 space-y-3">
+                    <div className="mt-3 space-y-2.5">
                       <div>
                         <label className={labelCls}>Photo Title</label>
                         <input
@@ -1044,7 +783,7 @@ export default function AdminApp() {
                         />
                       </div>
                       <div>
-                        <label className={labelCls}>Craft Badge Tag</label>
+                        <label className={labelCls}>Craft Badge</label>
                         <input
                           className={inputCls}
                           value={c.tag}
@@ -1056,7 +795,7 @@ export default function AdminApp() {
                         />
                       </div>
                       <div>
-                        <label className={labelCls}>Material / Craft Note</label>
+                        <label className={labelCls}>Material Note</label>
                         <input
                           className={inputCls}
                           value={c.material || ""}
@@ -1069,7 +808,7 @@ export default function AdminApp() {
                       </div>
 
                       <ImageUploadField
-                        label="Change Carousel Image"
+                        label="Change Image"
                         value={c.image}
                         onChange={(val) => {
                           const updated = [...carouselList];
@@ -1082,1058 +821,25 @@ export default function AdminApp() {
                 ))}
               </div>
 
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => saveOverrides({ ...ov, carousel: carouselList })}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
                 >
-                  {busy ? "Saving..." : "💾 Save All Carousel Photos"}
+                  {busy ? "Saving..." : "💾 Save Carousel"}
                 </button>
               </div>
             </div>
           )}
 
-          {/* TAB: WORLDWIDE EXPORT & HUBS */}
-          {tab === "Worldwide Export" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <SectionSaveBar
-                title="Worldwide Export & Manufacturing"
-                subtitle="Manage shipping destinations, express courier timelines, and technical weave specs"
-                busy={busy}
-                onSave={() => saveOverrides({ ...ov, globalExport })}
-                extraButton={
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newRegion: ExportRegion = {
-                        id: "region-" + Date.now(),
-                        name: "New International Region",
-                        flag: "🌐",
-                        hubs: "Major fashion capitals & apparel hubs",
-                        timeline: "3 – 5 Business Days (Air Express)",
-                        popular: ["Custom Woven Damask Labels", "Luxury Embossed Hang Tags"],
-                        note: "Bespoke sampling and door-to-door courier clearance.",
-                      };
-                      const updated = [...globalExport.regions, newRegion];
-                      saveOverrides(
-                        { ...ov, globalExport: { ...globalExport, regions: updated } },
-                        "New export region added!"
-                      );
-                    }}
-                    className="rounded-full bg-coal px-4 py-2.5 text-xs font-semibold text-ivory hover:bg-gold-deep transition-colors shadow-sm"
-                  >
-                    + Add New Region
-                  </button>
-                }
-              />
-
-              {/* Section Header & Subtitle */}
-              <div className="mt-6 rounded-2xl border border-ink/15 bg-amber-50/20 p-4 sm:p-5">
-                <h3 className="font-display text-lg font-bold text-ink border-b border-ink/10 pb-2">
-                  Section Headers & Headlines
-                </h3>
-                <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                  <div className="sm:col-span-2">
-                    <label className={labelCls}>Section Eyebrow</label>
-                    <input
-                      className={inputCls}
-                      value={globalExport.eyebrow}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          globalExport: { ...globalExport, eyebrow: e.target.value },
-                        })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Title Line 1</label>
-                    <input
-                      className={inputCls}
-                      value={globalExport.titleLine1}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          globalExport: { ...globalExport, titleLine1: e.target.value },
-                        })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Title Line 2 (Gold Accent)</label>
-                    <input
-                      className={inputCls}
-                      value={globalExport.titleLine2}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          globalExport: { ...globalExport, titleLine2: e.target.value },
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className={labelCls}>Subtitle Description</label>
-                    <textarea
-                      className={cn(inputCls, "min-h-[4rem]")}
-                      value={globalExport.sub}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          globalExport: { ...globalExport, sub: e.target.value },
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Regions Manager */}
-              <div className="mt-8 space-y-6">
-                <div className="flex items-center justify-between border-b border-ink/10 pb-2">
-                  <h3 className="font-display text-xl text-ink">International Delivery Destinations</h3>
-                  <span className="text-xs text-ink/50">{globalExport.regions.length} Active Regions</span>
-                </div>
-
-                {globalExport.regions.map((reg, rIdx) => (
-                  <div key={reg.id || rIdx} className="rounded-2xl border border-ink/15 bg-amber-50/30 p-4 sm:p-5">
-                    <div className="flex items-center justify-between border-b border-ink/10 pb-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">{reg.flag}</span>
-                        <span className="font-display text-lg font-bold text-ink">
-                          {reg.name}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          disabled={busy}
-                          onClick={() =>
-                            saveOverrides({ ...ov, globalExport }, `Saved "${reg.name}"!`)
-                          }
-                          className="rounded-full bg-coal/10 px-3 py-1 text-xs font-bold text-ink hover:bg-gold hover:text-ink transition-colors"
-                        >
-                          Save Region ✓
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (confirm(`Delete region "${reg.name}"?`)) {
-                              const updated = globalExport.regions.filter((_, i) => i !== rIdx);
-                              saveOverrides(
-                                { ...ov, globalExport: { ...globalExport, regions: updated } },
-                                `Removed "${reg.name}"`
-                              );
-                            }
-                          }}
-                          className="text-xs text-red-600 hover:underline"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 grid gap-4 sm:grid-cols-3">
-                      <div>
-                        <label className={labelCls}>Region Name</label>
-                        <input
-                          className={inputCls}
-                          value={reg.name}
-                          onChange={(e) => {
-                            const updated = [...globalExport.regions];
-                            updated[rIdx] = { ...reg, name: e.target.value };
-                            setOv({
-                              ...ov,
-                              globalExport: { ...globalExport, regions: updated },
-                            });
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <label className={labelCls}>Flag / Emojis</label>
-                        <input
-                          className={inputCls}
-                          value={reg.flag}
-                          onChange={(e) => {
-                            const updated = [...globalExport.regions];
-                            updated[rIdx] = { ...reg, flag: e.target.value };
-                            setOv({
-                              ...ov,
-                              globalExport: { ...globalExport, regions: updated },
-                            });
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <label className={labelCls}>Express Timeline</label>
-                        <input
-                          className={inputCls}
-                          value={reg.timeline}
-                          onChange={(e) => {
-                            const updated = [...globalExport.regions];
-                            updated[rIdx] = { ...reg, timeline: e.target.value };
-                            setOv({
-                              ...ov,
-                              globalExport: { ...globalExport, regions: updated },
-                            });
-                          }}
-                        />
-                      </div>
-                      <div className="sm:col-span-3">
-                        <label className={labelCls}>Key Delivery Hubs</label>
-                        <input
-                          className={inputCls}
-                          value={reg.hubs}
-                          onChange={(e) => {
-                            const updated = [...globalExport.regions];
-                            updated[rIdx] = { ...reg, hubs: e.target.value };
-                            setOv({
-                              ...ov,
-                              globalExport: { ...globalExport, regions: updated },
-                            });
-                          }}
-                        />
-                      </div>
-                      <div className="sm:col-span-3">
-                        <label className={labelCls}>Regional Note / Market Capabilities</label>
-                        <textarea
-                          className={cn(inputCls, "min-h-[3.5rem]")}
-                          value={reg.note}
-                          onChange={(e) => {
-                            const updated = [...globalExport.regions];
-                            updated[rIdx] = { ...reg, note: e.target.value };
-                            setOv({
-                              ...ov,
-                              globalExport: { ...globalExport, regions: updated },
-                            });
-                          }}
-                        />
-                      </div>
-                      <div className="sm:col-span-3">
-                        <label className={labelCls}>Most Popular Crafts (Comma-separated)</label>
-                        <input
-                          className={inputCls}
-                          value={reg.popular?.join(", ") || ""}
-                          onChange={(e) => {
-                            const updated = [...globalExport.regions];
-                            updated[rIdx] = {
-                              ...reg,
-                              popular: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
-                            };
-                            setOv({
-                              ...ov,
-                              globalExport: { ...globalExport, regions: updated },
-                            });
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Bottom CTA Box Edit */}
-              <div className="mt-8 rounded-2xl border border-gold/30 bg-gold/10 p-5">
-                <h4 className="font-display text-lg text-ink">Bottom Sample Request Banner</h4>
-                <div className="mt-3 grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className={labelCls}>Banner Heading</label>
-                    <input
-                      className={inputCls}
-                      value={globalExport.ctaHeading || ""}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          globalExport: { ...globalExport, ctaHeading: e.target.value },
-                        })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Button Text</label>
-                    <input
-                      className={inputCls}
-                      value={globalExport.ctaButton || ""}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          globalExport: { ...globalExport, ctaButton: e.target.value },
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className={labelCls}>Banner Subtitle</label>
-                    <input
-                      className={inputCls}
-                      value={globalExport.ctaSub || ""}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          globalExport: { ...globalExport, ctaSub: e.target.value },
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides({ ...ov, globalExport })}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
-                >
-                  {busy ? "Saving..." : "💾 Save Worldwide Export Settings"}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB: GLOBAL SEO & META TAGS */}
-          {tab === "SEO & Meta" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <SectionSaveBar
-                title="Global SEO & Search Engine Metadata"
-                subtitle="Configure Google snippet title, description, targeted worldwide keywords and social share cards"
-                busy={busy}
-                onSave={() => saveOverrides({ ...ov, seoSettings })}
-              />
-
-              <div className="mt-6 space-y-5">
-                <div>
-                  <label className={labelCls}>Website Meta Title (Shows in Google & Browser Tabs)</label>
-                  <input
-                    className={inputCls}
-                    value={seoSettings.metaTitle || ""}
-                    onChange={(e) =>
-                      setOv({
-                        ...ov,
-                        seoSettings: { ...seoSettings, metaTitle: e.target.value },
-                      })
-                    }
-                  />
-                  <p className="mt-1 text-[11px] text-ink/50">Recommended length: 50-60 characters.</p>
-                </div>
-
-                <div>
-                  <label className={labelCls}>Website Meta Description (Shows below title on Google)</label>
-                  <textarea
-                    className={cn(inputCls, "min-h-[5rem]")}
-                    value={seoSettings.metaDescription || ""}
-                    onChange={(e) =>
-                      setOv({
-                        ...ov,
-                        seoSettings: { ...seoSettings, metaDescription: e.target.value },
-                      })
-                    }
-                  />
-                  <p className="mt-1 text-[11px] text-ink/50">Recommended length: 150-160 characters.</p>
-                </div>
-
-                <div>
-                  <label className={labelCls}>Target International B2B Keywords (Comma-separated)</label>
-                  <textarea
-                    className={cn(inputCls, "min-h-[4.5rem]")}
-                    value={seoSettings.targetKeywords || ""}
-                    onChange={(e) =>
-                      setOv({
-                        ...ov,
-                        seoSettings: { ...seoSettings, targetKeywords: e.target.value },
-                      })
-                    }
-                  />
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className={labelCls}>Google Rich Snippet Review Rating (Out of 5.0)</label>
-                    <input
-                      className={inputCls}
-                      value={seoSettings.ratingValue || "4.9"}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          seoSettings: { ...seoSettings, ratingValue: e.target.value },
-                        })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Total Verified Reviews Count</label>
-                    <input
-                      className={inputCls}
-                      value={seoSettings.reviewCount || "186"}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          seoSettings: { ...seoSettings, reviewCount: e.target.value },
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-4">
-                  <ImageUploadField
-                    label="OpenGraph / Social Media Share Preview Image"
-                    value={seoSettings.ogImage || "/photos/rs-092-02.jpg"}
-                    onChange={(val) =>
-                      setOv({
-                        ...ov,
-                        seoSettings: { ...seoSettings, ogImage: val },
-                      })
-                    }
-                  />
-                </div>
-              </div>
-
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides({ ...ov, seoSettings })}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
-                >
-                  {busy ? "Saving..." : "💾 Save Global SEO Settings"}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 5: WORKBENCH VIDEOS / REELS */}
-          {tab === "Workbench Videos" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <SectionSaveBar
-                title="Workbench Video Reels"
-                subtitle="Manage video clips, auto-compressed poster images and titles"
-                busy={busy}
-                onSave={() => saveOverrides({ ...ov, reels: reelsList })}
-                extraButton={
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newReel = {
-                        src: "/videos/rs-003-video.mp4",
-                        poster: "/photos/rs-003-cover.jpg",
-                        label: "Custom Craft Reel",
-                      };
-                      const updated = [...reelsList, newReel];
-                      saveOverrides({ ...ov, reels: updated }, "Added new reel!");
-                    }}
-                    className="rounded-full bg-coal px-4 py-2.5 text-xs font-semibold text-ivory hover:bg-gold-deep transition-colors shadow-sm"
-                  >
-                    + Add New Video Reel
-                  </button>
-                }
-              />
-
-              <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {reelsList.map((r, idx) => (
-                  <div key={idx} className="rounded-2xl border border-ink/15 bg-amber-50/20 p-4">
-                    <div className="flex items-center justify-between border-b border-ink/10 pb-2">
-                      <span className="font-bold text-xs uppercase tracking-wider text-ink">Reel #{idx + 1}</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (confirm(`Remove Reel #${idx + 1}?`)) {
-                            const updated = reelsList.filter((_, i) => i !== idx);
-                            saveOverrides({ ...ov, reels: updated }, "Removed reel");
-                          }
-                        }}
-                        className="text-xs text-red-600 hover:underline"
-                      >
-                        Remove
-                      </button>
-                    </div>
-
-                    <div className="mt-3 relative aspect-[9/16] max-h-56 w-full overflow-hidden rounded-xl bg-coal shadow-inner">
-                      <video
-                        src={r.src}
-                        poster={r.poster}
-                        controls
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-
-                    <div className="mt-4 space-y-3">
-                      <div>
-                        <label className={labelCls}>Video Title / Label</label>
-                        <input
-                          className={inputCls}
-                          value={r.label}
-                          onChange={(e) => {
-                            const updated = [...reelsList];
-                            updated[idx] = { ...r, label: e.target.value };
-                            setOv({ ...ov, reels: updated });
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <label className={labelCls}>Video File URL / Path</label>
-                        <input
-                          className={inputCls}
-                          value={r.src}
-                          placeholder="/videos/rs-003-video.mp4"
-                          onChange={(e) => {
-                            const updated = [...reelsList];
-                            updated[idx] = { ...r, src: e.target.value };
-                            setOv({ ...ov, reels: updated });
-                          }}
-                        />
-                      </div>
-
-                      <ImageUploadField
-                        label="Video Poster Image"
-                        value={r.poster}
-                        onChange={(val) => {
-                          const updated = [...reelsList];
-                          updated[idx] = { ...r, poster: val };
-                          setOv({ ...ov, reels: updated });
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides({ ...ov, reels: reelsList })}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
-                >
-                  {busy ? "Saving..." : "💾 Save All Video Reels"}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 6: CONTACT & COMPANY INFO */}
-          {tab === "Contact & Info" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <SectionSaveBar
-                title="Company & Contact Details"
-                subtitle="Update phone, WhatsApp, Instagram, location and legal info"
-                busy={busy}
-                onSave={() => saveOverrides(ov)}
-              />
-
-              <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className={labelCls}>Company Name</label>
-                  <input
-                    className={inputCls}
-                    value={site.name}
-                    onChange={(e) => setOv({ ...ov, site: { ...ov.site, name: e.target.value } })}
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>Short Brand Name</label>
-                  <input
-                    className={inputCls}
-                    value={site.shortName}
-                    onChange={(e) => setOv({ ...ov, site: { ...ov.site, shortName: e.target.value } })}
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>Phone Number (Display Format)</label>
-                  <input
-                    className={inputCls}
-                    value={site.phoneDisplay}
-                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, phoneDisplay: e.target.value } })}
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>WhatsApp URL Link</label>
-                  <input
-                    className={inputCls}
-                    value={site.whatsapp}
-                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, whatsapp: e.target.value } })}
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>Email Address</label>
-                  <input
-                    className={inputCls}
-                    value={site.email}
-                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, email: e.target.value } })}
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>Instagram URL</label>
-                  <input
-                    className={inputCls}
-                    value={site.instagram}
-                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, instagram: e.target.value } })}
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <label className={labelCls}>Location & Worldwide Note</label>
-                  <input
-                    className={inputCls}
-                    value={site.location}
-                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, location: e.target.value } })}
-                  />
-                </div>
-              </div>
-
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides(ov)}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
-                >
-                  {busy ? "Saving..." : "💾 Save Contact Info"}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 7: HERO SECTION */}
-          {tab === "Hero Section" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <SectionSaveBar
-                title="Hero Banner Header"
-                subtitle="Top headlines, gold accent text, video and primary call-to-actions"
-                busy={busy}
-                onSave={() => saveOverrides(ov)}
-              />
-
-              <div className="mt-6 space-y-4">
-                <div>
-                  <label className={labelCls}>Eyebrow Badge</label>
-                  <input
-                    className={inputCls}
-                    value={hero.eyebrow}
-                    onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, eyebrow: e.target.value } })}
-                  />
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className={labelCls}>Headline Line 1</label>
-                    <input
-                      className={inputCls}
-                      value={hero.line1}
-                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, line1: e.target.value } })}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Headline Line 2 (Gold Gradient)</label>
-                    <input
-                      className={inputCls}
-                      value={hero.line2}
-                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, line2: e.target.value } })}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className={labelCls}>Subtitle Description</label>
-                  <textarea
-                    className={cn(inputCls, "min-h-[4.5rem] resize-none")}
-                    value={hero.sub}
-                    onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, sub: e.target.value } })}
-                  />
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className={labelCls}>Primary CTA Button</label>
-                    <input
-                      className={inputCls}
-                      value={hero.ctaPrimary}
-                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, ctaPrimary: e.target.value } })}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Secondary CTA Button</label>
-                    <input
-                      className={inputCls}
-                      value={hero.ctaSecondary}
-                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, ctaSecondary: e.target.value } })}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className={labelCls}>Hero Background Video URL / Path</label>
-                  <input
-                    className={inputCls}
-                    value={hero.video}
-                    onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, video: e.target.value } })}
-                  />
-                </div>
-
-                <ImageUploadField
-                  label="Hero Poster / Fallback Image"
-                  value={hero.poster}
-                  onChange={(val) => setOv({ ...ov, hero: { ...ov.hero, poster: val } })}
-                />
-              </div>
-
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides(ov)}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
-                >
-                  {busy ? "Saving..." : "💾 Save Hero Section"}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 8: TRUST MARQUEE */}
-          {tab === "Trust Bar" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <SectionSaveBar
-                title="Trust Bar & Marquee"
-                subtitle="Edit scrolling keywords and brand pillars"
-                busy={busy}
-                onSave={() => saveOverrides(ov)}
-              />
-
-              <div className="mt-6 space-y-5">
-                <div>
-                  <label className={labelCls}>Marquee Row 1 (Comma-separated)</label>
-                  <textarea
-                    className={cn(inputCls, "min-h-[4rem]")}
-                    value={(trustBar.marquee1 || []).join(", ")}
-                    onChange={(e) =>
-                      setOv({
-                        ...ov,
-                        trustBar: {
-                          ...ov.trustBar,
-                          marquee1: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
-                        },
-                      })
-                    }
-                  />
-                </div>
-
-                <div>
-                  <label className={labelCls}>Marquee Row 2 (Comma-separated)</label>
-                  <textarea
-                    className={cn(inputCls, "min-h-[4rem]")}
-                    value={(trustBar.marquee2 || []).join(", ")}
-                    onChange={(e) =>
-                      setOv({
-                        ...ov,
-                        trustBar: {
-                          ...ov.trustBar,
-                          marquee2: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
-                        },
-                      })
-                    }
-                  />
-                </div>
-              </div>
-
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides(ov)}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
-                >
-                  {busy ? "Saving..." : "💾 Save Trust Bar"}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 9: MANIFESTO */}
-          {tab === "Manifesto" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <SectionSaveBar
-                title="The Studio Manifesto"
-                subtitle="Brand story, body text, and feature image"
-                busy={busy}
-                onSave={() => saveOverrides(ov)}
-              />
-
-              <div className="mt-6 space-y-4">
-                <div>
-                  <label className={labelCls}>Eyebrow</label>
-                  <input
-                    className={inputCls}
-                    value={manifesto.eyebrow}
-                    onChange={(e) => setOv({ ...ov, manifesto: { ...ov.manifesto, eyebrow: e.target.value } })}
-                  />
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className={labelCls}>Title Part 1</label>
-                    <input
-                      className={inputCls}
-                      value={manifesto.big[0]}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          manifesto: { ...ov.manifesto, big: [e.target.value, manifesto.big[1]] },
-                        })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Title Part 2 (Gold Accent)</label>
-                    <input
-                      className={inputCls}
-                      value={manifesto.big[1]}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          manifesto: { ...ov.manifesto, big: [manifesto.big[0], e.target.value] },
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className={labelCls}>Body Paragraph</label>
-                  <textarea
-                    className={cn(inputCls, "min-h-[5rem]")}
-                    value={manifesto.body}
-                    onChange={(e) => setOv({ ...ov, manifesto: { ...ov.manifesto, body: e.target.value } })}
-                  />
-                </div>
-
-                <ImageUploadField
-                  label="Manifesto Story Photo"
-                  value={manifesto.image}
-                  onChange={(val) => setOv({ ...ov, manifesto: { ...ov.manifesto, image: val } })}
-                />
-              </div>
-
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides(ov)}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
-                >
-                  {busy ? "Saving..." : "💾 Save Manifesto"}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 10: PHILOSOPHY */}
-          {tab === "Philosophy" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <SectionSaveBar
-                title="The Craft Philosophy"
-                subtitle="Visual quote banner, gold typography and background"
-                busy={busy}
-                onSave={() => saveOverrides(ov)}
-              />
-
-              <div className="mt-6 space-y-4">
-                <div>
-                  <label className={labelCls}>Eyebrow</label>
-                  <input
-                    className={inputCls}
-                    value={philosophy.eyebrow}
-                    onChange={(e) =>
-                      setOv({ ...ov, philosophy: { ...philosophy, eyebrow: e.target.value } })
-                    }
-                  />
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className={labelCls}>Heading Line 1</label>
-                    <input
-                      className={inputCls}
-                      value={philosophy.heading1}
-                      onChange={(e) =>
-                        setOv({ ...ov, philosophy: { ...philosophy, heading1: e.target.value } })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Heading Line 2 (Gold)</label>
-                    <input
-                      className={inputCls}
-                      value={philosophy.heading2}
-                      onChange={(e) =>
-                        setOv({ ...ov, philosophy: { ...philosophy, heading2: e.target.value } })
-                      }
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className={labelCls}>Body Paragraph</label>
-                  <textarea
-                    className={cn(inputCls, "min-h-[5rem]")}
-                    value={philosophy.body}
-                    onChange={(e) =>
-                      setOv({ ...ov, philosophy: { ...philosophy, body: e.target.value } })
-                    }
-                  />
-                </div>
-
-                <ImageUploadField
-                  label="Philosophy Background Photo"
-                  value={philosophy.image}
-                  onChange={(val) =>
-                    setOv({ ...ov, philosophy: { ...philosophy, image: val } })
-                  }
-                />
-              </div>
-
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides(ov)}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
-                >
-                  {busy ? "Saving..." : "💾 Save Philosophy"}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 11: PROCESS STEPS */}
-          {tab === "Process Steps" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <SectionSaveBar
-                title="Craft Process Steps"
-                subtitle="Step-by-step production timeline (5 steps)"
-                busy={busy}
-                onSave={() => saveOverrides(ov)}
-              />
-
-              <div className="mt-6 space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className={labelCls}>Section Eyebrow</label>
-                    <input
-                      className={inputCls}
-                      value={processEyebrow}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          atelierProcess: { ...ov.atelierProcess, eyebrow: e.target.value },
-                        })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Section Title</label>
-                    <input
-                      className={inputCls}
-                      value={processTitle}
-                      onChange={(e) =>
-                        setOv({
-                          ...ov,
-                          atelierProcess: { ...ov.atelierProcess, title: e.target.value },
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-6 space-y-4">
-                  {processSteps.map((s, idx) => (
-                    <div key={s.n} className="rounded-xl border border-ink/10 bg-amber-50/20 p-4">
-                      <div className="grid gap-3 sm:grid-cols-4">
-                        <div>
-                          <label className={labelCls}>Step #</label>
-                          <input
-                            className={inputCls}
-                            value={s.n}
-                            onChange={(e) => {
-                              const updated = [...processSteps];
-                              updated[idx] = { ...s, n: e.target.value };
-                              setOv({
-                                ...ov,
-                                atelierProcess: { ...ov.atelierProcess, steps: updated },
-                              });
-                            }}
-                          />
-                        </div>
-                        <div className="sm:col-span-3">
-                          <label className={labelCls}>Step Title</label>
-                          <input
-                            className={inputCls}
-                            value={s.title}
-                            onChange={(e) => {
-                              const updated = [...processSteps];
-                              updated[idx] = { ...s, title: e.target.value };
-                              setOv({
-                                ...ov,
-                                atelierProcess: { ...ov.atelierProcess, steps: updated },
-                              });
-                            }}
-                          />
-                        </div>
-                        <div className="sm:col-span-4">
-                          <label className={labelCls}>Description</label>
-                          <textarea
-                            className={cn(inputCls, "min-h-[3rem]")}
-                            value={s.body}
-                            onChange={(e) => {
-                              const updated = [...processSteps];
-                              updated[idx] = { ...s, body: e.target.value };
-                              setOv({
-                                ...ov,
-                                atelierProcess: { ...ov.atelierProcess, steps: updated },
-                              });
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <ImageUploadField
-                  label="Process Ambient Photo"
-                  value={processImage}
-                  onChange={(val) =>
-                    setOv({
-                      ...ov,
-                      atelierProcess: { ...ov.atelierProcess, image: val },
-                    })
-                  }
-                />
-              </div>
-
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides(ov)}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
-                >
-                  {busy ? "Saving..." : "💾 Save Process Steps"}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 12: SHOWROOM GALLERY */}
+          {/* TAB: SHOWROOM GALLERY */}
           {tab === "Showroom Gallery" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+            <div>
               <SectionSaveBar
                 title="Showroom Gallery"
-                subtitle="Upload new photos with auto-compression and category tags"
+                subtitle="Archive of crafted product photos categorized with tags"
                 busy={busy}
                 onSave={() => saveOverrides({ ...ov, gallery })}
                 extraButton={
@@ -2148,17 +854,17 @@ export default function AdminApp() {
                       const updated = [newItem, ...gallery];
                       saveOverrides({ ...ov, gallery: updated }, "Gallery photo added!");
                     }}
-                    className="rounded-full bg-coal px-4 py-2.5 text-xs font-semibold text-ivory hover:bg-gold-deep transition-colors shadow-sm"
+                    className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs"
                   >
                     + Add Gallery Photo
                   </button>
                 }
               />
 
-              <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {gallery.map((g, idx) => (
-                  <div key={idx} className="rounded-xl border border-ink/15 bg-amber-50/20 p-4">
-                    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-ink/10 bg-white">
+                  <div key={idx} className="rounded-xl border border-gray-200 bg-slate-50/50 p-3">
+                    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border border-gray-200 bg-white">
                       <Image
                         src={g.src}
                         alt={g.tag}
@@ -2168,8 +874,8 @@ export default function AdminApp() {
                       />
                     </div>
 
-                    <div className="mt-3">
-                      <label className={labelCls}>Category Tag</label>
+                    <div className="mt-2.5">
+                      <label className={labelCls}>Category</label>
                       <input
                         className={inputCls}
                         value={g.tag}
@@ -2181,7 +887,7 @@ export default function AdminApp() {
                       />
                     </div>
 
-                    <div className="mt-3">
+                    <div className="mt-2">
                       <ImageUploadField
                         label="Change Photo"
                         value={g.src}
@@ -2193,8 +899,8 @@ export default function AdminApp() {
                       />
                     </div>
 
-                    <div className="mt-3 flex items-center justify-between">
-                      <label className="flex items-center gap-2 text-xs text-ink/70">
+                    <div className="mt-2.5 flex items-center justify-between">
+                      <label className="flex items-center gap-1.5 text-xs text-slate-600">
                         <input
                           type="checkbox"
                           checked={Boolean(g.tall)}
@@ -2221,13 +927,12 @@ export default function AdminApp() {
                 ))}
               </div>
 
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => saveOverrides({ ...ov, gallery })}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
                 >
                   {busy ? "Saving..." : "💾 Save Gallery"}
                 </button>
@@ -2235,12 +940,908 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 13: REVIEWS */}
+          {/* TAB: WORKBENCH VIDEO REELS */}
+          {tab === "Workbench Videos" && (
+            <div>
+              <SectionSaveBar
+                title="Workbench Video Reels"
+                subtitle="Video clips of the production workbench"
+                busy={busy}
+                onSave={() => saveOverrides({ ...ov, reels: reelsList })}
+                extraButton={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newReel = {
+                        src: "/videos/rs-003-video.mp4",
+                        poster: "/photos/rs-003-cover.jpg",
+                        label: "Custom Craft Reel",
+                      };
+                      const updated = [...reelsList, newReel];
+                      saveOverrides({ ...ov, reels: updated }, "Added reel!");
+                    }}
+                    className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs"
+                  >
+                    + Add New Reel
+                  </button>
+                }
+              />
+
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {reelsList.map((r, idx) => (
+                  <div key={idx} className="rounded-xl border border-gray-200 bg-slate-50/50 p-4">
+                    <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+                      <span className="font-bold text-xs text-slate-700">Reel #{idx + 1}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (confirm(`Remove Reel #${idx + 1}?`)) {
+                            const updated = reelsList.filter((_, i) => i !== idx);
+                            saveOverrides({ ...ov, reels: updated }, "Removed reel");
+                          }
+                        }}
+                        className="text-xs text-red-600 hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+
+                    <div className="mt-3 relative aspect-[9/16] max-h-48 w-full overflow-hidden rounded-lg bg-slate-900">
+                      <video src={r.src} poster={r.poster} controls className="h-full w-full object-cover" />
+                    </div>
+
+                    <div className="mt-3 space-y-2.5">
+                      <div>
+                        <label className={labelCls}>Title / Label</label>
+                        <input
+                          className={inputCls}
+                          value={r.label}
+                          onChange={(e) => {
+                            const updated = [...reelsList];
+                            updated[idx] = { ...r, label: e.target.value };
+                            setOv({ ...ov, reels: updated });
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Video URL</label>
+                        <input
+                          className={inputCls}
+                          value={r.src}
+                          onChange={(e) => {
+                            const updated = [...reelsList];
+                            updated[idx] = { ...r, src: e.target.value };
+                            setOv({ ...ov, reels: updated });
+                          }}
+                        />
+                      </div>
+                      <ImageUploadField
+                        label="Video Poster"
+                        value={r.poster}
+                        onChange={(val) => {
+                          const updated = [...reelsList];
+                          updated[idx] = { ...r, poster: val };
+                          setOv({ ...ov, reels: updated });
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides({ ...ov, reels: reelsList })}
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
+                >
+                  {busy ? "Saving..." : "💾 Save Video Reels"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: WORLDWIDE EXPORT & HUBS */}
+          {tab === "Worldwide Export" && (
+            <div>
+              <SectionSaveBar
+                title="Worldwide Export & Manufacturing Hubs"
+                subtitle="Manage shipping destinations, express courier delivery timelines, and popular region crafts"
+                busy={busy}
+                onSave={() => saveOverrides({ ...ov, globalExport })}
+                extraButton={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newRegion: ExportRegion = {
+                        id: "region-" + Date.now(),
+                        name: "New International Region",
+                        flag: "🌐",
+                        hubs: "Major fashion capitals & apparel hubs",
+                        timeline: "3 – 5 Business Days (Air Express)",
+                        popular: ["Custom Woven Damask Labels", "Luxury Embossed Hang Tags"],
+                        note: "Bespoke sampling and door-to-door courier clearance.",
+                      };
+                      const updated = [...globalExport.regions, newRegion];
+                      saveOverrides(
+                        { ...ov, globalExport: { ...globalExport, regions: updated } },
+                        "New region added!"
+                      );
+                    }}
+                    className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs"
+                  >
+                    + Add New Region
+                  </button>
+                }
+              />
+
+              <div className="space-y-6">
+                <div className="rounded-xl border border-gray-200 bg-slate-50/50 p-4">
+                  <h3 className="font-bold text-sm text-slate-900 mb-3">Section Headers</h3>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className={labelCls}>Eyebrow</label>
+                      <input
+                        className={inputCls}
+                        value={globalExport.eyebrow}
+                        onChange={(e) =>
+                          setOv({
+                            ...ov,
+                            globalExport: { ...globalExport, eyebrow: e.target.value },
+                          })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls}>Title Line 1</label>
+                      <input
+                        className={inputCls}
+                        value={globalExport.titleLine1}
+                        onChange={(e) =>
+                          setOv({
+                            ...ov,
+                            globalExport: { ...globalExport, titleLine1: e.target.value },
+                          })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls}>Title Line 2 (Accent)</label>
+                      <input
+                        className={inputCls}
+                        value={globalExport.titleLine2}
+                        onChange={(e) =>
+                          setOv({
+                            ...ov,
+                            globalExport: { ...globalExport, titleLine2: e.target.value },
+                          })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls}>Subtitle</label>
+                      <input
+                        className={inputCls}
+                        value={globalExport.sub}
+                        onChange={(e) =>
+                          setOv({
+                            ...ov,
+                            globalExport: { ...globalExport, sub: e.target.value },
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="font-bold text-sm text-slate-900">Regional Destinations</h3>
+                  {globalExport.regions.map((reg, rIdx) => (
+                    <div key={reg.id || rIdx} className="rounded-xl border border-gray-200 bg-slate-50/50 p-4">
+                      <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{reg.flag}</span>
+                          <span className="font-bold text-sm text-slate-900">{reg.name}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => saveOverrides({ ...ov, globalExport }, `Saved "${reg.name}"!`)}
+                            className="rounded-lg bg-white border border-gray-200 px-3 py-1 text-xs font-bold text-slate-900 hover:bg-amber-400"
+                          >
+                            Save ✓
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (confirm(`Delete region "${reg.name}"?`)) {
+                                const updated = globalExport.regions.filter((_, i) => i !== rIdx);
+                                saveOverrides(
+                                  { ...ov, globalExport: { ...globalExport, regions: updated } },
+                                  `Removed "${reg.name}"`
+                                );
+                              }
+                            }}
+                            className="text-xs text-red-600 hover:underline"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                        <div>
+                          <label className={labelCls}>Region Name</label>
+                          <input
+                            className={inputCls}
+                            value={reg.name}
+                            onChange={(e) => {
+                              const updated = [...globalExport.regions];
+                              updated[rIdx] = { ...reg, name: e.target.value };
+                              setOv({
+                                ...ov,
+                                globalExport: { ...globalExport, regions: updated },
+                              });
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <label className={labelCls}>Flag Emojis</label>
+                          <input
+                            className={inputCls}
+                            value={reg.flag}
+                            onChange={(e) => {
+                              const updated = [...globalExport.regions];
+                              updated[rIdx] = { ...reg, flag: e.target.value };
+                              setOv({
+                                ...ov,
+                                globalExport: { ...globalExport, regions: updated },
+                              });
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <label className={labelCls}>Timeline</label>
+                          <input
+                            className={inputCls}
+                            value={reg.timeline}
+                            onChange={(e) => {
+                              const updated = [...globalExport.regions];
+                              updated[rIdx] = { ...reg, timeline: e.target.value };
+                              setOv({
+                                ...ov,
+                                globalExport: { ...globalExport, regions: updated },
+                              });
+                            }}
+                          />
+                        </div>
+                        <div className="sm:col-span-3">
+                          <label className={labelCls}>Delivery Hubs</label>
+                          <input
+                            className={inputCls}
+                            value={reg.hubs}
+                            onChange={(e) => {
+                              const updated = [...globalExport.regions];
+                              updated[rIdx] = { ...reg, hubs: e.target.value };
+                              setOv({
+                                ...ov,
+                                globalExport: { ...globalExport, regions: updated },
+                              });
+                            }}
+                          />
+                        </div>
+                        <div className="sm:col-span-3">
+                          <label className={labelCls}>Regional Note</label>
+                          <textarea
+                            className={cn(inputCls, "min-h-[2.8rem] resize-none")}
+                            value={reg.note}
+                            onChange={(e) => {
+                              const updated = [...globalExport.regions];
+                              updated[rIdx] = { ...reg, note: e.target.value };
+                              setOv({
+                                ...ov,
+                                globalExport: { ...globalExport, regions: updated },
+                              });
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides({ ...ov, globalExport })}
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
+                >
+                  {busy ? "Saving..." : "💾 Save Worldwide Export"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: GLOBAL SEO & META */}
+          {tab === "SEO & Meta" && (
+            <div>
+              <SectionSaveBar
+                title="Global SEO & Search Metadata"
+                subtitle="Configure Google title, meta description, and worldwide B2B ranking keywords"
+                busy={busy}
+                onSave={() => saveOverrides({ ...ov, seoSettings })}
+              />
+
+              <div className="space-y-4 max-w-3xl">
+                <div>
+                  <label className={labelCls}>Google Page Title</label>
+                  <input
+                    className={inputCls}
+                    value={seoSettings.metaTitle || ""}
+                    onChange={(e) =>
+                      setOv({
+                        ...ov,
+                        seoSettings: { ...seoSettings, metaTitle: e.target.value },
+                      })
+                    }
+                  />
+                  <p className="mt-1 text-[11px] text-slate-400">Shows in Google search results and browser tab.</p>
+                </div>
+
+                <div>
+                  <label className={labelCls}>Google Meta Description</label>
+                  <textarea
+                    className={cn(inputCls, "min-h-[4.5rem]")}
+                    value={seoSettings.metaDescription || ""}
+                    onChange={(e) =>
+                      setOv({
+                        ...ov,
+                        seoSettings: { ...seoSettings, metaDescription: e.target.value },
+                      })
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label className={labelCls}>Target Keywords (Comma-separated)</label>
+                  <textarea
+                    className={cn(inputCls, "min-h-[4rem]")}
+                    value={seoSettings.targetKeywords || ""}
+                    onChange={(e) =>
+                      setOv({
+                        ...ov,
+                        seoSettings: { ...seoSettings, targetKeywords: e.target.value },
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className={labelCls}>Review Rating Score</label>
+                    <input
+                      className={inputCls}
+                      value={seoSettings.ratingValue || "4.9"}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          seoSettings: { ...seoSettings, ratingValue: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Review Count</label>
+                    <input
+                      className={inputCls}
+                      value={seoSettings.reviewCount || "186"}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          seoSettings: { ...seoSettings, reviewCount: e.target.value },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <ImageUploadField
+                  label="Social Media Share Banner Image"
+                  value={seoSettings.ogImage || "/photos/rs-092-02.jpg"}
+                  onChange={(val) =>
+                    setOv({
+                      ...ov,
+                      seoSettings: { ...seoSettings, ogImage: val },
+                    })
+                  }
+                />
+              </div>
+
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides({ ...ov, seoSettings })}
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
+                >
+                  {busy ? "Saving..." : "💾 Save SEO Settings"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: HERO SECTION */}
+          {tab === "Hero Section" && (
+            <div>
+              <SectionSaveBar
+                title="Hero Banner Section"
+                subtitle="Top headlines, video, and CTA buttons"
+                busy={busy}
+                onSave={() => saveOverrides(ov)}
+              />
+
+              <div className="space-y-4 max-w-3xl">
+                <div>
+                  <label className={labelCls}>Eyebrow Badge</label>
+                  <input
+                    className={inputCls}
+                    value={hero.eyebrow}
+                    onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, eyebrow: e.target.value } })}
+                  />
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className={labelCls}>Headline Line 1</label>
+                    <input
+                      className={inputCls}
+                      value={hero.line1}
+                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, line1: e.target.value } })}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Headline Line 2 (Accent)</label>
+                    <input
+                      className={inputCls}
+                      value={hero.line2}
+                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, line2: e.target.value } })}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelCls}>Subtitle</label>
+                  <textarea
+                    className={cn(inputCls, "min-h-[4rem]")}
+                    value={hero.sub}
+                    onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, sub: e.target.value } })}
+                  />
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className={labelCls}>Primary CTA Button</label>
+                    <input
+                      className={inputCls}
+                      value={hero.ctaPrimary}
+                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, ctaPrimary: e.target.value } })}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Secondary CTA Button</label>
+                    <input
+                      className={inputCls}
+                      value={hero.ctaSecondary}
+                      onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, ctaSecondary: e.target.value } })}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelCls}>Video URL</label>
+                  <input
+                    className={inputCls}
+                    value={hero.video}
+                    onChange={(e) => setOv({ ...ov, hero: { ...ov.hero, video: e.target.value } })}
+                  />
+                </div>
+                <ImageUploadField
+                  label="Hero Poster Fallback Photo"
+                  value={hero.poster}
+                  onChange={(val) => setOv({ ...ov, hero: { ...ov.hero, poster: val } })}
+                />
+              </div>
+
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides(ov)}
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
+                >
+                  {busy ? "Saving..." : "💾 Save Hero"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: TRUST MARQUEE */}
+          {tab === "Trust Bar" && (
+            <div>
+              <SectionSaveBar
+                title="Trust Bar & Marquee"
+                subtitle="Scrolling trust keywords and brand pillars"
+                busy={busy}
+                onSave={() => saveOverrides(ov)}
+              />
+
+              <div className="space-y-4 max-w-3xl">
+                <div>
+                  <label className={labelCls}>Marquee Row 1 (Comma-separated)</label>
+                  <textarea
+                    className={cn(inputCls, "min-h-[3.5rem]")}
+                    value={(trustBar.marquee1 || []).join(", ")}
+                    onChange={(e) =>
+                      setOv({
+                        ...ov,
+                        trustBar: {
+                          ...ov.trustBar,
+                          marquee1: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                        },
+                      })
+                    }
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Marquee Row 2 (Comma-separated)</label>
+                  <textarea
+                    className={cn(inputCls, "min-h-[3.5rem]")}
+                    value={(trustBar.marquee2 || []).join(", ")}
+                    onChange={(e) =>
+                      setOv({
+                        ...ov,
+                        trustBar: {
+                          ...ov.trustBar,
+                          marquee2: e.target.value.split(",").map((s) => s.trim()).filter(Boolean),
+                        },
+                      })
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides(ov)}
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
+                >
+                  {busy ? "Saving..." : "💾 Save Trust Bar"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: BRAND STORY & MANIFESTO */}
+          {tab === "Manifesto" && (
+            <div>
+              <SectionSaveBar
+                title="Brand Story & Manifesto"
+                subtitle="Core manifesto statement and photo"
+                busy={busy}
+                onSave={() => saveOverrides(ov)}
+              />
+
+              <div className="space-y-4 max-w-3xl">
+                <div>
+                  <label className={labelCls}>Eyebrow</label>
+                  <input
+                    className={inputCls}
+                    value={manifesto.eyebrow}
+                    onChange={(e) => setOv({ ...ov, manifesto: { ...ov.manifesto, eyebrow: e.target.value } })}
+                  />
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className={labelCls}>Title Part 1</label>
+                    <input
+                      className={inputCls}
+                      value={manifesto.big[0]}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          manifesto: { ...ov.manifesto, big: [e.target.value, manifesto.big[1]] },
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Title Part 2 (Accent)</label>
+                    <input
+                      className={inputCls}
+                      value={manifesto.big[1]}
+                      onChange={(e) =>
+                        setOv({
+                          ...ov,
+                          manifesto: { ...ov.manifesto, big: [manifesto.big[0], e.target.value] },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelCls}>Body Paragraph</label>
+                  <textarea
+                    className={cn(inputCls, "min-h-[4rem]")}
+                    value={manifesto.body}
+                    onChange={(e) => setOv({ ...ov, manifesto: { ...ov.manifesto, body: e.target.value } })}
+                  />
+                </div>
+                <ImageUploadField
+                  label="Manifesto Photo"
+                  value={manifesto.image}
+                  onChange={(val) => setOv({ ...ov, manifesto: { ...ov.manifesto, image: val } })}
+                />
+              </div>
+
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides(ov)}
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
+                >
+                  {busy ? "Saving..." : "💾 Save Manifesto"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: CRAFT PHILOSOPHY */}
+          {tab === "Philosophy" && (
+            <div>
+              <SectionSaveBar
+                title="Craft Philosophy"
+                subtitle="Visual quote banner and atelier background"
+                busy={busy}
+                onSave={() => saveOverrides(ov)}
+              />
+
+              <div className="space-y-4 max-w-3xl">
+                <div>
+                  <label className={labelCls}>Eyebrow</label>
+                  <input
+                    className={inputCls}
+                    value={philosophy.eyebrow}
+                    onChange={(e) => setOv({ ...ov, philosophy: { ...philosophy, eyebrow: e.target.value } })}
+                  />
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className={labelCls}>Heading Line 1</label>
+                    <input
+                      className={inputCls}
+                      value={philosophy.heading1}
+                      onChange={(e) => setOv({ ...ov, philosophy: { ...philosophy, heading1: e.target.value } })}
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Heading Line 2</label>
+                    <input
+                      className={inputCls}
+                      value={philosophy.heading2}
+                      onChange={(e) => setOv({ ...ov, philosophy: { ...philosophy, heading2: e.target.value } })}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelCls}>Body</label>
+                  <textarea
+                    className={cn(inputCls, "min-h-[4rem]")}
+                    value={philosophy.body}
+                    onChange={(e) => setOv({ ...ov, philosophy: { ...philosophy, body: e.target.value } })}
+                  />
+                </div>
+                <ImageUploadField
+                  label="Philosophy Photo"
+                  value={philosophy.image}
+                  onChange={(val) => setOv({ ...ov, philosophy: { ...philosophy, image: val } })}
+                />
+              </div>
+
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides(ov)}
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
+                >
+                  {busy ? "Saving..." : "💾 Save Philosophy"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: PROCESS STEPS */}
+          {tab === "Process Steps" && (
+            <div>
+              <SectionSaveBar
+                title="Craft Process Steps"
+                subtitle="Step-by-step production timeline (5 steps)"
+                busy={busy}
+                onSave={() => saveOverrides(ov)}
+              />
+
+              <div className="space-y-4 max-w-3xl">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className={labelCls}>Eyebrow</label>
+                    <input
+                      className={inputCls}
+                      value={processEyebrow}
+                      onChange={(e) =>
+                        setOv({ ...ov, atelierProcess: { ...ov.atelierProcess, eyebrow: e.target.value } })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className={labelCls}>Title</label>
+                    <input
+                      className={inputCls}
+                      value={processTitle}
+                      onChange={(e) =>
+                        setOv({ ...ov, atelierProcess: { ...ov.atelierProcess, title: e.target.value } })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {processSteps.map((s, idx) => (
+                    <div key={s.n} className="rounded-xl border border-gray-200 bg-slate-50/50 p-3.5">
+                      <div className="grid gap-2 sm:grid-cols-4">
+                        <div>
+                          <label className={labelCls}>Step #{s.n}</label>
+                          <input
+                            className={inputCls}
+                            value={s.title}
+                            onChange={(e) => {
+                              const updated = [...processSteps];
+                              updated[idx] = { ...s, title: e.target.value };
+                              setOv({ ...ov, atelierProcess: { ...ov.atelierProcess, steps: updated } });
+                            }}
+                          />
+                        </div>
+                        <div className="sm:col-span-3">
+                          <label className={labelCls}>Description</label>
+                          <input
+                            className={inputCls}
+                            value={s.body}
+                            onChange={(e) => {
+                              const updated = [...processSteps];
+                              updated[idx] = { ...s, body: e.target.value };
+                              setOv({ ...ov, atelierProcess: { ...ov.atelierProcess, steps: updated } });
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <ImageUploadField
+                  label="Process Ambient Photo"
+                  value={processImage}
+                  onChange={(val) => setOv({ ...ov, atelierProcess: { ...ov.atelierProcess, image: val } })}
+                />
+              </div>
+
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides(ov)}
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
+                >
+                  {busy ? "Saving..." : "💾 Save Process"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: FAQS */}
+          {tab === "FAQs" && (
+            <div>
+              <SectionSaveBar
+                title="Frequently Asked Questions"
+                subtitle="Accordion FAQ items displayed on the website"
+                busy={busy}
+                onSave={() => saveOverrides({ ...ov, faqs: faqList })}
+                extraButton={
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newFaq: Faq = {
+                        q: "What is the delivery timeline?",
+                        a: "Digital proofs arrive in 24 hours. Production takes 7-10 working days plus tracked courier dispatch.",
+                        guessed: false,
+                      };
+                      const updated = [...faqList, newFaq];
+                      saveOverrides({ ...ov, faqs: updated }, "FAQ added!");
+                    }}
+                    className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs"
+                  >
+                    + Add FAQ
+                  </button>
+                }
+              />
+
+              <div className="space-y-3.5">
+                {faqList.map((f, idx) => (
+                  <div key={idx} className="rounded-xl border border-gray-200 bg-slate-50/50 p-4">
+                    <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+                      <span className="font-bold text-xs text-slate-800">FAQ #{idx + 1}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const filtered = faqList.filter((_, i) => i !== idx);
+                          saveOverrides({ ...ov, faqs: filtered }, "FAQ deleted");
+                        }}
+                        className="text-xs text-red-600 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                    <div className="mt-3 space-y-2">
+                      <div>
+                        <label className={labelCls}>Question</label>
+                        <input
+                          className={inputCls}
+                          value={f.q}
+                          onChange={(e) => {
+                            const updated = [...faqList];
+                            updated[idx] = { ...f, q: e.target.value };
+                            setOv({ ...ov, faqs: updated });
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label className={labelCls}>Answer</label>
+                        <textarea
+                          className={cn(inputCls, "min-h-[3rem] resize-none")}
+                          value={f.a}
+                          onChange={(e) => {
+                            const updated = [...faqList];
+                            updated[idx] = { ...f, a: e.target.value };
+                            setOv({ ...ov, faqs: updated });
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides({ ...ov, faqs: faqList })}
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
+                >
+                  {busy ? "Saving..." : "💾 Save FAQs"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: CLIENT REVIEWS */}
           {tab === "Reviews" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+            <div>
               <SectionSaveBar
                 title="Client Reviews"
-                subtitle="Manage 5-star testimonials shown across the site"
+                subtitle="5-star testimonials shown on the website"
                 busy={busy}
                 onSave={() => saveOverrides({ ...ov, testimonials: testimonialList })}
                 extraButton={
@@ -2257,18 +1858,18 @@ export default function AdminApp() {
                       const updated = [...testimonialList, newTest];
                       saveOverrides({ ...ov, testimonials: updated }, "Review added!");
                     }}
-                    className="rounded-full bg-coal px-4 py-2.5 text-xs font-semibold text-ivory hover:bg-gold-deep transition-colors shadow-sm"
+                    className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-xs"
                   >
                     + Add Review
                   </button>
                 }
               />
 
-              <div className="mt-6 space-y-4">
+              <div className="space-y-4">
                 {testimonialList.map((t, idx) => (
-                  <div key={idx} className="rounded-xl border border-ink/10 bg-amber-50/20 p-4">
-                    <div className="flex justify-between">
-                      <span className="font-semibold text-sm text-ink">Review #{idx + 1}</span>
+                  <div key={idx} className="rounded-xl border border-gray-200 bg-slate-50/50 p-4">
+                    <div className="flex justify-between border-b border-gray-200 pb-2">
+                      <span className="font-bold text-xs text-slate-800">Review #{idx + 1}</span>
                       <button
                         type="button"
                         onClick={() => {
@@ -2280,11 +1881,11 @@ export default function AdminApp() {
                         Delete
                       </button>
                     </div>
-                    <div className="mt-3 space-y-3">
+                    <div className="mt-3 space-y-2">
                       <div>
                         <label className={labelCls}>Quote</label>
                         <textarea
-                          className={cn(inputCls, "min-h-[3rem]")}
+                          className={cn(inputCls, "min-h-[2.8rem] resize-none")}
                           value={t.quote}
                           onChange={(e) => {
                             const updated = [...testimonialList];
@@ -2294,30 +1895,6 @@ export default function AdminApp() {
                         />
                       </div>
                       <div className="grid gap-3 sm:grid-cols-3">
-                        <div>
-                          <label className={labelCls}>City / Country</label>
-                          <input
-                            className={inputCls}
-                            value={t.city}
-                            onChange={(e) => {
-                              const updated = [...testimonialList];
-                              updated[idx] = { ...t, city: e.target.value };
-                              setOv({ ...ov, testimonials: updated });
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <label className={labelCls}>Role / Brand Type</label>
-                          <input
-                            className={inputCls}
-                            value={t.role}
-                            onChange={(e) => {
-                              const updated = [...testimonialList];
-                              updated[idx] = { ...t, role: e.target.value };
-                              setOv({ ...ov, testimonials: updated });
-                            }}
-                          />
-                        </div>
                         <div>
                           <label className={labelCls}>Reviewer Name</label>
                           <input
@@ -2330,19 +1907,42 @@ export default function AdminApp() {
                             }}
                           />
                         </div>
+                        <div>
+                          <label className={labelCls}>Role / Brand</label>
+                          <input
+                            className={inputCls}
+                            value={t.role}
+                            onChange={(e) => {
+                              const updated = [...testimonialList];
+                              updated[idx] = { ...t, role: e.target.value };
+                              setOv({ ...ov, testimonials: updated });
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <label className={labelCls}>City / Country</label>
+                          <input
+                            className={inputCls}
+                            value={t.city}
+                            onChange={(e) => {
+                              const updated = [...testimonialList];
+                              updated[idx] = { ...t, city: e.target.value };
+                              setOv({ ...ov, testimonials: updated });
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => saveOverrides({ ...ov, testimonials: testimonialList })}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
                 >
                   {busy ? "Saving..." : "💾 Save Reviews"}
                 </button>
@@ -2350,106 +1950,19 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 14: FAQS */}
-          {tab === "FAQs" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
-              <SectionSaveBar
-                title="Frequently Asked Questions"
-                subtitle="Add, edit, or remove accordion FAQ items"
-                busy={busy}
-                onSave={() => saveOverrides({ ...ov, faqs: faqList })}
-                extraButton={
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newFaq: Faq = {
-                        q: "What is the delivery timeline?",
-                        a: "Digital proofs arrive in 24 hours. Production takes 7-10 working days plus tracked courier dispatch.",
-                        guessed: false,
-                      };
-                      const updated = [...faqList, newFaq];
-                      saveOverrides({ ...ov, faqs: updated }, "FAQ added!");
-                    }}
-                    className="rounded-full bg-coal px-4 py-2.5 text-xs font-semibold text-ivory hover:bg-gold-deep transition-colors shadow-sm"
-                  >
-                    + Add FAQ
-                  </button>
-                }
-              />
-
-              <div className="mt-6 space-y-4">
-                {faqList.map((f, idx) => (
-                  <div key={idx} className="rounded-xl border border-ink/10 bg-amber-50/20 p-4">
-                    <div className="flex justify-between">
-                      <span className="font-semibold text-sm text-ink">Question #{idx + 1}</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const filtered = faqList.filter((_, i) => i !== idx);
-                          saveOverrides({ ...ov, faqs: filtered }, "FAQ deleted");
-                        }}
-                        className="text-xs text-red-600 hover:underline"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                    <div className="mt-3 space-y-3">
-                      <div>
-                        <label className={labelCls}>Question</label>
-                        <input
-                          className={inputCls}
-                          value={f.q}
-                          onChange={(e) => {
-                            const updated = [...faqList];
-                            updated[idx] = { ...f, q: e.target.value };
-                            setOv({ ...ov, faqs: updated });
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <label className={labelCls}>Answer</label>
-                        <textarea
-                          className={cn(inputCls, "min-h-[4rem]")}
-                          value={f.a}
-                          onChange={(e) => {
-                            const updated = [...faqList];
-                            updated[idx] = { ...f, a: e.target.value };
-                            setOv({ ...ov, faqs: updated });
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => saveOverrides({ ...ov, faqs: faqList })}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
-                >
-                  {busy ? "Saving..." : "💾 Save FAQs"}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 15: FOOTER */}
+          {/* TAB: FOOTER */}
           {tab === "Footer" && (
-            <div className="rounded-2xl border border-ink/10 bg-white p-5 sm:p-6 shadow-sm">
+            <div>
               <SectionSaveBar
                 title="Footer Section"
-                subtitle="Bottom call-to-action headlines and copyright notes"
+                subtitle="Bottom call-to-action headlines and notes"
                 busy={busy}
                 onSave={() => saveOverrides(ov)}
               />
 
-              <div className="mt-6 space-y-4">
+              <div className="space-y-4 max-w-3xl">
                 <div>
-                  <label className={labelCls}>Big Footer Heading</label>
+                  <label className={labelCls}>Big Headline</label>
                   <input
                     className={inputCls}
                     value={footer.big}
@@ -2457,7 +1970,7 @@ export default function AdminApp() {
                   />
                 </div>
                 <div>
-                  <label className={labelCls}>Top Note / Eyebrow</label>
+                  <label className={labelCls}>Top Note / Subtitle</label>
                   <input
                     className={inputCls}
                     value={footer.note}
@@ -2466,38 +1979,267 @@ export default function AdminApp() {
                 </div>
               </div>
 
-              {/* Bottom Big Save Button */}
-              <div className="mt-8 flex justify-end border-t border-ink/10 pt-4">
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => saveOverrides(ov)}
-                  className="btn-sheen rounded-full bg-gold px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-ink shadow-lg active:scale-95 transition-transform hover:scale-[1.02]"
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
                 >
                   {busy ? "Saving..." : "💾 Save Footer"}
                 </button>
               </div>
             </div>
           )}
+
+          {/* TAB: CONTACT & SOCIALS */}
+          {tab === "Contact & Info" && (
+            <div>
+              <SectionSaveBar
+                title="Contact & Company Info"
+                subtitle="Phone, WhatsApp, email, Instagram and location details"
+                busy={busy}
+                onSave={() => saveOverrides(ov)}
+              />
+
+              <div className="grid gap-4 sm:grid-cols-2 max-w-3xl">
+                <div>
+                  <label className={labelCls}>Company Name</label>
+                  <input
+                    className={inputCls}
+                    value={site.name}
+                    onChange={(e) => setOv({ ...ov, site: { ...ov.site, name: e.target.value } })}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Short Brand Name</label>
+                  <input
+                    className={inputCls}
+                    value={site.shortName}
+                    onChange={(e) => setOv({ ...ov, site: { ...ov.site, shortName: e.target.value } })}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Phone (Display)</label>
+                  <input
+                    className={inputCls}
+                    value={site.phoneDisplay}
+                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, phoneDisplay: e.target.value } })}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>WhatsApp URL</label>
+                  <input
+                    className={inputCls}
+                    value={site.whatsapp}
+                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, whatsapp: e.target.value } })}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Email Address</label>
+                  <input
+                    className={inputCls}
+                    value={site.email}
+                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, email: e.target.value } })}
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>Instagram Link</label>
+                  <input
+                    className={inputCls}
+                    value={site.instagram}
+                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, instagram: e.target.value } })}
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className={labelCls}>Location Note</label>
+                  <input
+                    className={inputCls}
+                    value={site.location}
+                    onChange={(e) => setOv({ ...ov, contact: { ...ov.contact, location: e.target.value } })}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => saveOverrides(ov)}
+                  className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400"
+                >
+                  {busy ? "Saving..." : "💾 Save Contact Details"}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: INQUIRIES */}
+          {tab === "Enquiries" && (
+            <div>
+              <div className="flex items-center justify-between border-b border-gray-200/80 pb-4 mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-900">Customer Inquiries</h2>
+                  <p className="text-xs text-slate-500">Live incoming quote requests</p>
+                </div>
+                <button
+                  onClick={load}
+                  className="rounded-xl border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-100"
+                >
+                  Refresh 🔄
+                </button>
+              </div>
+
+              {leads.length === 0 ? (
+                <div className="py-16 text-center text-sm text-slate-400">No inquiries yet.</div>
+              ) : (
+                <div className="divide-y divide-gray-200/80">
+                  {leads.map((l) => (
+                    <div key={l.id} className="py-4">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex items-center gap-2.5">
+                          <span
+                            className={cn(
+                              "rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase",
+                              l.status === "new" ? "bg-amber-100 text-amber-900 ring-1 ring-amber-300" : "bg-emerald-100 text-emerald-900"
+                            )}
+                          >
+                            {l.status}
+                          </span>
+                          <span className="text-base font-bold text-slate-900">{l.name || "Anonymous"}</span>
+                          {l.meta?.brand && <span className="text-xs text-slate-500">({l.meta.brand})</span>}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          {l.phone && (
+                            <a
+                              href={`https://wa.me/${l.phone.replace(/[^0-9]/g, "")}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="rounded-lg bg-[#25D366]/15 px-3 py-1 text-xs font-bold text-[#128C7E] hover:bg-[#25D366]/30"
+                            >
+                              WhatsApp Reply ↗
+                            </a>
+                          )}
+                          <button
+                            onClick={async () => {
+                              await post({
+                                action: "lead-status",
+                                id: l.id,
+                                status: l.status === "new" ? "replied" : "new",
+                              });
+                              load();
+                            }}
+                            className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs text-slate-600 hover:bg-slate-100"
+                          >
+                            Mark {l.status === "new" ? "Replied" : "New"}
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (confirm("Delete this inquiry?")) {
+                                await post({ action: "delete-lead", id: l.id });
+                                load();
+                              }
+                            }}
+                            className="rounded-lg px-2 text-xs text-red-600 hover:bg-red-50"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="mt-2.5 grid gap-2 rounded-xl bg-slate-50 p-3 text-xs sm:grid-cols-3">
+                        <div>
+                          <span className="font-semibold text-slate-500">Product:</span> {l.product || "N/A"}
+                        </div>
+                        <div>
+                          <span className="font-semibold text-slate-500">Quantity:</span> {l.quantity || "N/A"}
+                        </div>
+                        <div>
+                          <span className="font-semibold text-slate-500">Contact:</span> {l.phone || l.email || l.meta?.contact || "N/A"}
+                        </div>
+                        {l.message && (
+                          <div className="sm:col-span-3">
+                            <span className="font-semibold text-slate-500">Notes / Artwork:</span> {l.message}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB: LIVE ANALYTICS */}
+          {tab === "Live Analytics" && (
+            <div className="space-y-6">
+              <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+                <div className="rounded-xl border border-gray-200 bg-slate-50/50 p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Live Online</span>
+                    <span className="flex h-2.5 w-2.5 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                    </span>
+                  </div>
+                  <p className="mt-1 text-3xl font-extrabold text-slate-900">{analytics?.liveVisitors ?? 1}</p>
+                  <p className="text-[11px] text-emerald-700 font-medium">Active on site now</p>
+                </div>
+
+                <div className="rounded-xl border border-gray-200 bg-slate-50/50 p-4">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">24h Views</span>
+                  <p className="mt-1 text-3xl font-extrabold text-slate-900">{analytics?.views24h ?? 0}</p>
+                  <p className="text-[11px] text-slate-500">Unique: {analytics?.unique24h ?? 0}</p>
+                </div>
+
+                <div className="rounded-xl border border-gray-200 bg-slate-50/50 p-4">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Total Views</span>
+                  <p className="mt-1 text-3xl font-extrabold text-amber-600">{analytics?.totalViews ?? 0}</p>
+                  <p className="text-[11px] text-slate-500">Lifetime pageviews</p>
+                </div>
+
+                <div className="rounded-xl border border-gray-200 bg-slate-50/50 p-4">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Total Visitors</span>
+                  <p className="mt-1 text-3xl font-extrabold text-slate-900">{analytics?.uniqueVisitors ?? 0}</p>
+                  <p className="text-[11px] text-slate-500">Distinct devices</p>
+                </div>
+              </div>
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <div className="rounded-xl border border-gray-200 bg-slate-50/50 p-4 sm:p-5">
+                  <div className="flex items-center justify-between border-b border-gray-200 pb-3">
+                    <h3 className="font-bold text-sm text-slate-900">Traffic by Country</h3>
+                    <button onClick={loadAnalytics} className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs">
+                      {analyticsLoading ? "..." : "Refresh"}
+                    </button>
+                  </div>
+                  <div className="mt-3 divide-y divide-gray-200">
+                    {analytics?.countryStats?.map((c, idx) => (
+                      <div key={idx} className="flex items-center justify-between py-2 text-xs">
+                        <span className="font-semibold text-slate-800">{getCountryFlag(c.country)}</span>
+                        <span className="font-bold text-slate-900">{c.count} views</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-gray-200 bg-slate-50/50 p-4 sm:p-5">
+                  <h3 className="font-bold text-sm text-slate-900 border-b border-gray-200 pb-3">Top Visited Pages</h3>
+                  <div className="mt-3 divide-y divide-gray-200">
+                    {analytics?.topPages?.map((p, idx) => (
+                      <div key={idx} className="flex items-center justify-between py-2 text-xs">
+                        <span className="font-mono text-slate-700">{p.path}</span>
+                        <span className="font-bold text-slate-900">{p.count} views</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Floating Sticky Save Button Bar on Mobile (Unmissable) */}
-      {tab !== "Live Analytics" && tab !== "Enquiries" && (
-        <div className="fixed bottom-0 inset-x-0 z-40 border-t border-ink/10 bg-white/95 p-3.5 shadow-2xl backdrop-blur-md md:hidden flex items-center justify-between gap-3">
-          <div className="text-[11px] text-ink/70 font-medium">
-            {busy ? "Saving changes..." : "Unsaved changes?"}
-          </div>
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() => saveOverrides(ov)}
-            className="rounded-full bg-gold px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-ink shadow-md active:scale-95 transition-transform hover:scale-[1.02]"
-          >
-            {busy ? "Saving..." : "💾 Save Now ✓"}
-          </button>
-        </div>
-      )}
 
       {/* Floating Toast Notification */}
       <AnimatePresence>
@@ -2506,9 +2248,9 @@ export default function AdminApp() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 30 }}
-            className="fixed bottom-20 sm:bottom-8 left-1/2 z-[300] -translate-x-1/2 rounded-full bg-coal px-6 py-3.5 text-xs font-semibold text-ivory shadow-2xl flex items-center gap-2 border border-gold/40"
+            className="fixed bottom-6 left-1/2 z-[300] -translate-x-1/2 rounded-full bg-slate-950 px-6 py-3 text-xs font-bold text-white shadow-2xl flex items-center gap-2 border border-amber-400"
           >
-            <span className="text-gold font-bold">✓</span> {toast}
+            <span className="text-amber-400">✓</span> {toast}
           </motion.div>
         )}
       </AnimatePresence>
