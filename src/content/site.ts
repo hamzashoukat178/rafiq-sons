@@ -105,6 +105,8 @@ export const products: Product[] = [
     image: "/photos/rs-092-02.jpg",
     detail: "Damask, taffeta and satin bases. Up to 8 thread colors, laser cut or folded.",
     from: "0.09",
+    turnaround: "7 – 10 working days",
+    moq: "Starts from 100 pcs (bulk savings at 500+)",
     guessedPrice: true,
   },
   {
@@ -115,6 +117,8 @@ export const products: Product[] = [
     image: "/photos/rs-070-03.jpg",
     detail: "Single or double sided print, cut sealed edges, custom folds.",
     from: "0.07",
+    turnaround: "5 – 8 working days",
+    moq: "Starts from 100 pcs",
     guessedPrice: true,
   },
   {
@@ -125,6 +129,8 @@ export const products: Product[] = [
     image: "/photos/rs-057-00.jpg",
     detail: "400 to 800 gsm boards, metallic foils, cotton or waxed string, eyelets.",
     from: "0.12",
+    turnaround: "6 – 9 working days",
+    moq: "Starts from 100 pcs",
     guessedPrice: true,
   },
   {
@@ -135,6 +141,8 @@ export const products: Product[] = [
     image: "/photos/rs-004-cover.jpg",
     detail: "HD and 3D silicone effects, iron on application, wash tested.",
     from: "0.08",
+    turnaround: "6 – 8 working days",
+    moq: "Starts from 100 pcs",
     guessedPrice: true,
   },
   {
@@ -145,6 +153,8 @@ export const products: Product[] = [
     image: "/photos/rs-095-01.jpg",
     detail: "Kiss cut vinyl, embroidered merrowed edges, iron on backing.",
     from: "0.06",
+    turnaround: "5 – 8 working days",
+    moq: "Starts from 100 pcs",
     guessedPrice: true,
   },
   {
@@ -155,6 +165,8 @@ export const products: Product[] = [
     image: "/photos/rs-089-00.jpg",
     detail: "Foil, letterpress and digital print on textured art card.",
     from: "0.05",
+    turnaround: "5 – 7 working days",
+    moq: "Starts from 100 pcs",
     guessedPrice: true,
   },
   {
@@ -165,6 +177,8 @@ export const products: Product[] = [
     image: "/photos/rs-024-01.jpg",
     detail: "600 gsm duplex boards, foil edges, spot gloss on matte lamination.",
     from: "0.10",
+    turnaround: "5 – 7 working days",
+    moq: "Starts from 100 pcs",
     guessedPrice: true,
   },
   {
@@ -175,6 +189,8 @@ export const products: Product[] = [
     image: "/photos/rs-032-00.jpg",
     detail: "Frosted zip bags, polymailers, branded tissue and packing tape.",
     from: "0.14",
+    turnaround: "8 – 12 working days",
+    moq: "Starts from 100 pcs",
     guessedPrice: true,
   },
 ];
