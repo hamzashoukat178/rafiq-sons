@@ -12,6 +12,22 @@ export type TabCategory = {
 
 export const tabCategories: TabCategory[] = [
   {
+    id: "invoices-hub",
+    label: "Invoices & Billing",
+    icon: "🧾",
+    subTabs: [
+      { id: "Invoices", label: "Commercial Invoices", icon: "📑" },
+      { id: "Customers", label: "Client Directory", icon: "👥" },
+      { id: "Invoice Settings", label: "Billing & Bank Setup", icon: "⚙️" },
+    ],
+  },
+  {
+    id: "leads-hub",
+    label: "Inquiries",
+    icon: "💬",
+    subTabs: [{ id: "Enquiries", label: "Customer Inquiries", icon: "💬" }],
+  },
+  {
     id: "products-hub",
     label: "Products & Media",
     icon: "📦",
@@ -51,12 +67,6 @@ export const tabCategories: TabCategory[] = [
     label: "Contact & Info",
     icon: "📞",
     subTabs: [{ id: "Contact & Info", label: "Contact & Socials", icon: "📞" }],
-  },
-  {
-    id: "leads-hub",
-    label: "Inquiries",
-    icon: "💬",
-    subTabs: [{ id: "Enquiries", label: "Customer Inquiries", icon: "💬" }],
   },
   {
     id: "analytics-hub",

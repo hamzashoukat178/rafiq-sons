@@ -161,3 +161,49 @@ body {
     transition-duration: 0.001s !important;
   }
 }
+
+/* Print Stylesheet for High-End Commercial Invoices */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #0c0b09 !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide all admin UI during print */
+  .no-print,
+  nav,
+  aside,
+  header:not(.invoice-print-header),
+  footer:not(.invoice-print-footer),
+  .admin-header,
+  .admin-sidebar,
+  .admin-tabbar,
+  .admin-actions {
+    display: none !important;
+  }
+
+  .invoice-printable-container {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: #ffffff !important;
+    color: #111111 !important;
+    display: block !important;
+  }
+
+  .invoice-page-break {
+    page-break-after: always;
+    break-after: page;
+  }
+}

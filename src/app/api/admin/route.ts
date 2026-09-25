@@ -1,8 +1,22 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createHash } from "crypto";
-import { sql, ensureTables, getContent, setContent } from "@/lib/db";
+import {
+  sql,
+  ensureTables,
+  getContent,
+  setContent,
+  getInvoices,
+  getCustomers,
+  getInvoiceSettings,
+  saveInvoiceSettings,
+  getNextInvoiceNumber,
+  saveInvoice,
+  deleteOrVoidInvoice,
+  saveCustomer,
+} from "@/lib/db";
 import { defaultContent, type Overrides } from "@/lib/content";
+import type { Invoice, Customer, InvoiceSettings } from "@/lib/invoice";
 
 const COOKIE = "rs_admin";
 const DEFAULT_PASS = "rafiq123";
@@ -22,13 +36,29 @@ async function authed() {
 
 export async function GET() {
   if (!(await authed())) return NextResponse.json({ ok: false }, { status: 401 });
-  if (!sql) return NextResponse.json({ ok: true, db: false, leads: [], orders: [], overrides: {} });
+  if (!sql) return NextResponse.json({ ok: true, db: false, leads: [], orders: [], overrides: {}, invoices: [], customers: [] });
   try {
     await ensureTables();
     const leads = await sql`SELECT * FROM leads ORDER BY created_at DESC LIMIT 300`;
     const orders = await sql`SELECT * FROM orders ORDER BY created_at DESC LIMIT 300`;
     const overrides = (await getContent<Overrides>("overrides")) ?? {};
-    return NextResponse.json({ ok: true, db: true, leads, orders, overrides, defaults: { products: defaultContent.products.length } });
+    const invoices = await getInvoices();
+    const customers = await getCustomers();
+    const invoiceSettings = await getInvoiceSettings();
+    const nextInvoiceNumber = await getNextInvoiceNumber();
+
+    return NextResponse.json({
+      ok: true,
+      db: true,
+      leads,
+      orders,
+      overrides,
+      invoices,
+      customers,
+      invoiceSettings,
+      nextInvoiceNumber,
+      defaults: { products: defaultContent.products.length },
+    });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ ok: false, error: "Database error" }, { status: 500 });
@@ -72,6 +102,7 @@ export async function POST(req: Request) {
   try {
     await ensureTables();
 
+    // 1. Save Content Overrides
     if (action === "save-overrides") {
       const { overrides } = body as { overrides: Overrides };
       try {
@@ -83,6 +114,52 @@ export async function POST(req: Request) {
       }
     }
 
+    // 2. Save / Update Commercial Invoice
+    if (action === "save-invoice") {
+      const { invoice } = body as { invoice: Partial<Invoice> };
+      if (!invoice || !invoice.customer_name?.trim()) {
+        return NextResponse.json({ ok: false, error: "Customer name is required" }, { status: 400 });
+      }
+      const result = await saveInvoice(invoice);
+      const nextNum = await getNextInvoiceNumber();
+      return NextResponse.json({ ...result, nextInvoiceNumber: nextNum });
+    }
+
+    // 3. Delete or Void Invoice
+    if (action === "delete-invoice") {
+      const { id, voidOnly = true } = body as { id: number; voidOnly?: boolean };
+      const success = await deleteOrVoidInvoice(id, voidOnly ? "void" : "delete");
+      return NextResponse.json({ ok: success });
+    }
+
+    // 4. Save Customer Profile
+    if (action === "save-customer") {
+      const { customer } = body as { customer: Partial<Customer> };
+      if (!customer?.name?.trim()) {
+        return NextResponse.json({ ok: false, error: "Customer name is required" }, { status: 400 });
+      }
+      const result = await saveCustomer(customer);
+      return NextResponse.json(result);
+    }
+
+    // 5. Save Invoice Settings
+    if (action === "save-invoice-settings") {
+      const { settings } = body as { settings: InvoiceSettings };
+      if (!settings) {
+        return NextResponse.json({ ok: false, error: "Settings object required" }, { status: 400 });
+      }
+      const success = await saveInvoiceSettings(settings);
+      const nextNum = await getNextInvoiceNumber();
+      return NextResponse.json({ ok: success, nextInvoiceNumber: nextNum });
+    }
+
+    // 6. Get Next Invoice Number
+    if (action === "get-next-invoice-number") {
+      const nextNum = await getNextInvoiceNumber();
+      return NextResponse.json({ ok: true, nextInvoiceNumber: nextNum });
+    }
+
+    // 7. Lead Status Management
     if (action === "lead-status") {
       const { id, status } = body as { id: number; status: string };
       await sql`UPDATE leads SET status = ${status} WHERE id = ${id}`;

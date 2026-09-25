@@ -27,6 +27,15 @@ import { defaultContent, type Overrides } from "@/lib/content";
 import { defaultCarouselItems, type ProductCarouselItem } from "@/components/ProductCarousel";
 import { cn } from "@/lib/utils";
 import AdminTabsNav from "./AdminTabsNav";
+import {
+  DEFAULT_INVOICE_SETTINGS,
+  type Invoice,
+  type Customer,
+  type InvoiceSettings,
+} from "@/lib/invoice";
+import InvoiceManager from "./invoices/InvoiceManager";
+import CustomerManager from "./invoices/CustomerManager";
+import InvoiceSettingsView from "./invoices/InvoiceSettingsView";
 
 type Lead = {
   id: number;
@@ -69,6 +78,10 @@ type Data = {
   leads: Lead[];
   orders: unknown[];
   overrides: Overrides;
+  invoices?: Invoice[];
+  customers?: Customer[];
+  invoiceSettings?: InvoiceSettings;
+  nextInvoiceNumber?: string;
 };
 
 const inputCls =
@@ -292,7 +305,7 @@ export default function AdminApp() {
   const [data, setData] = useState<Data | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
-  const [tab, setTab] = useState<string>("Products");
+  const [tab, setTab] = useState<string>("Invoices");
   const [toast, setToast] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -418,6 +431,114 @@ export default function AdminApp() {
   const leads = useMemo(() => data?.leads ?? [], [data]);
   const newCount = useMemo(() => leads.filter((l) => l.status === "new").length, [leads]);
 
+  const invoices = useMemo(() => data?.invoices ?? [], [data]);
+  const customers = useMemo(() => data?.customers ?? [], [data]);
+  const invoiceSettings = useMemo(() => data?.invoiceSettings ?? DEFAULT_INVOICE_SETTINGS, [data]);
+  const nextInvoiceNumber = useMemo(() => data?.nextInvoiceNumber ?? "RS-INV-2026-001", [data]);
+
+  const handleSaveInvoice = async (invoice: Partial<Invoice>, saveCustomerProfile = true): Promise<boolean> => {
+    setBusy(true);
+    try {
+      if (saveCustomerProfile && invoice.customer_name) {
+        await post({
+          action: "save-customer",
+          customer: {
+            id: invoice.customer_id,
+            name: invoice.customer_name,
+            company: invoice.customer_company,
+            email: invoice.customer_email,
+            phone: invoice.customer_phone,
+            address: invoice.customer_address,
+            city: invoice.customer_city,
+            country: invoice.customer_country,
+            tax_id: invoice.customer_tax_id,
+          },
+        });
+      }
+
+      const res = await fetch("/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "save-invoice", invoice }),
+      });
+      const json = await res.json();
+      if (json.ok) {
+        say("Commercial Invoice saved successfully!");
+        await load();
+        return true;
+      } else {
+        alert(json.error || "Failed to save invoice");
+        return false;
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to save invoice");
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleDeleteInvoice = async (id: number, voidOnly = false): Promise<boolean> => {
+    setBusy(true);
+    try {
+      const res = await fetch("/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete-invoice", id, voidOnly }),
+      });
+      const json = await res.json();
+      if (json.ok) {
+        say("Invoice updated/removed!");
+        await load();
+        return true;
+      }
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleSaveCustomer = async (customer: Partial<Customer>): Promise<boolean> => {
+    setBusy(true);
+    try {
+      const res = await fetch("/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "save-customer", customer }),
+      });
+      const json = await res.json();
+      if (json.ok) {
+        say("Client profile saved!");
+        await load();
+        return true;
+      }
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleSaveInvoiceSettings = async (settings: InvoiceSettings): Promise<boolean> => {
+    setBusy(true);
+    try {
+      const res = await fetch("/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "save-invoice-settings", settings }),
+      });
+      const json = await res.json();
+      if (json.ok) {
+        say("Billing & Bank Settings saved!");
+        await load();
+        return true;
+      }
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  };
+
   if (state === "loading") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-950 font-display text-2xl italic text-amber-400">
@@ -515,6 +636,39 @@ export default function AdminApp() {
 
         {/* Tab Panels */}
         <div className="rounded-2xl border border-gray-200/90 bg-white p-5 sm:p-7 shadow-xs">
+          {/* TAB: COMMERCIAL INVOICES MASTER */}
+          {tab === "Invoices" && (
+            <InvoiceManager
+              invoices={invoices}
+              customers={customers}
+              settings={invoiceSettings}
+              nextInvoiceNumber={nextInvoiceNumber}
+              onSaveInvoice={handleSaveInvoice}
+              onDeleteInvoice={handleDeleteInvoice}
+              onRefreshData={load}
+            />
+          )}
+
+          {/* TAB: CLIENT DIRECTORY & CRM */}
+          {tab === "Customers" && (
+            <CustomerManager
+              customers={customers}
+              invoices={invoices}
+              onSaveCustomer={handleSaveCustomer}
+              onCreateInvoiceForCustomer={() => {
+                setTab("Invoices");
+              }}
+            />
+          )}
+
+          {/* TAB: BILLING & BANK CONFIGURATION */}
+          {tab === "Invoice Settings" && (
+            <InvoiceSettingsView
+              settings={invoiceSettings}
+              onSave={handleSaveInvoiceSettings}
+            />
+          )}
+
           {/* TAB: PRODUCTS CATALOG (WITH FULL TURNAROUND & MOQ EDITING) */}
           {tab === "Products" && (
             <div>
