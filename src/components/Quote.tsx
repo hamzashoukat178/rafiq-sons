@@ -10,7 +10,7 @@ import { easeLuxe, cn } from "@/lib/utils";
 
 const steps = ["Product", "Quantity", "Contact"];
 const inputCls =
-  "w-full rounded-xl border border-ivory/15 bg-ink/70 px-4 py-3.5 text-sm text-ivory placeholder-ivory/30 outline-none transition-colors focus:border-gold";
+  "w-full rounded-xl border border-ivory/20 bg-ink/80 px-4 py-3.5 text-sm text-ivory placeholder:text-ivory/50 outline-none transition-colors focus:border-gold";
 
 function Chip({ active, children, onClick }: { active: boolean; children: React.ReactNode; onClick: () => void }) {
   return (
@@ -187,18 +187,18 @@ export default function Quote({
                           onClick={() => i < step && setStep(i)}
                           className={cn(
                             "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold transition-all",
-                            i <= step ? "border-gold bg-gold text-ink shadow-[0_0_15px_rgba(198,161,91,0.4)]" : "border-ivory/20 text-ivory/40"
+                            i <= step ? "border-gold bg-gold text-ink shadow-[0_0_15px_rgba(198,161,91,0.4)]" : "border-ivory/20 text-ivory/50"
                           )}
                           aria-label={`Step ${i + 1}: ${s}`}
                         >
                           {i + 1}
                         </button>
                         <div className="hidden sm:block">
-                          <p className={cn("text-[11px] font-semibold uppercase tracking-[0.18em]", i <= step ? "text-ivory" : "text-ivory/35")}>
+                          <p className={cn("text-[11px] uppercase tracking-[0.18em]", i <= step ? "text-ivory font-bold" : "text-ivory/50 font-medium")}>
                             {s}
                           </p>
                         </div>
-                        {i < steps.length - 1 && <div className="h-px flex-1 bg-ivory/12" />}
+                        {i < steps.length - 1 && <div className="h-px flex-1 bg-ivory/15" />}
                       </div>
                     ))}
                   </div>
@@ -212,8 +212,8 @@ export default function Quote({
                         exit={{ opacity: 0, x: -40 }}
                         transition={{ duration: 0.45, ease: easeLuxe }}
                       >
-                        <p className="font-display text-2xl text-ivory">What product are we making?</p>
-                        <p className="mt-1 text-xs text-smoke">Select the primary craft for your project</p>
+                        <p className="font-display text-2xl text-ivory font-bold">What product are we making?</p>
+                        <p className="mt-1 text-xs text-ivory/70">Select the primary craft for your project</p>
                         <div className="mt-6 flex flex-wrap gap-2.5">
                           {quote.products.map((p) => (
                             <Chip key={p} active={form.product === p} onClick={() => setForm({ ...form, product: p })}>
@@ -232,8 +232,8 @@ export default function Quote({
                         exit={{ opacity: 0, x: -40 }}
                         transition={{ duration: 0.45, ease: easeLuxe }}
                       >
-                        <p className="font-display text-2xl text-ivory">How many pieces, roughly?</p>
-                        <p className="mt-1 text-xs text-smoke">Higher volume runs benefit from significantly lower unit prices</p>
+                        <p className="font-display text-2xl text-ivory font-bold">How many pieces, roughly?</p>
+                        <p className="mt-1 text-xs text-ivory/70">Higher volume runs benefit from significantly lower unit prices</p>
                         <div className="mt-6 flex flex-wrap gap-2.5">
                           {quote.quantities.map((q) => (
                             <Chip key={q} active={form.quantity === q} onClick={() => setForm({ ...form, quantity: q })}>
@@ -258,7 +258,7 @@ export default function Quote({
                         exit={{ opacity: 0, x: -40 }}
                         transition={{ duration: 0.45, ease: easeLuxe }}
                       >
-                        <p className="font-display text-2xl text-ivory">Where do we send your quote?</p>
+                        <p className="font-display text-2xl text-ivory font-bold">Where do we send your quote?</p>
                         <div className="mt-6 grid gap-5 sm:grid-cols-2">
                           <input
                             className={inputCls}

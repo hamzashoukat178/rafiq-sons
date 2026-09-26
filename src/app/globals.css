@@ -96,10 +96,18 @@ body {
 }
 
 .text-gold-grad {
+  color: #c6a15b;
   background: linear-gradient(100deg, #e8cf9a 0%, #c6a15b 38%, #97763a 62%, #e2c88b 100%);
   -webkit-background-clip: text;
   background-clip: text;
-  color: transparent;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+@supports not (-webkit-text-fill-color: transparent) {
+  .text-gold-grad {
+    color: #c6a15b !important;
+  }
 }
 
 .grain::after {
@@ -113,10 +121,10 @@ body {
 }
 
 .glass-dark {
-  background: rgba(20, 18, 14, 0.55);
+  background: rgba(20, 18, 14, 0.75);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(245, 241, 232, 0.09);
+  border: 1px solid rgba(245, 241, 232, 0.12);
 }
 
 .hairline-t {
@@ -149,8 +157,8 @@ body {
   background: radial-gradient(120% 90% at 50% 10%, transparent 40%, rgba(12, 11, 9, 0.85) 100%);
 }
 
-.no-cursor * {
-  cursor: none !important;
+.no-cursor body {
+  cursor: default;
 }
 
 @media (prefers-reduced-motion: reduce) {

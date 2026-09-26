@@ -44,13 +44,13 @@ export default function Process({
           <div className="flex flex-col gap-14 lg:gap-20">
             {process.steps.map((s, i) => (
               <FadeUp key={s.n} delay={0.05 * i} className="relative grid gap-4 pl-12 sm:pl-16 lg:grid-cols-[220px_1fr] lg:gap-16">
-                <span className="absolute left-0 top-1.5 flex h-[15px] w-[15px] items-center justify-center rounded-full border border-gold/60 bg-coal sm:h-[19px] sm:w-[19px]">
+                <span className="absolute left-0 top-1.5 flex h-[15px] w-[15px] items-center justify-center rounded-full border border-gold bg-coal sm:h-[19px] sm:w-[19px]">
                   <span className="h-[5px] w-[5px] rounded-full bg-gold" />
                 </span>
-                <span className="font-display text-5xl italic text-ivory/25 sm:text-6xl">{s.n}</span>
+                <span className="font-display text-5xl italic text-gold/45 sm:text-6xl">{s.n}</span>
                 <div className="max-w-xl pb-2">
-                  <h3 className="font-display text-2xl text-ivory sm:text-3xl">{s.title}</h3>
-                  <p className="mt-3 leading-relaxed text-ivory/55">{s.body}</p>
+                  <h3 className="font-display text-2xl text-ivory sm:text-3xl font-bold">{s.title}</h3>
+                  <p className="mt-3 leading-relaxed text-ivory/70">{s.body}</p>
                 </div>
               </FadeUp>
             ))}

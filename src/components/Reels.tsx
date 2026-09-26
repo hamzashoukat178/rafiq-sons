@@ -150,13 +150,13 @@ export default function Reels({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[220] flex items-center justify-center bg-ink/95 p-4 backdrop-blur-2xl sm:p-8"
+            className="fixed inset-0 z-[250] flex items-center justify-center bg-ink/95 p-4 backdrop-blur-2xl sm:p-8"
             onClick={() => setActiveVideo(null)}
           >
             <button
               onClick={() => setActiveVideo(null)}
               aria-label="Close video"
-              className="absolute right-6 top-6 z-20 flex h-12 w-12 items-center justify-center rounded-full border border-ivory/20 bg-coal text-xl text-ivory transition-colors hover:border-gold hover:text-gold"
+              className="absolute right-6 top-6 z-20 flex h-12 w-12 items-center justify-center rounded-full border border-ivory/20 bg-coal text-xl text-ivory transition-colors hover:border-gold hover:text-gold cursor-pointer"
             >
               ✕
             </button>

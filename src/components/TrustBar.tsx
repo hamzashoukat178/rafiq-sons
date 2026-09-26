@@ -92,10 +92,10 @@ export default function TrustBar({
             {row1.concat(row1).map((item, i) => (
               <span
                 key={`${item}-${i}`}
-                className="flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.24em] text-ivory/70 transition-colors hover:text-gold sm:text-sm"
+                className="flex items-center gap-4 text-xs font-bold uppercase tracking-[0.24em] text-ivory/85 transition-colors hover:text-gold sm:text-sm"
               >
                 <span>{item}</span>
-                <span className="h-1 w-1 rounded-full bg-gold/40" />
+                <span className="h-1.5 w-1.5 rounded-full bg-gold/60" />
               </span>
             ))}
           </div>
@@ -107,10 +107,10 @@ export default function TrustBar({
             {row2.concat(row2).map((item, i) => (
               <span
                 key={`${item}-${i}`}
-                className="flex items-center gap-4 text-xs font-medium tracking-[0.2em] text-ivory/45 transition-colors hover:text-ivory sm:text-sm"
+                className="flex items-center gap-4 text-xs font-semibold tracking-[0.2em] text-ivory/70 transition-colors hover:text-gold sm:text-sm"
               >
                 <span>{item}</span>
-                <span className="h-1 w-1 rounded-full bg-ivory/20" />
+                <span className="h-1.5 w-1.5 rounded-full bg-ivory/40" />
               </span>
             ))}
           </div>
@@ -122,15 +122,15 @@ export default function TrustBar({
             <FadeUp
               key={p.title}
               delay={0.08 * idx}
-              className="glass-dark group relative rounded-2xl border border-ivory/10 p-6 transition-all duration-500 hover:border-gold/40 hover:bg-coal/90"
+              className="glass-dark group relative rounded-2xl border border-ivory/15 p-6 transition-all duration-500 hover:border-gold/60 hover:bg-coal/90 shadow-lg"
             >
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-gold/30 bg-gold/10 transition-transform duration-500 group-hover:scale-110 group-hover:border-gold">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-gold/40 bg-gold/15 transition-transform duration-500 group-hover:scale-110 group-hover:border-gold">
                 {icons[idx % icons.length]}
               </div>
-              <h3 className="mt-4 font-display text-lg text-ivory transition-colors group-hover:text-gold">
+              <h3 className="mt-4 font-display text-lg font-bold text-ivory transition-colors group-hover:text-gold">
                 {p.title}
               </h3>
-              <p className="mt-2 text-xs leading-relaxed text-ivory/55">
+              <p className="mt-2 text-xs leading-relaxed text-ivory/70">
                 {p.desc}
               </p>
             </FadeUp>

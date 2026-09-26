@@ -117,14 +117,14 @@ export default function Gallery({ items: itemsProp }: { items?: Item[] }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[220] flex items-center justify-center bg-ink/95 p-4 backdrop-blur-2xl sm:p-8"
+            className="fixed inset-0 z-[250] flex items-center justify-center bg-ink/95 p-4 backdrop-blur-2xl sm:p-8"
             onClick={close}
           >
             {/* Close Button */}
             <button
               onClick={close}
               aria-label="Close lightbox"
-              className="absolute right-6 top-6 z-20 flex h-12 w-12 items-center justify-center rounded-full border border-ivory/20 bg-coal/80 text-xl text-ivory transition-colors hover:border-gold hover:text-gold"
+              className="absolute right-6 top-6 z-20 flex h-12 w-12 items-center justify-center rounded-full border border-ivory/20 bg-coal/80 text-xl text-ivory transition-colors hover:border-gold hover:text-gold cursor-pointer"
             >
               ✕
             </button>
@@ -136,7 +136,7 @@ export default function Gallery({ items: itemsProp }: { items?: Item[] }) {
                 step(-1);
               }}
               aria-label="Previous photo"
-              className="absolute left-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-ivory/20 bg-coal/80 text-xl text-ivory transition-colors hover:border-gold hover:text-gold sm:left-8"
+              className="absolute left-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-ivory/20 bg-coal/80 text-xl text-ivory transition-colors hover:border-gold hover:text-gold sm:left-8 cursor-pointer"
             >
               ←
             </button>
@@ -148,7 +148,7 @@ export default function Gallery({ items: itemsProp }: { items?: Item[] }) {
                 step(1);
               }}
               aria-label="Next photo"
-              className="absolute right-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-ivory/20 bg-coal/80 text-xl text-ivory transition-colors hover:border-gold hover:text-gold sm:right-8"
+              className="absolute right-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-ivory/20 bg-coal/80 text-xl text-ivory transition-colors hover:border-gold hover:text-gold sm:right-8 cursor-pointer"
             >
               →
             </button>

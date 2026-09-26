@@ -267,7 +267,7 @@ export default function ProductCarousel({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[220] flex items-center justify-center bg-ink/95 p-4 backdrop-blur-2xl sm:p-8"
+            className="fixed inset-0 z-[250] flex items-center justify-center bg-ink/95 p-4 backdrop-blur-2xl sm:p-8"
             onClick={() => setSelectedPhoto(null)}
           >
             <motion.div
@@ -276,13 +276,13 @@ export default function ProductCarousel({
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               transition={{ ease: easeLuxe, duration: 0.35 }}
               onClick={(e) => e.stopPropagation()}
-              className="glass-dark relative max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-3xl border border-gold/30 bg-coal p-5 sm:p-8"
+              className="glass-dark relative max-h-[92vh] w-full max-w-4xl overflow-hidden rounded-3xl border border-gold/40 bg-coal p-5 sm:p-8 shadow-2xl"
             >
               <button
                 type="button"
                 onClick={() => setSelectedPhoto(null)}
                 aria-label="Close photo preview"
-                className="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-ivory/20 bg-ink/80 text-ivory transition-colors hover:border-gold hover:text-gold"
+                className="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-ivory/20 bg-ink/90 text-ivory transition-colors hover:border-gold hover:text-gold cursor-pointer"
               >
                 ✕
               </button>
@@ -306,11 +306,11 @@ export default function ProductCarousel({
                       {selectedPhoto.title}
                     </h3>
                     {selectedPhoto.material && (
-                      <p className="mt-3 text-sm leading-relaxed text-ivory/70 border-l-2 border-gold/40 pl-3">
+                      <p className="mt-3 text-sm leading-relaxed text-ivory/80 border-l-2 border-gold/60 pl-3">
                         {selectedPhoto.material}
                       </p>
                     )}
-                    <p className="mt-4 text-xs leading-relaxed text-smoke">
+                    <p className="mt-4 text-xs leading-relaxed text-ivory/65">
                       Custom woven, printed, or embossed to your exact logo specs and dimensions. Sample orders available worldwide.
                     </p>
                   </div>
@@ -319,7 +319,7 @@ export default function ProductCarousel({
                     <button
                       type="button"
                       onClick={() => handleInquire(selectedPhoto)}
-                      className="btn-sheen flex-1 rounded-full bg-[#25D366] py-3.5 text-center text-xs font-bold uppercase tracking-wider text-ink shadow-lg"
+                      className="btn-sheen flex-1 rounded-full bg-[#25D366] py-3.5 text-center text-xs font-bold uppercase tracking-wider text-ink shadow-lg cursor-pointer"
                     >
                       Inquire on WhatsApp ↗
                     </button>
@@ -329,7 +329,7 @@ export default function ProductCarousel({
                         setSelectedPhoto(null);
                         document.querySelector("#quote")?.scrollIntoView({ behavior: "smooth" });
                       }}
-                      className="rounded-full bg-gold px-6 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-ink"
+                      className="rounded-full bg-gold px-6 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-ink cursor-pointer"
                     >
                       Request Quote
                     </button>

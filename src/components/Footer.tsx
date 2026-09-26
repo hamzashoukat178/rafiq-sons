@@ -65,15 +65,15 @@ export default function Footer({
               height={58}
               className="h-12 w-auto"
             />
-            <p className="mt-4 text-[10px] uppercase tracking-[0.28em] text-smoke">Woven with intent</p>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-ivory/55">
+            <p className="mt-4 text-[10px] uppercase tracking-[0.28em] text-gold font-bold">Woven with intent</p>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-ivory/70">
               Custom high-density damask woven labels, satin wash care labels, embossed hang tags, leather patches, and bespoke packaging for apparel brands worldwide. {site.location}.
             </p>
           </div>
 
           <div>
-            <p className="eyebrow text-[10px] text-smoke">Collections</p>
-            <ul className="mt-5 space-y-3 text-sm text-ivory/60">
+            <p className="eyebrow text-xs font-bold text-gold">Collections</p>
+            <ul className="mt-5 space-y-3 text-sm text-ivory/75">
               {marqueeItems.slice(0, 6).map((m) => (
                 <li key={m}>
                   <button onClick={() => go("#collections")} className="transition-colors hover:text-gold">{m}</button>
@@ -83,8 +83,8 @@ export default function Footer({
           </div>
 
           <div>
-            <p className="eyebrow text-[10px] text-smoke">Studio & Export</p>
-            <ul className="mt-5 space-y-3 text-sm text-ivory/60">
+            <p className="eyebrow text-xs font-bold text-gold">Studio & Export</p>
+            <ul className="mt-5 space-y-3 text-sm text-ivory/75">
               <li><button onClick={() => go("#worldwide-export")} className="transition-colors hover:text-gold">Worldwide Export Hubs</button></li>
               <li><button onClick={() => go("#atelier")} className="transition-colors hover:text-gold">The Process</button></li>
               <li><button onClick={() => go("#showcase")} className="transition-colors hover:text-gold">Photo Showcase</button></li>
@@ -96,8 +96,8 @@ export default function Footer({
           </div>
 
           <div>
-            <p className="eyebrow text-[10px] text-smoke">Direct Contact</p>
-            <ul className="mt-5 space-y-3 text-sm text-ivory/60">
+            <p className="eyebrow text-xs font-bold text-gold">Direct Contact</p>
+            <ul className="mt-5 space-y-3 text-sm text-ivory/75">
               <li>
                 <a href={site.whatsapp} target="_blank" rel="noreferrer" className="flex items-center gap-2 font-medium text-gold hover:underline">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#25D366]" />
@@ -106,24 +106,24 @@ export default function Footer({
               </li>
               <li><a href={`mailto:${site.email}`} className="transition-colors hover:text-gold">{site.email}</a></li>
               <li><a href={site.instagram} target="_blank" rel="noreferrer" className="transition-colors hover:text-gold">Instagram (@rafiqsonslabelss)</a></li>
-              <li className="text-ivory/40">{site.location}</li>
+              <li className="text-ivory/60">{site.location}</li>
             </ul>
           </div>
         </div>
 
         {/* Global Export Footprint SEO Tags Footer */}
         <div className="mt-12 border-t border-ivory/10 pt-8">
-          <p className="eyebrow text-[10px] text-smoke">Worldwide Express Air Delivery</p>
-          <div className="mt-3 flex flex-wrap gap-2 text-xs text-ivory/45">
+          <p className="eyebrow text-xs font-bold text-gold">Worldwide Express Air Delivery</p>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs text-ivory/60">
             {globalExportDestinations.map((dest) => (
-              <span key={dest} className="rounded-full border border-ivory/10 bg-ink/40 px-3 py-1">
+              <span key={dest} className="rounded-full border border-ivory/15 bg-ink/60 px-3 py-1">
                 {dest}
               </span>
             ))}
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-ivory/10 pt-8 text-[11px] uppercase tracking-[0.2em] text-smoke sm:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-ivory/10 pt-8 text-[11px] uppercase tracking-[0.2em] text-ivory/60 sm:flex-row">
           <p>© {year} {site.legalNote}. All rights reserved.</p>
           <p className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-gold animate-pulse-dot" />
