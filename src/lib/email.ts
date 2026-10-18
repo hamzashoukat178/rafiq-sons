@@ -7,25 +7,32 @@ export type LeadNotificationData = {
   brand?: string;
   product?: string;
   quantity?: string;
+  country?: string;
+  city?: string;
+  dimensions?: string;
+  colors?: string;
+  material?: string;
+  deliveryPreference?: string;
+  items?: { name: string; quantity: string; specs?: string }[];
   message?: string;
 };
 
 export async function sendLeadEmailNotification(data: LeadNotificationData): Promise<boolean> {
   const resendApiKey = process.env.RESEND_API_KEY;
-  const toEmail = process.env.NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL || "rafiqsonslabels@gmail.com";
+  const toEmail = process.env.NOTIFICATION_EMAIL || process.env.ADMIN_EMAIL || "hamzashoukat178@gmail.com";
   const fromEmail = process.env.FROM_EMAIL || "Rafiq Sons Leads <onboarding@resend.dev>";
 
   if (!resendApiKey) {
-    console.log("Email notification skipped: RESEND_API_KEY is not set yet in Vercel environment variables.");
+    console.log("Email notification skipped: RESEND_API_KEY is not set in environment.");
     return false;
   }
 
   const isQuote = data.type === "quote";
   const subject = isQuote
-    ? `✨ New Quote Request from ${data.name || "Customer"}${data.brand ? ` (${data.brand})` : ""}`
-    : `📩 New Contact Message from ${data.name || "Customer"}`;
+    ? `⚡ [New Quote] ${data.name || "Client"}${data.brand ? ` (${data.brand})` : ""} - ${data.country || "Direct Inquiry"}`
+    : `📩 [New Message] ${data.name || "Customer"}`;
 
-  const cleanPhone = data.contact.replace(/[^0-9]/g, "");
+  const cleanPhone = (data.contact || "").replace(/[^0-9]/g, "");
   const waUrl = cleanPhone.length >= 7 ? `https://wa.me/${cleanPhone}` : null;
 
   const html = `
@@ -35,86 +42,126 @@ export async function sendLeadEmailNotification(data: LeadNotificationData): Pro
   <meta charset="utf-8">
   <title>${subject}</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #0c0b09; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #f5f1e8;">
-  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #0c0b09; padding: 30px 15px;">
+<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; padding: 30px 15px;">
     <tr>
       <td align="center">
-        <table width="100%" max-width="600" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #151411; border: 1px solid #c6a15b; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
+        <table width="100%" max-width="620" border="0" cellspacing="0" cellpadding="0" style="max-width: 620px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
           
           <!-- Header Banner -->
           <tr>
-            <td align="center" style="padding: 35px 30px 25px; background-color: #1a1814; border-bottom: 1px solid rgba(198, 161, 91, 0.2);">
-              <h1 style="margin: 0; font-size: 24px; font-weight: 700; color: #c6a15b; letter-spacing: 2px; text-transform: uppercase;">
+            <td align="center" style="padding: 30px 25px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff;">
+              <h1 style="margin: 0; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: 1.5px; text-transform: uppercase;">
                 RAFIQ SONS LABELS
               </h1>
-              <p style="margin: 6px 0 0; font-size: 11px; color: #a39c8f; text-transform: uppercase; letter-spacing: 3px;">
-                ${isQuote ? "New Customer Quote Request" : "New Website Inquiry"}
+              <p style="margin: 6px 0 0; font-size: 12px; color: #fbbf24; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;">
+                ${isQuote ? "New Customer Quotation Request" : "New Website Contact Inquiry"}
               </p>
             </td>
           </tr>
 
           <!-- Content Details -->
           <tr>
-            <td style="padding: 30px 30px 20px;">
-              <p style="margin: 0 0 20px; font-size: 15px; color: #f5f1e8; line-height: 1.5;">
-                A new customer has just submitted an inquiry on <a href="https://www.rafiqsonslabels.com" style="color: #c6a15b; text-decoration: none; font-weight: 600;">rafiqsonslabels.com</a>:
+            <td style="padding: 25px 30px;">
+              <p style="margin: 0 0 18px; font-size: 15px; color: #334155; line-height: 1.5;">
+                A customer just requested a custom quote on <a href="https://www.rafiqsonslabels.com" style="color: #b45309; text-decoration: none; font-weight: 700;">rafiqsonslabels.com</a>:
               </p>
 
-              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #0c0b09; border-radius: 12px; border: 1px solid rgba(245,241,232,0.1); margin-bottom: 25px;">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 22px;">
                 <tr>
-                  <td style="padding: 14px 18px; border-bottom: 1px solid rgba(245,241,232,0.08); font-size: 13px; color: #a39c8f; width: 35%;">
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; color: #64748b; width: 35%; font-weight: 600;">
                     Client Name
                   </td>
-                  <td style="padding: 14px 18px; border-bottom: 1px solid rgba(245,241,232,0.08); font-size: 14px; color: #f5f1e8; font-weight: 600;">
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #0f172a; font-weight: 700;">
                     ${data.name || "Not provided"}
                   </td>
                 </tr>
 
                 ${data.brand ? `
                 <tr>
-                  <td style="padding: 14px 18px; border-bottom: 1px solid rgba(245,241,232,0.08); font-size: 13px; color: #a39c8f;">
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; color: #64748b; font-weight: 600;">
                     Brand / Company
                   </td>
-                  <td style="padding: 14px 18px; border-bottom: 1px solid rgba(245,241,232,0.08); font-size: 14px; color: #c6a15b; font-weight: 600;">
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #b45309; font-weight: 700;">
                     ${data.brand}
+                  </td>
+                </tr>` : ""}
+
+                <tr>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; color: #64748b; font-weight: 600;">
+                    Contact Info
+                  </td>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #16a34a; font-weight: 700;">
+                    ${data.contact || "Not provided"}
+                  </td>
+                </tr>
+
+                ${data.country || data.city ? `
+                <tr>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; color: #64748b; font-weight: 600;">
+                    Location
+                  </td>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #0f172a; font-weight: 600;">
+                    ${[data.city, data.country].filter(Boolean).join(", ")}
                   </td>
                 </tr>` : ""}
 
                 ${data.product ? `
                 <tr>
-                  <td style="padding: 14px 18px; border-bottom: 1px solid rgba(245,241,232,0.08); font-size: 13px; color: #a39c8f;">
-                    Selected Product
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; color: #64748b; font-weight: 600;">
+                    Product(s)
                   </td>
-                  <td style="padding: 14px 18px; border-bottom: 1px solid rgba(245,241,232,0.08); font-size: 14px; color: #f5f1e8; font-weight: 600;">
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #0f172a; font-weight: 700;">
                     ${data.product}
                   </td>
                 </tr>` : ""}
 
                 ${data.quantity ? `
                 <tr>
-                  <td style="padding: 14px 18px; border-bottom: 1px solid rgba(245,241,232,0.08); font-size: 13px; color: #a39c8f;">
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; color: #64748b; font-weight: 600;">
                     Estimated Quantity
                   </td>
-                  <td style="padding: 14px 18px; border-bottom: 1px solid rgba(245,241,232,0.08); font-size: 14px; color: #f5f1e8; font-weight: 600;">
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #0f172a; font-weight: 700;">
                     ${data.quantity}
                   </td>
                 </tr>` : ""}
 
+                ${data.dimensions ? `
                 <tr>
-                  <td style="padding: 14px 18px; border-bottom: 1px solid rgba(245,241,232,0.08); font-size: 13px; color: #a39c8f;">
-                    Contact Info
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; color: #64748b; font-weight: 600;">
+                    Size / Dimensions
                   </td>
-                  <td style="padding: 14px 18px; border-bottom: 1px solid rgba(245,241,232,0.08); font-size: 14px; color: #25D366; font-weight: 600;">
-                    ${data.contact || "Not provided"}
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #0f172a;">
+                    ${data.dimensions}
                   </td>
-                </tr>
+                </tr>` : ""}
+
+                ${data.material ? `
+                <tr>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; color: #64748b; font-weight: 600;">
+                    Material / Finish
+                  </td>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #0f172a;">
+                    ${data.material}
+                  </td>
+                </tr>` : ""}
+
+                ${data.deliveryPreference ? `
+                <tr>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; color: #64748b; font-weight: 600;">
+                    Delivery Speed
+                  </td>
+                  <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-size: 14px; color: #0f172a;">
+                    ${data.deliveryPreference}
+                  </td>
+                </tr>` : ""}
 
                 ${data.message ? `
                 <tr>
-                  <td style="padding: 14px 18px; font-size: 13px; color: #a39c8f; vertical-align: top;">
-                    Notes / Artwork
+                  <td style="padding: 12px 16px; font-size: 13px; color: #64748b; vertical-align: top; font-weight: 600;">
+                    Instructions / Notes
                   </td>
-                  <td style="padding: 14px 18px; font-size: 13px; color: #f5f1e8; line-height: 1.6;">
+                  <td style="padding: 12px 16px; font-size: 13px; color: #334155; line-height: 1.6;">
                     ${data.message.replace(/\n/g, "<br>")}
                   </td>
                 </tr>` : ""}
@@ -123,13 +170,13 @@ export async function sendLeadEmailNotification(data: LeadNotificationData): Pro
               <!-- Call to Action Buttons -->
               <table width="100%" border="0" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td align="center" style="padding: 10px 0 25px;">
+                  <td align="center" style="padding: 10px 0 20px;">
                     ${waUrl ? `
-                    <a href="${waUrl}" style="display: inline-block; background-color: #25D366; color: #0c0b09; font-size: 13px; font-weight: 700; text-decoration: none; padding: 14px 28px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; margin-right: 10px;">
-                      💬 Reply on WhatsApp
+                    <a href="${waUrl}" style="display: inline-block; background-color: #16a34a; color: #ffffff; font-size: 13px; font-weight: 700; text-decoration: none; padding: 12px 24px; border-radius: 8px; margin-right: 8px;">
+                      💬 Chat on WhatsApp
                     </a>
                     ` : ""}
-                    <a href="https://www.rafiqsonslabels.com/admin" style="display: inline-block; background-color: #c6a15b; color: #0c0b09; font-size: 13px; font-weight: 700; text-decoration: none; padding: 14px 28px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px;">
+                    <a href="https://www.rafiqsonslabels.com/admin" style="display: inline-block; background-color: #0f172a; color: #ffffff; font-size: 13px; font-weight: 700; text-decoration: none; padding: 12px 24px; border-radius: 8px;">
                       ⚡ Open Admin Studio
                     </a>
                   </td>
@@ -141,8 +188,8 @@ export async function sendLeadEmailNotification(data: LeadNotificationData): Pro
 
           <!-- Footer -->
           <tr>
-            <td align="center" style="padding: 20px; background-color: #0c0b09; border-top: 1px solid rgba(198, 161, 91, 0.15); font-size: 11px; color: #a39c8f;">
-              Rafiq Sons Labels Atelier Notification System • <a href="https://www.rafiqsonslabels.com" style="color: #c6a15b; text-decoration: none;">www.rafiqsonslabels.com</a>
+            <td align="center" style="padding: 16px; background-color: #f1f5f9; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
+              Rafiq Sons Labels • Direct Factory Manufacturer • <a href="https://www.rafiqsonslabels.com" style="color: #b45309; text-decoration: none; font-weight: 600;">www.rafiqsonslabels.com</a>
             </td>
           </tr>
 

@@ -1,27 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink: #0c0b09;
-  --color-coal: #14120e;
-  --color-graphite: #211d16;
-  --color-smoke: #7a7365;
-  --color-ivory: #f5f1e8;
-  --color-cream: #ece5d5;
-  --color-sand: #d8cdb6;
-  --color-gold: #c6a15b;
-  --color-gold-deep: #a5813f;
-  --color-line-dark: rgba(245, 241, 232, 0.12);
-  --color-line-light: rgba(12, 11, 9, 0.12);
+  --color-brand-dark: #0f172a;
+  --color-brand-slate: #1e293b;
+  --color-brand-muted: #64748b;
+  --color-brand-light: #f8fafc;
+  --color-brand-gold: #c6a15b;
+  --color-brand-gold-deep: #b45309;
+  --color-brand-gold-light: #fef3c7;
+  --color-brand-green: #16a34a;
 
   --font-display: var(--font-fraunces), "Georgia", serif;
-  --font-sans: var(--font-manrope), "Helvetica Neue", sans-serif;
+  --font-sans: var(--font-manrope), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
 
-  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
 
-  --animate-marquee: marquee 42s linear infinite;
-  --animate-marquee-rev: marquee-rev 38s linear infinite;
-  --animate-float-slow: float-slow 9s ease-in-out infinite;
-  --animate-pulse-dot: pulse-dot 2.4s ease-in-out infinite;
+  --animate-marquee: marquee 36s linear infinite;
+  --animate-marquee-rev: marquee-rev 36s linear infinite;
 
   @keyframes marquee {
     from { transform: translateX(0); }
@@ -31,73 +26,48 @@
     from { transform: translateX(-50%); }
     to { transform: translateX(0); }
   }
-  @keyframes float-slow {
-    0%, 100% { transform: translate3d(0, 0, 0); }
-    50% { transform: translate3d(0, -22px, 0); }
-  }
-  @keyframes pulse-dot {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.45; transform: scale(0.8); }
-  }
 }
 
 html {
-  scroll-behavior: auto;
-}
-
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--color-ink);
-  color: var(--color-ivory);
+  background-color: #f8fafc;
+  color: #0f172a;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  overflow-x: clip;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 ::selection {
-  background: var(--color-gold);
-  color: var(--color-ink);
+  background: #fde68a;
+  color: #0f172a;
 }
 
+/* Custom scrollbars */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-ink);
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3a342a;
+  background: #cbd5e1;
   border-radius: 99px;
-  border: 2px solid var(--color-ink);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .font-display {
   font-family: var(--font-display);
-  font-variation-settings: "opsz" 96, "SOFT" 25;
 }
 
-.display-tight {
-  letter-spacing: -0.02em;
-  line-height: 0.98;
-}
-
-.eyebrow {
-  font-size: 0.7rem;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-
-.text-gold-grad {
-  color: #c6a15b;
-  background: linear-gradient(100deg, #e8cf9a 0%, #c6a15b 38%, #97763a 62%, #e2c88b 100%);
+.text-gold-gradient {
+  background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #92400e 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -105,113 +75,67 @@ body {
 }
 
 @supports not (-webkit-text-fill-color: transparent) {
-  .text-gold-grad {
-    color: #c6a15b !important;
+  .text-gold-gradient {
+    color: #b45309 !important;
   }
 }
 
-.grain::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.5;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.32'/%3E%3C/svg%3E");
+/* Clean glass cards */
+.glass-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
 }
 
-.glass-dark {
-  background: rgba(20, 18, 14, 0.75);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(245, 241, 232, 0.12);
+.glass-card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.glass-card-hover:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
 }
 
-.hairline-t {
-  border-top: 1px solid var(--color-line-dark);
-}
-.hairline-b {
-  border-bottom: 1px solid var(--color-line-dark);
-}
-.hairline-t-light {
-  border-top: 1px solid var(--color-line-light);
-}
-
-.btn-sheen {
-  position: relative;
+/* Clean line clamp */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.btn-sheen::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.35) 50%, transparent 65%);
-  transform: translateX(-120%);
-  transition: transform 0.9s var(--ease-luxe);
-}
-.btn-sheen:hover::before {
-  transform: translateX(120%);
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.vignette {
-  background: radial-gradient(120% 90% at 50% 10%, transparent 40%, rgba(12, 11, 9, 0.85) 100%);
-}
-
-.no-cursor body {
-  cursor: default;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001s !important;
-    transition-duration: 0.001s !important;
-  }
-}
-
-/* Print Stylesheet for High-End Commercial Invoices */
+/* Print styling for Vector A4 Invoices */
 @media print {
   @page {
     size: A4 portrait;
     margin: 10mm;
   }
-
   body {
     background: #ffffff !important;
-    color: #0c0b09 !important;
-    overflow: visible !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+    color: #000000 !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
-
-  /* Hide all admin UI during print */
-  .no-print,
-  nav,
-  aside,
-  header:not(.invoice-print-header),
-  footer:not(.invoice-print-footer),
-  .admin-header,
-  .admin-sidebar,
-  .admin-tabbar,
-  .admin-actions {
+  .no-print {
     display: none !important;
   }
-
-  .invoice-printable-container {
+  .print-only {
+    display: block !important;
+  }
+  .invoice-print-sheet {
     box-shadow: none !important;
     border: none !important;
     padding: 0 !important;
     margin: 0 !important;
-    width: 100% !important;
     max-width: 100% !important;
+    width: 100% !important;
     background: #ffffff !important;
-    color: #111111 !important;
-    display: block !important;
-  }
-
-  .invoice-page-break {
-    page-break-after: always;
-    break-after: page;
   }
 }

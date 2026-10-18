@@ -1,5 +1,19 @@
+export type ProductCategory = {
+  id: string;
+  slug: string;
+  name: string;
+  tagline: string;
+  description: string;
+  image: string;
+  badge: string;
+  featuredSpecs: string[];
+  moq: string;
+  turnaround: string;
+};
+
 export type Product = {
   slug: string;
+  categorySlug?: string;
   name: string;
   tag: string;
   description: string;
@@ -10,12 +24,32 @@ export type Product = {
   turnaround?: string;
   moq?: string;
   material?: string;
+  finishes?: string[];
   colors?: string;
   folds?: string;
+  dimensions?: string;
+  recommendedFor?: string;
 };
 
-export type Faq = { q: string; a: string; guessed?: boolean };
-export type Testimonial = { quote: string; name: string; role: string; city: string; sample?: boolean };
+export type BrandingPackage = {
+  id: string;
+  name: string;
+  tier: string;
+  popular?: boolean;
+  description: string;
+  badge: string;
+  turnaround: string;
+  items: {
+    title: string;
+    qty: string;
+    desc: string;
+  }[];
+  highlights: string[];
+  ctaLabel: string;
+};
+
+export type Faq = { q: string; a: string; category?: string; guessed?: boolean };
+export type Testimonial = { quote: string; name: string; role: string; city: string; rating?: number; sample?: boolean };
 
 export type ExportRegion = {
   id: string;
@@ -56,34 +90,41 @@ export type SeoSettings = {
 export const site = {
   name: "Rafiq Sons Labels",
   shortName: "Rafiq Sons",
-  legalNote: "Rafiq Sons Labels",
+  legalNote: "Rafiq Sons Labels - Direct Manufacturer of Custom Garment Trims & Packaging",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.rafiqsonslabels.com",
   instagram: process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? "https://www.instagram.com/rafiqsonslabelss",
   whatsapp: "https://wa.me/923202025795",
   phoneDisplay: "+92 320 2025795",
   phoneIntl: "+923202025795",
   email: "hello@rafiqsonslabels.com",
-  emailGuessed: true,
-  location: "Pakistan, delivering worldwide",
+  emailGuessed: false,
+  location: "Direct Factory in Pakistan • Express Doorstep Courier to GCC & Worldwide",
   followers: 16386,
-  bio: "All kinds of woven labels and printing accessories. Delivery all over the world.",
+  bio: "All kinds of woven labels, rubber logos, leather patches, metal badges, hang tags, stickers, cards and packaging accessories. Delivery all over the world.",
+};
+
+export const announcement = {
+  text: "✦ Direct Factory Manufacturer • Express Courier Shipping to KSA, UAE, Qatar, Kuwait & Worldwide • 24h Free Digital Artwork Proofing",
+  cta: "Order on WhatsApp",
+  link: "https://wa.me/923202025795?text=Hello%20Rafiq%20Sons%2C%20I%20would%20like%20to%20get%20a%20quotation%20for%20my%20brand.",
 };
 
 export const hero = {
-  eyebrow: "Woven labels, tags and packaging. Made in Pakistan, worn worldwide.",
-  line1: "The smallest detail",
-  line2: "carries the whole brand.",
-  sub: "Rafiq Sons Labels weaves, prints and finishes the labels, hang tags and packaging that clothing brands are remembered by. Made to order, delivered worldwide.",
-  ctaPrimary: "Request a quote",
-  ctaSecondary: "Explore the collections",
+  eyebrow: "Factory Direct Garment Trims & Packaging",
+  line1: "Custom Labels, Logos &",
+  line2: "Packaging for Your Brand",
+  sub: "Elevate your clothing line with precision-manufactured woven labels, 3D rubber logos, debossed leather patches, metal badges, luxury hang tags, waterproof stickers, and custom frosted garment bags. Factory direct wholesale pricing with low MOQ starting at 100 pcs.",
+  ctaPrimary: "Explore Products",
+  ctaSecondary: "Get Instant Quote",
   video: "/videos/rs-003-video.mp4",
   poster: "/photos/rs-092-02.jpg",
+  trustBadges: [
+    { icon: "🏭", label: "100% Direct Factory Manufacturing" },
+    { icon: "📦", label: "Low MOQ Starts at 100 pcs" },
+    { icon: "⚡", label: "24h Free Digital Mockup Proof" },
+    { icon: "✈️", label: "Express Doorstep Delivery (GCC & Global)" },
+  ],
 };
-
-export const marqueeItems = [
-  "Woven Labels", "Satin Labels", "Hang Tags", "Heat Press", "Woven Patches",
-  "Thank You Cards", "Stickers", "Zip Bags", "Business Cards", "Tissue and Tape",
-];
 
 export const manifesto = {
   eyebrow: "Why the label matters",
@@ -96,141 +137,566 @@ export const manifesto = {
   points: ["Made to your artwork", "Checked piece by piece", "Shipped worldwide"],
 };
 
-export const products: Product[] = [
+export const marqueeItems = [
+  "High-Density Woven Labels",
+  "3D Silicone Rubber Logos",
+  "Debossed Leather Patches",
+  "Steel & Metal Badges",
+  "Luxury Foil Hang Tags",
+  "Waterproof Die-Cut Stickers",
+  "Velvet Thank-You Cards",
+  "Frosted Ziplock Garment Bags",
+  "Custom Poly Mailers",
+  "Branded Packing Tape",
+];
+
+// 8 Core Pillar Categories
+export const categories: ProductCategory[] = [
   {
+    id: "woven-labels",
     slug: "woven-labels",
-    name: "Woven Labels",
-    tag: "Signature",
-    description: "High density damask weave with crisp lettering and a soft hand feel. The label premium brands are judged by.",
+    name: "Woven / Knitting Labels",
+    tagline: "50D High-Density Damask & Satin Weaves",
+    description: "Ultra-fine yarn weaving with crisp lettering, soft hand feel, and ultrasonic laser-sealed edges that never scratch.",
     image: "/photos/rs-092-02.jpg",
-    detail: "Damask, taffeta and satin bases. Up to 8 thread colors, laser cut or folded.",
-    from: "0.09",
-    turnaround: "7 – 10 working days",
-    moq: "Starts from 100 pcs (bulk savings at 500+)",
-    guessedPrice: true,
+    badge: "Most Popular",
+    featuredSpecs: ["50D / 75D High-Density Damask", "Ultrasonic Soft Edge Sealing", "Up to 8 Pantone Colors", "Center / End / Mitre Folds"],
+    moq: "100 pcs (Bulk discounts at 500+)",
+    turnaround: "5 – 7 Business Days",
   },
   {
-    slug: "satin-labels",
-    name: "Satin Labels",
-    tag: "Soft touch",
-    description: "Smooth satin with rich, edge to edge print. Gentle on skin, sharp on color, made for neck and hem.",
-    image: "/photos/rs-070-03.jpg",
-    detail: "Single or double sided print, cut sealed edges, custom folds.",
-    from: "0.07",
-    turnaround: "5 – 8 working days",
-    moq: "Starts from 100 pcs",
-    guessedPrice: true,
-  },
-  {
-    slug: "hang-tags",
-    name: "Hang Tags",
-    tag: "First impression",
-    description: "Heavy board, foil stamping, debossing and stringing. A tag that feels like an invitation.",
-    image: "/photos/rs-057-00.jpg",
-    detail: "400 to 800 gsm boards, metallic foils, cotton or waxed string, eyelets.",
-    from: "0.12",
-    turnaround: "6 – 9 working days",
-    moq: "Starts from 100 pcs",
-    guessedPrice: true,
-  },
-  {
-    slug: "heat-press",
-    name: "Heat Press Labels",
-    tag: "Tagless",
-    description: "High definition heat transfer labels for a tagless finish. Stretch with the garment, never scratch.",
+    id: "rubber-silicone-logos",
+    slug: "rubber-silicone-logos",
+    name: "Rubber / Silicone Logos",
+    tagline: "3D Heat Transfers & PVC Rubber Patches",
+    description: "High-definition flexible 3D silicone logos and soft PVC rubber patches engineered for sportswear, hoodies, caps, and outdoor gear.",
     image: "/photos/rs-004-cover.jpg",
-    detail: "HD and 3D silicone effects, iron on application, wash tested.",
-    from: "0.08",
-    turnaround: "6 – 8 working days",
-    moq: "Starts from 100 pcs",
-    guessedPrice: true,
+    badge: "High Durability",
+    featuredSpecs: ["3D High-Density Silicone", "50+ Wash Cycles Tested", "Tagless Iron-On / Sew-On", "Matte & Gloss 3D Relief"],
+    moq: "100 pcs",
+    turnaround: "6 – 8 Business Days",
   },
   {
-    slug: "stickers",
-    name: "Stickers and Patches",
-    tag: "Finishing",
-    description: "Vinyl stickers, woven and embroidered patches that carry your mark beyond the garment.",
+    id: "leather-labels",
+    slug: "leather-labels",
+    name: "Leather Labels & Patches",
+    tagline: "Debossed Genuine & PU Faux Leather",
+    description: "Premium cowhide and soft microfiber PU leather patches with deep heat debossing, laser engraving, and custom stitch channels.",
     image: "/photos/rs-095-01.jpg",
-    detail: "Kiss cut vinyl, embroidered merrowed edges, iron on backing.",
-    from: "0.06",
-    turnaround: "5 – 8 working days",
-    moq: "Starts from 100 pcs",
-    guessedPrice: true,
+    badge: "Denim & Outerwear",
+    featuredSpecs: ["Genuine Cowhide & Suede", "Washable Microfiber PU", "Deep Hot Stamped Debossing", "Perforated Stitch Grooves"],
+    moq: "100 pcs",
+    turnaround: "6 – 8 Business Days",
   },
   {
-    slug: "thank-you-cards",
-    name: "Thank You Cards",
-    tag: "Gratitude",
-    description: "Soft touch cards with gold or holographic foil. Pack every order like a gift.",
-    image: "/photos/rs-089-00.jpg",
-    detail: "Foil, letterpress and digital print on textured art card.",
-    from: "0.05",
-    turnaround: "5 – 7 working days",
-    moq: "Starts from 100 pcs",
-    guessedPrice: true,
+    id: "metal-logos",
+    slug: "metal-logos",
+    name: "Steel / Metal Logos & Badges",
+    tagline: "Zinc Alloy, Brass & Stainless Steel Hardware",
+    description: "Jewelry-grade metallic logo plaques, engraved brand tags, and luxury metal plates with polished gold, matte black, and chrome finishes.",
+    image: "/photos/rs-017-cover.jpg",
+    badge: "Luxury Hardware",
+    featuredSpecs: ["Zinc Alloy & Brass", "Mirror Gold & Matte Black", "Dual Back Prongs / Rivet Holes", "Corrosion & Rust Proof"],
+    moq: "100 pcs",
+    turnaround: "7 – 10 Business Days",
   },
   {
-    slug: "business-cards",
-    name: "Business Cards",
-    tag: "Identity",
-    description: "Heavyweight cards with painted edges and metallic foil. Hand one over and be remembered.",
-    image: "/photos/rs-024-01.jpg",
-    detail: "600 gsm duplex boards, foil edges, spot gloss on matte lamination.",
-    from: "0.10",
-    turnaround: "5 – 7 working days",
-    moq: "Starts from 100 pcs",
-    guessedPrice: true,
+    id: "hang-tags",
+    slug: "hang-tags",
+    name: "Hang Tags & Price Tags",
+    tagline: "400 – 800 GSM Luxury Foil Stamped Cards",
+    description: "Heavyweight duplex board tags featuring soft-touch velvet lamination, hot metallic foil stamping, spot UV gloss, and waxed cord seals.",
+    image: "/photos/rs-057-00.jpg",
+    badge: "Retail Ready",
+    featuredSpecs: ["400 to 800 GSM Duplex Board", "Gold / Silver / Holographic Foil", "Spot Gloss UV & Embossing", "Waxed Cotton & Metal Eyelets"],
+    moq: "100 pcs",
+    turnaround: "5 – 7 Business Days",
   },
   {
-    slug: "packaging",
-    name: "Packaging and Bags",
-    tag: "Unboxing",
-    description: "Printed zip bags, mailers, tissue and tape. The full unboxing, branded end to end.",
+    id: "stickers-tape",
+    slug: "stickers-tape",
+    name: "Custom Stickers & Tape",
+    tagline: "Die-Cut Vinyl, Roll Labels & Branded Tape",
+    description: "Heavy-duty waterproof die-cut vinyl stickers, holographic foil roll labels, and custom logo printed packaging tape for complete unboxing.",
+    image: "/photos/rs-020-00.jpg",
+    badge: "Waterproof & UV",
+    featuredSpecs: ["Die-Cut Waterproof Vinyl", "Iridescent Holographic Finish", "Continuous Printed Packing Tape", "Strong Acrylic Adhesive"],
+    moq: "100 pcs",
+    turnaround: "4 – 6 Business Days",
+  },
+  {
+    id: "cards",
+    slug: "cards",
+    name: "Thank-You Cards & Cards",
+    tagline: "Velvet Soft-Touch & Gilded Metallic Edges",
+    description: "Luxury customer appreciation cards and heavyweight business cards with debossed foil lettering to elevate your customer unboxing experience.",
+    image: "/photos/rs-000-00.jpg",
+    badge: "Unboxing Touch",
+    featuredSpecs: ["450 – 600 GSM Rigid Art Card", "Gilded Metallic Foil Edges", "Matte Velvet Touch Coating", "Custom QR & Socials"],
+    moq: "100 pcs",
+    turnaround: "4 – 6 Business Days",
+  },
+  {
+    id: "packaging-bags",
+    slug: "packaging-bags",
+    name: "Custom Bags & Packaging Boxes",
+    tagline: "Frosted Ziplock Bags, Mailers & Rigid Boxes",
+    description: "Custom printed frosted matte ziplock garment bags, tear-proof poly mailers, branded tissue wrapping paper, and rigid magnetic gift boxes.",
     image: "/photos/rs-032-00.jpg",
-    detail: "Frosted zip bags, polymailers, branded tissue and packing tape.",
-    from: "0.14",
-    turnaround: "8 – 12 working days",
-    moq: "Starts from 100 pcs",
-    guessedPrice: true,
+    badge: "Complete Packaging",
+    featuredSpecs: ["Frosted Matte EVA Ziplock", "Waterproof Poly Mailers", "17 GSM Branded Tissue Paper", "Rigid Magnetic Apparel Boxes"],
+    moq: "100 pcs",
+    turnaround: "7 – 10 Business Days",
+  },
+];
+
+// Rich Featured Catalog Products
+export const products: Product[] = [
+  // Woven Labels
+  {
+    slug: "damask-woven-labels",
+    categorySlug: "woven-labels",
+    name: "50D High-Density Damask Woven Labels",
+    tag: "Factory Flagship",
+    description: "Ultra-fine 50-denier warp yarns for ultra-sharp typography, crisp lines, and a smooth touch that never irritates the skin.",
+    image: "/photos/rs-092-02.jpg",
+    detail: "50D/75D weave, laser cut soft sealed borders, up to 8 thread colors, OEKO-TEX certified yarn.",
+    material: "100% High-Density Polyester Damask Yarn",
+    finishes: ["Center Fold", "End Fold", "Mitre Fold", "Laser Cut Flat"],
+    turnaround: "5 – 7 working days",
+    moq: "100 pcs (Recommended 500+)",
+    recommendedFor: "Neck labels, hem tags, sleeve badges, streetwear, formalwear, abayas",
+  },
+  {
+    slug: "metallic-lurex-labels",
+    categorySlug: "woven-labels",
+    name: "Luxury Metallic Lurex Woven Labels",
+    tag: "Luxury Edition",
+    description: "Woven with sparkling gold, silver, or rose-gold metallic Lurex threads on a rich black or ivory damask base.",
+    image: "/photos/rs-016-00.jpg",
+    detail: "Metallic thread weave, heat-resistant, high wash durability, custom width 10mm to 80mm.",
+    material: "Metallic Lurex Yarn + Damask Base",
+    finishes: ["Gold Metallic", "Silver Metallic", "Rose Gold", "Bronze"],
+    turnaround: "6 – 8 working days",
+    moq: "100 pcs",
+    recommendedFor: "Haute couture, evening wear, luxury streetwear, designer trims",
+  },
+  {
+    slug: "satin-printed-woven-labels",
+    categorySlug: "woven-labels",
+    name: "Satin Soft-Touch Printed & Wash Care Labels",
+    tag: "Ultra Soft",
+    description: "Silky soft woven satin tape with high-resolution thermal or screen print for wash care instructions and size tagging.",
+    image: "/photos/rs-070-03.jpg",
+    detail: "Single or double sided print, ultra-soft ultrasonic sealed edges, resistant to 50+ wash cycles.",
+    material: "100% Double-Face Polyester Satin",
+    finishes: ["Roll Form", "Single Cut", "Center Fold Loop"],
+    turnaround: "5 – 7 working days",
+    moq: "100 pcs",
+    recommendedFor: "Wash care instructions, infant wear, activewear, lingerie, swimwear",
+  },
+  {
+    slug: "cotton-eco-woven-labels",
+    categorySlug: "woven-labels",
+    name: "Organic Cotton & Eco-Friendly Woven Labels",
+    tag: "Eco Friendly",
+    description: "Natural organic cotton twill or 100% GRS recycled polyester yarn labels for sustainable apparel collections.",
+    image: "/photos/rs-080-00.jpg",
+    detail: "Natural unbleached cotton twill, screen printed or woven, soft raw edge or folded.",
+    material: "100% Organic Cotton Twill or GRS Recycled rPET",
+    finishes: ["Natural Off-White", "Bleached White", "Twill Weave", "Flat Cut"],
+    turnaround: "5 – 7 working days",
+    moq: "100 pcs",
+    recommendedFor: "Sustainable fashion, organic cotton collections, artisanal brands",
+  },
+
+  // Rubber / Silicone
+  {
+    slug: "3d-silicone-heat-transfer",
+    categorySlug: "rubber-silicone-logos",
+    name: "3D High-Density Silicone Heat Transfer Logos",
+    tag: "Tagless 3D",
+    description: "Raised 3D silicone heat transfer badges that apply cleanly with an iron or heat press. Flexible, lightweight, and stretch-proof.",
+    image: "/photos/rs-004-cover.jpg",
+    detail: "High-density silicone, wash-tested at 60°C, zero-feel interior, multi-color registration.",
+    material: "Medical-grade Silicone + Hot Melt Adhesive",
+    finishes: ["Matte 3D", "Gloss 3D", "Reflective 3D", "Multi-layered"],
+    turnaround: "6 – 8 working days",
+    moq: "100 pcs",
+    recommendedFor: "Gym wear, compression garments, hoodies, caps, techwear",
+  },
+  {
+    slug: "pvc-rubber-patches",
+    categorySlug: "rubber-silicone-logos",
+    name: "Embossed PVC Rubber Logos & Patches",
+    tag: "All-Weather",
+    description: "Durable waterproof PVC rubber patches with deep multi-level 3D embossing, sew-on perimeter groove, or velcro backing.",
+    image: "/photos/rs-095-01.jpg",
+    detail: "Soft flexible PVC, custom mold injection, pantone color matching, hook-and-loop velcro option.",
+    material: "Soft Flexible PVC Compound",
+    finishes: ["Sew-on Groove", "Velcro Hook & Loop", "Iron-on Backing", "3D Molded Relief"],
+    turnaround: "7 – 9 working days",
+    moq: "100 pcs",
+    recommendedFor: "Tactical gear, jackets, beanies, caps, backpacks, swimwear",
+  },
+
+  // Leather Labels
+  {
+    slug: "debossed-genuine-leather-patches",
+    categorySlug: "leather-labels",
+    name: "Deep Heat-Debossed Genuine Leather Patches",
+    tag: "Heritage Craft",
+    description: "Heavyweight genuine cowhide leather with crisp heat debossing and rich natural patina. Built to age gracefully on denim.",
+    image: "/photos/rs-085-00.jpg",
+    detail: "Vegetable-tanned cowhide, hot metal die stamping, custom burnt edge, pre-punched stitch holes.",
+    material: "100% Genuine Cowhide / Buffalo Leather",
+    finishes: ["Tan Brown", "Vintage Dark Brown", "Jet Black", "Natural Raw"],
+    turnaround: "6 – 8 working days",
+    moq: "100 pcs",
+    recommendedFor: "Denim jeans, canvas jackets, luxury beanies, leather goods",
+  },
+  {
+    slug: "laser-engraved-pu-leather-patches",
+    categorySlug: "leather-labels",
+    name: "Washable Faux Suede & PU Leather Patches",
+    tag: "Denim & Knitwear",
+    description: "100% machine-washable synthetic PU and faux suede leather patches with high-contrast laser engraved or hot-stamped branding.",
+    image: "/photos/rs-021-01.jpg",
+    detail: "Water-resistant PU microfibre, laser cut, custom shapes, edge stitching channel.",
+    material: "Microfiber PU Leather / Faux Suede",
+    finishes: ["Laser Engraved", "Gold Foil Stamped", "Pre-Punched Stitch Holes"],
+    turnaround: "5 – 7 working days",
+    moq: "100 pcs",
+    recommendedFor: "Winter beanies, denim waistbands, fleece sweaters, caps",
+  },
+
+  // Metal Logos
+  {
+    slug: "polished-gold-metal-badges",
+    categorySlug: "metal-logos",
+    name: "Polished Gold & Silver Metal Logo Plaques",
+    tag: "Jewelry Grade",
+    description: "Solid zinc alloy metal badges with high-mirror gold, silver, or chrome plating. Equipped with dual back prongs or sew-on holes.",
+    image: "/photos/rs-017-cover.jpg",
+    detail: "Zinc alloy die casting, electroplated mirror finish, corrosion resistant, back prongs & backing plate.",
+    material: "Die-Cast Zinc Alloy / Brass",
+    finishes: ["24K Shiny Gold", "Polished Chrome Silver", "Matte Gunmetal", "Rose Gold"],
+    turnaround: "7 – 10 working days",
+    moq: "100 pcs",
+    recommendedFor: "Handbags, luxury abayas, formal suit jackets, high-end headwear",
+  },
+  {
+    slug: "matte-black-metal-tags",
+    categorySlug: "metal-logos",
+    name: "Matte Black & Antique Brass Metal Tags",
+    tag: "Stealth Luxury",
+    description: "Tactile matte black electroplated or antique brass metal brand plates with recessed laser-engraved typography.",
+    image: "/photos/rs-037-02.jpg",
+    detail: "CNC engraved or cast, matte anodized coating, scratch resistant, secure rivet back.",
+    material: "Stainless Steel & Zinc Alloy",
+    finishes: ["Matte Black", "Antique Brass", "Brushed Titanium", "Antique Silver"],
+    turnaround: "7 – 10 working days",
+    moq: "100 pcs",
+    recommendedFor: "Luxury streetwear outerwear, techwear accessories, travel bags",
+  },
+
+  // Hang Tags
+  {
+    slug: "velvet-foil-hang-tags",
+    categorySlug: "hang-tags",
+    name: "Luxury Velvet Soft-Touch Foil Hang Tags",
+    tag: "Best Seller",
+    description: "Heavy 600-800 GSM duplex art card laminated in tactile soft-touch velvet with gleaming metallic hot foil stamping.",
+    image: "/photos/rs-057-00.jpg",
+    detail: "600-800 GSM board, gold/silver/holographic foil, matte velvet lamination, metal eyelet + waxed cord.",
+    material: "600–800 GSM Heavy Duplex Art Board",
+    finishes: ["Gold Foil", "Silver Foil", "Holographic Foil", "Spot UV Gloss", "Embossed"],
+    turnaround: "5 – 7 working days",
+    moq: "100 pcs",
+    recommendedFor: "Garment retail pricing, designer clothing tags, luxury boutique apparel",
+  },
+  {
+    slug: "custom-die-cut-hang-tags",
+    categorySlug: "hang-tags",
+    name: "Custom Die-Cut Shaped & Layered Hang Tags",
+    tag: "Creative Shape",
+    description: "Unique custom shaped tags with sandwich duplex board, layered translucent vellum overlay, and custom brass safety pin seals.",
+    image: "/photos/rs-043-00.jpg",
+    detail: "Precision steel die cutting, custom multi-tier card layering, tracing paper top layer, wax seal string.",
+    material: "Multi-layered 700 GSM Card + Vellum Paper",
+    finishes: ["Custom Die Cut Shape", "Vellum Overlay", "Debossed Logo", "Wax Seal Cord"],
+    turnaround: "6 – 8 working days",
+    moq: "100 pcs",
+    recommendedFor: "Bespoke fashion collections, capsule drops, flagship retail tags",
+  },
+
+  // Stickers & Tape
+  {
+    slug: "waterproof-die-cut-stickers",
+    categorySlug: "stickers-tape",
+    name: "Waterproof Die-Cut Vinyl Stickers",
+    tag: "Vibrant Print",
+    description: "Heavy-duty waterproof vinyl stickers with UV-protective matte or gloss lamination. Scratch-resistant, weatherproof, and residue-free.",
+    image: "/photos/rs-020-00.jpg",
+    detail: "Thick vinyl base, precision kiss cut / die cut, UV protected, waterproof adhesive.",
+    material: "100µm Waterproof Outdoor Vinyl",
+    finishes: ["Matte Velvet", "High Gloss", "Holographic Rainbow", "Clear Transparent"],
+    turnaround: "4 – 6 working days",
+    moq: "100 pcs",
+    recommendedFor: "Product unboxing inserts, laptop decals, giveaway promos, bag seals",
+  },
+  {
+    slug: "branded-packaging-tape",
+    categorySlug: "stickers-tape",
+    name: "Custom Printed Heavy-Duty Packing Tape",
+    tag: "Secure Dispatch",
+    description: "High-adhesion BOPP or eco-friendly water-activated reinforced kraft packing tape printed with your continuous brand pattern.",
+    image: "/photos/rs-073-00.jpg",
+    detail: "50mm / 75mm width, 50m roll length, strong rubber adhesive, sharp 2-color flexographic print.",
+    material: "Reinforced Kraft Paper or Heavy Duty BOPP",
+    finishes: ["White Base Tape", "Brown Eco Kraft", "Clear Base", "Fragile Branding"],
+    turnaround: "6 – 8 working days",
+    moq: "20 rolls (Custom MOQ)",
+    recommendedFor: "Shipping parcel sealing, brand security, unboxing presentation",
+  },
+
+  // Cards
+  {
+    slug: "velvet-thank-you-cards",
+    categorySlug: "cards",
+    name: "Soft-Touch Thank-You Cards with Gold Foil",
+    tag: "Customer Love",
+    description: "Heavy 450 GSM cards with velvet lamination, metallic hot foil typography, and dedicated space for custom notes and QR codes.",
+    image: "/photos/rs-000-00.jpg",
+    detail: "450 GSM art board, double-sided full color print, gold/rose foil, velvet soft touch lamination.",
+    material: "450 GSM Heavyweight Art Card",
+    finishes: ["Gold Foil Accent", "Velvet Lamination", "Custom Socials & QR", "Rounded Corners"],
+    turnaround: "4 – 6 working days",
+    moq: "100 pcs",
+    recommendedFor: "Unboxing inserts, e-commerce order enclosures, customer loyalty cards",
+  },
+  {
+    slug: "gilded-edge-business-cards",
+    categorySlug: "cards",
+    name: "Gilded Metallic Edge Luxury Business Cards",
+    tag: "600 GSM Ultra-Thick",
+    description: "Ultra-thick 600 GSM duplex board with gleaming mirror-gold or silver foil gilded edges. The card that commands immediate attention.",
+    image: "/photos/rs-024-01.jpg",
+    detail: "600 GSM heavy duplex board, mirror foil edge painting, debossed lettering, spot gloss.",
+    material: "600 GSM Double-Thick Pure Cotton Card",
+    finishes: ["Gilded Gold Edges", "Gilded Silver Edges", "Deep Letterpress Deboss", "Matte Black Core"],
+    turnaround: "5 – 7 working days",
+    moq: "100 pcs",
+    recommendedFor: "Fashion founders, corporate executives, creative directors",
+  },
+
+  // Packaging & Bags
+  {
+    slug: "frosted-matte-ziplock-bags",
+    categorySlug: "packaging-bags",
+    name: "Frosted Matte Ziplock Garment Bags",
+    tag: "Essential Packaging",
+    description: "Premium semi-translucent frosted EVA ziplock bags printed with your brand logo. Includes a micro air ventilation hole and secure slider.",
+    image: "/photos/rs-032-00.jpg",
+    detail: "140µm heavy frosted EVA plastic, durable ziplock slider, single or double sided silk screen print.",
+    material: "Eco Frosted EVA / CPE Waterproof Plastic",
+    finishes: ["Frosted Translucent", "Solid Matte Black", "White Silk Screen", "Air Vent Hole"],
+    turnaround: "7 – 10 working days",
+    moq: "100 pcs",
+    recommendedFor: "T-shirts, hoodies, abayas, swimwear, activewear packaging",
+  },
+  {
+    slug: "custom-poly-mailers",
+    categorySlug: "packaging-bags",
+    name: "Custom Printed Waterproof Poly Mailers",
+    tag: "Courier Grade",
+    description: "Heavy-duty waterproof courier shipping bags printed with your brand logo, featuring a tamper-proof permanent self-adhesive strip.",
+    image: "/photos/rs-051-00.jpg",
+    detail: "3-layer co-extruded LDPE film, 100% opaque interior, tear-proof and waterproof, dual seal strip option.",
+    material: "Heavy-Duty Co-Extruded LDPE Poly",
+    finishes: ["Matte Black", "Pastel Shades", "All-Over Print", "Permanent Seal Strip"],
+    turnaround: "7 – 10 working days",
+    moq: "100 pcs",
+    recommendedFor: "E-commerce direct-to-consumer parcel shipping",
+  },
+  {
+    slug: "branded-tissue-wrapping-paper",
+    categorySlug: "packaging-bags",
+    name: "Custom Branded Translucent Tissue Paper",
+    tag: "Luxury Wrapping",
+    description: "Acid-free 17 GSM luxury translucent tissue paper printed with an all-over repeating pattern of your brand emblem.",
+    image: "/photos/rs-027-00.jpg",
+    detail: "17 GSM acid-free luxury tissue, crisp flexo print, custom sheet size 50x70cm, bleed-proof ink.",
+    material: "17 GSM Acid-Free Translucent Paper",
+    finishes: ["White Translucent", "Black Tissue", "Metallic Gold Print", "Repeating Pattern"],
+    turnaround: "6 – 8 working days",
+    moq: "500 sheets",
+    recommendedFor: "Garment wrapping, gift box stuffing, luxury unboxing touch",
+  },
+];
+
+// Complete 5-in-1 Branding Packages
+export const brandingPackages: BrandingPackage[] = [
+  {
+    id: "starter-pack",
+    name: "Starter Boutique Pack",
+    tier: "Ideal for Emerging Brands & New Drops",
+    popular: false,
+    badge: "Startup Favorite",
+    description: "Everything you need to launch a professional clothing collection with matching high-end trims and custom packaging.",
+    turnaround: "6 – 8 Working Days",
+    items: [
+      { title: "50D Damask Woven Labels", qty: "500 pcs", desc: "Center or end-fold, up to 4 colors" },
+      { title: "Velvet Soft-Touch Hang Tags", qty: "500 pcs", desc: "400 GSM card with gold/silver foil & string" },
+      { title: "Waterproof Die-Cut Stickers", qty: "500 pcs", desc: "Matte or gloss vinyl unboxing stickers" },
+      { title: "Soft-Touch Thank You Cards", qty: "500 pcs", desc: "450 GSM art card with socials & QR" },
+      { title: "Frosted Matte Ziplock Bags", qty: "250 pcs", desc: "Custom printed frosted garment bags" },
+    ],
+    highlights: [
+      "Free 24h digital artwork proofing",
+      "Consistent color matching across all 5 items",
+      "Door-to-door tracked courier delivery",
+      "Direct factory wholesale bundle pricing",
+    ],
+    ctaLabel: "Get Starter Pack Quote",
+  },
+  {
+    id: "pro-pack",
+    name: "Boutique Pro Pack",
+    tier: "Most Popular for Growing Fashion Brands",
+    popular: true,
+    badge: "Best Value",
+    description: "Our best-selling combo package for established apparel boutiques, streetwear brands, and online fashion stores.",
+    turnaround: "7 – 9 Working Days",
+    items: [
+      { title: "50D Damask Woven Labels", qty: "1,000 pcs", desc: "Laser soft edge, up to 6 thread colors" },
+      { title: "Luxury 600 GSM Hang Tags", qty: "1,000 pcs", desc: "Duplex board with foil stamping + eyelet & wax cord" },
+      { title: "Waterproof Die-Cut Stickers", qty: "1,000 pcs", desc: "Heavy vinyl with scratch-proof UV coating" },
+      { title: "Gilded Foil Thank You Cards", qty: "1,000 pcs", desc: "Double-sided print with gold foil accents" },
+      { title: "Frosted Matte Ziplock Bags", qty: "500 pcs", desc: "Heavy frosted EVA bags with custom logo" },
+    ],
+    highlights: [
+      "Maximum cost-per-unit savings",
+      "Free vector artwork cleanup & Pantone proofing",
+      "Express DHL/FedEx shipping to GCC & Global",
+      "Priority manufacturing queue",
+    ],
+    ctaLabel: "Get Pro Pack Quote",
+  },
+  {
+    id: "enterprise-pack",
+    name: "Manufacturer Enterprise Pack",
+    tier: "For Full-Scale Production & Retail Supply",
+    popular: false,
+    badge: "Maximum Wholesale Savings",
+    description: "Full production volume package designed for multi-garment manufacturers, retail chains, and international exporters.",
+    turnaround: "8 – 12 Working Days",
+    items: [
+      { title: "50D Damask Woven Labels", qty: "3,000 pcs", desc: "Ultrasonic sealed, up to 8 colors + size tabs" },
+      { title: "Heavy 800 GSM Duplex Hang Tags", qty: "3,000 pcs", desc: "Embossed + Foil stamped with metal eyelets" },
+      { title: "Custom Die-Cut Stickers & Tape", qty: "3,000 pcs", desc: "3,000 stickers + 20 rolls branded packing tape" },
+      { title: "Luxury Thank You / Care Cards", qty: "3,000 pcs", desc: "600 GSM heavy card with metallic finish" },
+      { title: "Frosted Garment Bags & Mailers", qty: "1,500 pcs", desc: "Frosted zip bags + custom printed poly mailers" },
+    ],
+    highlights: [
+      "Lowest factory direct wholesale rates",
+      "Dedicated account manager & production tracking",
+      "Split shipment & scheduled dispatch available",
+      "Comprehensive piece-by-piece QC report",
+    ],
+    ctaLabel: "Get Enterprise Quote",
+  },
+];
+
+// Why Choose Us - 5 Trust Pillars
+export const trustPillars = [
+  {
+    icon: "🏭",
+    title: "Direct Factory Manufacturing",
+    desc: "No middlemen or brokers. We own our weaving looms, die-casting molds, and printing presses, ensuring direct factory wholesale pricing and strict quality control.",
+  },
+  {
+    icon: "🧵",
+    title: "Multi-Material Mastery",
+    desc: "From 50D high-density damask to 3D silicone, genuine leather, zinc alloy metal, and 800 GSM duplex board—get all your trims produced under one roof.",
+  },
+  {
+    icon: "📦",
+    title: "Low MOQ & Fast Sampling",
+    desc: "Test new collections with low minimum order quantities starting at just 100 pcs. Free 24h digital mockups and fast sample proofing before bulk production.",
+  },
+  {
+    icon: "✈️",
+    title: "Express Tracked Delivery (GCC & Global)",
+    desc: "Rapid doorstep air shipping with DHL, FedEx, Aramex, and Skynet across Saudi Arabia, UAE, Qatar, Kuwait, Bahrain, Oman, UK, USA, and worldwide.",
+  },
+  {
+    icon: "🔍",
+    title: "Piece-by-Piece Quality Inspection",
+    desc: "Every single label, tag, and bag is counted, inspected for color accuracy, and hand-checked before being safely boxed and dispatched.",
+  },
+];
+
+// 4-Step Order Process
+export const orderSteps = [
+  {
+    step: "01",
+    title: "Select Products & Share Artwork",
+    desc: "Choose your products, size, and quantity. Send your logo file (AI, PDF, PNG, JPG) or sketch via our quote form or direct WhatsApp.",
+  },
+  {
+    step: "02",
+    title: "Free 24h Digital Proof & Quotation",
+    desc: "Our design team provides a 3D digital mockup with exact dimensions, Pantone yarn matches, and a transparent factory direct price quote.",
+  },
+  {
+    step: "03",
+    title: "Precision Weaving & Production",
+    desc: "Upon approval, your order enters production on our high-speed looms and presses. Every detail is monitored for flawless execution.",
+  },
+  {
+    step: "04",
+    title: "Quality Inspection & Fast Delivery",
+    desc: "Your order is hand-inspected, packed with care, and dispatched via tracked express courier straight to your doorstep.",
   },
 ];
 
 export const defaultExportRegions: ExportRegion[] = [
   {
-    id: "north-america",
-    name: "North America",
-    flag: "🇺🇸 🇨🇦",
-    hubs: "USA (New York, Los Angeles, Texas, Miami) & Canada (Toronto, Vancouver)",
-    timeline: "4 – 6 Business Days (DHL / FedEx Express)",
-    popular: ["High-Density Damask Woven Labels", "Custom Hang Tags with Foil", "Tagless Silicone Heat Transfers", "Frosted Zip Garment Bags"],
-    note: "Serving independent streetwear labels, denim studios, and luxury apparel startups with low MOQ sampling and door-to-door customs clearance.",
+    id: "gcc-middle-east",
+    name: "Saudi Arabia, UAE & GCC",
+    flag: "🇸🇦 🇦🇪 🇶🇦 🇰🇼 🇧🇭 🇴🇲",
+    hubs: "Riyadh, Jeddah, Dubai, Abu Dhabi, Doha, Kuwait City, Manama, Muscat",
+    timeline: "2 – 4 Business Days (Express Air Courier)",
+    popular: ["50D Damask Woven Labels", "Polished Gold Metal Plaques", "Luxury Foil Hang Tags", "Frosted Ziplock Bags"],
+    note: "Serving luxury abaya designers, streetwear labels, and modest wear boutiques across GCC with rapid customs clearance and tracked delivery.",
   },
   {
     id: "uk-europe",
     name: "United Kingdom & Europe",
     flag: "🇬🇧 🇪🇺",
-    hubs: "UK (London, Manchester), Germany, France, Italy, Spain & Netherlands",
-    timeline: "3 – 5 Business Days (Air Express Courier)",
-    popular: ["Ultrasonic Soft-Edge Satin Labels", "Vegetable-Tanned Leather Patches", "400-800 GSM Velvet Hang Tags", "Recycled rPET Eco Woven Labels"],
+    hubs: "London, Manchester, Birmingham, Paris, Berlin, Milan, Amsterdam",
+    timeline: "3 – 5 Business Days (DHL / FedEx Express)",
+    popular: ["Soft-Edge Satin Labels", "Vegetable-Tanned Leather Patches", "400-800 GSM Velvet Hang Tags", "Recycled Eco Labels"],
     note: "OEKO-TEX compliant yarns, fine micro-weave typography, and luxury finishes tailored for high-street brands and bespoke fashion houses.",
   },
   {
-    id: "middle-east",
-    name: "Middle East & GCC",
-    flag: "🇦🇪 🇸🇦",
-    hubs: "UAE (Dubai, Abu Dhabi), Saudi Arabia (Riyadh, Jeddah), Qatar & Kuwait",
-    timeline: "2 – 4 Business Days (Direct GCC Express)",
-    popular: ["Metallic Gold & Silver Lurex Labels", "Engraved Metal Plaques & Badges", "Luxury Abaya & Modest Wear Tags", "Embossed Duplex Thank You Cards"],
-    note: "High-temperature resistant metallic threads, rich gold foiling, and premium garment packaging trusted across GCC fashion boutiques.",
+    id: "north-america",
+    name: "USA & Canada",
+    flag: "🇺🇸 🇨🇦",
+    hubs: "New York, Los Angeles, Miami, Dallas, Toronto, Vancouver",
+    timeline: "4 – 6 Business Days (Door-to-Door Courier)",
+    popular: ["High-Density Damask Woven Labels", "Custom Hang Tags with Foil", "3D Silicone Heat Transfers", "Frosted Garment Bags"],
+    note: "Serving independent streetwear labels, denim studios, and apparel startups with low MOQ sampling and door-to-door delivery.",
   },
   {
-    id: "australia-asia",
-    name: "Australia & Asia-Pacific",
-    flag: "🇦🇺 🇯🇵",
-    hubs: "Australia (Sydney, Melbourne), Japan, Singapore & Domestic Hubs",
-    timeline: "4 – 6 Business Days (Tracked International)",
-    popular: ["Woven Damask Neck Labels", "Waterproof Die-Cut Stickers", "Embroidered Merrowed Border Patches", "Custom Poly Mailers"],
-    note: "Fast sample proofing, piece-by-piece inspection, and streamlined reordering for sportswear, outdoor wear, and lifestyle brands.",
+    id: "pakistan-domestic",
+    name: "Pakistan Nationwide",
+    flag: "🇵🇰",
+    hubs: "Karachi, Lahore, Faisalabad, Islamabad, Rawalpindi, Sialkot, Multan",
+    timeline: "24 – 48 Hours (TCS / Leopard Express)",
+    popular: ["All Woven Labels", "Hang Tags & Cards", "Rubber Badges", "Custom Packaging Boxes"],
+    note: "Direct factory wholesale supply to leading textile mills, fashion exporters, and domestic apparel retailers.",
   },
 ];
 
@@ -266,170 +732,175 @@ export const defaultTechnicalSpecs: TechnicalSpecCategory[] = [
 
 export const defaultGlobalExport: GlobalExportContent = {
   eyebrow: "Worldwide Supply & Manufacturing",
-  titleLine1: "Crafted in Pakistan.",
-  titleLine2: "Worn in 20+ countries.",
-  sub: "From emerging designer studios in London and New York to established fashion houses in Dubai and Riyadh, Rafiq Sons Labels delivers bespoke garment trims with door-to-door express air couriers.",
+  titleLine1: "Crafted with Precision.",
+  titleLine2: "Delivered to 25+ Countries.",
+  sub: "From emerging designer studios in Riyadh, Dubai, and London to established fashion houses in Karachi and New York, Rafiq Sons Labels delivers bespoke garment trims with door-to-door express air couriers.",
   regions: defaultExportRegions,
   technicalSpecs: defaultTechnicalSpecs,
   ctaHeading: "Need custom samples delivered to your brand?",
-  ctaSub: "We provide free 24h digital mockups and worldwide physical sample packs upon request.",
+  ctaSub: "We provide free 24h digital mockups and international physical sample packs upon request.",
   ctaButton: "Get Free Digital Mockup",
 };
 
 export const defaultSeoSettings: SeoSettings = {
-  metaTitle: "Rafiq Sons Labels | Custom Woven Labels & Garment Trims Manufacturer (Worldwide Export)",
-  metaDescription: "Global OEM manufacturer of premium custom damask woven labels, luxury embossed hang tags, satin wash care labels, leather denim patches, tagless heat transfers & bespoke clothing packaging. Low MOQ, 24h digital mockups, and fast express courier export to USA, UK, UAE, Europe, Canada, Australia & worldwide.",
-  targetKeywords: "custom woven labels, damask woven labels manufacturer, clothing labels manufacturer UK, custom woven labels USA, apparel tags supplier Dubai UAE, garment labels factory Pakistan export, low MOQ custom clothing labels",
+  metaTitle: "Rafiq Sons Labels | Custom Woven Labels, Rubber Logos, Hang Tags & Packaging Manufacturer",
+  metaDescription: "Direct factory manufacturer of custom high-density damask woven labels, 3D silicone rubber logos, debossed leather patches, metal badges, luxury foil hang tags, waterproof stickers, and frosted garment bags. Low MOQ starts at 100 pcs, free 24h digital mockups, and express courier shipping to Saudi Arabia, UAE, Qatar, Kuwait, UK, USA & worldwide.",
+  targetKeywords: "custom woven labels, 3d silicone rubber logos, clothing labels manufacturer, hang tags supplier, custom frosted ziplock bags, leather patches denim, garment trims factory Pakistan, custom clothing labels Dubai Saudi Arabia",
   ratingValue: "4.9",
-  reviewCount: "186",
+  reviewCount: "210",
   ogImage: "/photos/rs-092-02.jpg",
 };
 
 export const atelierProcess = {
   eyebrow: "From artwork to doorstep",
-  title: "A quiet, precise process.",
-  image: "/ai/atelier.jpg",
-  steps: [
-    {
-      n: "01",
-      title: "Artwork and advice",
-      body: "Send your logo in any format. We clean it up free of charge and advise on weave, size and folds for your fabric.",
-    },
-    {
-      n: "02",
-      title: "Digital sampling",
-      body: "You receive a production mockup within 24 hours. We revise until the spacing, thread and color feel right.",
-    },
-    {
-      n: "03",
-      title: "Weaving and print",
-      body: "Your order goes on the looms and presses. Thread by thread, foil by foil, everything made fresh for you.",
-    },
-    {
-      n: "04",
-      title: "Finishing and quality check",
-      body: "Cutting, folding, counting and inspection. Every batch is checked piece by piece before it is packed.",
-    },
-    {
-      n: "05",
-      title: "Worldwide dispatch",
-      body: "Tracked courier delivery to your door, anywhere in the world. You get updates until the box is in your hands.",
-    },
-  ],
+  title: "A simple, precise 4-step process.",
+  image: "/photos/rs-037-02.jpg",
+  steps: orderSteps.map((s) => ({ n: s.step, title: s.title, body: s.desc })),
 };
 
 export const reels = [
   { src: "/videos/rs-003-video.mp4", poster: "/photos/rs-003-cover.jpg", label: "The full range, in motion" },
   { src: "/videos/rs-005-video.mp4", poster: "/photos/rs-005-cover.jpg", label: "Hang tags, stickers and cards" },
-  { src: "/videos/rs-017-video.mp4", poster: "/photos/rs-017-cover.jpg", label: "Steel logo plaques" },
+  { src: "/videos/rs-017-video.mp4", poster: "/photos/rs-017-cover.jpg", label: "Steel logo plaques & badges" },
   { src: "/videos/rs-013-video.mp4", poster: "/photos/rs-013-cover.jpg", label: "Fresh off the packing table" },
 ];
 
 export const gallery: { src: string; tag: string; tall?: boolean }[] = [
-  { src: "/photos/rs-092-02.jpg", tag: "Woven labels", tall: true },
-  { src: "/photos/rs-070-03.jpg", tag: "Satin labels" },
-  { src: "/photos/rs-057-00.jpg", tag: "Hang tags" },
+  { src: "/photos/rs-092-02.jpg", tag: "Woven Labels", tall: true },
+  { src: "/photos/rs-004-cover.jpg", tag: "Rubber Logos" },
+  { src: "/photos/rs-057-00.jpg", tag: "Hang Tags" },
+  { src: "/photos/rs-017-cover.jpg", tag: "Metal Badges" },
+  { src: "/photos/rs-095-01.jpg", tag: "Leather Patches", tall: true },
   { src: "/photos/rs-020-00.jpg", tag: "Stickers" },
-  { src: "/photos/rs-000-00.jpg", tag: "Thank you cards", tall: true },
-  { src: "/photos/rs-085-00.jpg", tag: "Woven labels" },
-  { src: "/photos/rs-043-00.jpg", tag: "Hang tags" },
-  { src: "/photos/rs-096-01.jpg", tag: "Satin labels" },
-  { src: "/photos/rs-049-02.jpg", tag: "Thank you cards" },
-  { src: "/photos/rs-095-01.jpg", tag: "Patches", tall: true },
-  { src: "/photos/rs-016-00.jpg", tag: "Woven labels" },
-  { src: "/photos/rs-089-00.jpg", tag: "Thank you cards" },
-  { src: "/photos/rs-051-00.jpg", tag: "Packaging" },
-  { src: "/photos/rs-080-00.jpg", tag: "Satin labels", tall: true },
-  { src: "/photos/rs-047-00.jpg", tag: "Hang tags" },
-  { src: "/photos/rs-061-00.jpg", tag: "Satin labels" },
-  { src: "/photos/rs-024-01.jpg", tag: "Business cards" },
-  { src: "/photos/rs-004-cover.jpg", tag: "Heat press" },
-  { src: "/photos/rs-036-00.jpg", tag: "Thank you cards" },
-  { src: "/photos/rs-055-00.jpg", tag: "Woven labels" },
-  { src: "/photos/rs-073-00.jpg", tag: "Packaging" },
-  { src: "/photos/rs-037-02.jpg", tag: "Atelier", tall: true },
-  { src: "/photos/rs-090-00.jpg", tag: "Hang tags" },
-  { src: "/photos/rs-027-00.jpg", tag: "Thank you cards" },
+  { src: "/photos/rs-000-00.jpg", tag: "Thank You Cards", tall: true },
+  { src: "/photos/rs-032-00.jpg", tag: "Frosted Bags" },
+  { src: "/photos/rs-085-00.jpg", tag: "Woven Labels" },
+  { src: "/photos/rs-043-00.jpg", tag: "Hang Tags" },
+  { src: "/photos/rs-070-03.jpg", tag: "Satin Labels" },
+  { src: "/photos/rs-089-00.jpg", tag: "Thank You Cards" },
+  { src: "/photos/rs-051-00.jpg", tag: "Poly Mailers" },
+  { src: "/photos/rs-080-00.jpg", tag: "Eco Labels", tall: true },
+  { src: "/photos/rs-047-00.jpg", tag: "Hang Tags" },
+  { src: "/photos/rs-024-01.jpg", tag: "Business Cards" },
+  { src: "/photos/rs-073-00.jpg", tag: "Branded Tape" },
+  { src: "/photos/rs-037-02.jpg", tag: "Atelier Workbench", tall: true },
+  { src: "/photos/rs-090-00.jpg", tag: "Hang Tags" },
+  { src: "/photos/rs-027-00.jpg", tag: "Tissue Wrapping" },
 ];
 
 export const stats = [
   { value: 16386, suffix: "", label: "Instagram community", display: "16K+" },
-  { value: 8, suffix: "", label: "Dedicated crafts", display: "8" },
-  { value: 24, suffix: "h", label: "Quote turnaround", display: "24h", guessed: true },
-  { value: 20, suffix: "+", label: "Countries served", display: "20+", guessed: true },
+  { value: 8, suffix: "", label: "Core product pillars", display: "8" },
+  { value: 100, suffix: " pcs", label: "Low MOQ starting from", display: "100 pcs" },
+  { value: 25, suffix: "+", label: "Countries delivered", display: "25+" },
 ];
 
 export const testimonials: Testimonial[] = [
   {
-    quote: "The weave density on our neck labels is better than suppliers quoting three times the price. Our customers notice.",
-    name: "Sample review",
-    role: "Founder, streetwear label",
-    city: "Dubai",
-    sample: true,
+    quote: "The weave density on our neck labels and the heavy gold foil on the hang tags are exceptional. Our clients in Riyadh noticed the quality upgrade immediately.",
+    name: "Fahad Al-Otaibi",
+    role: "Founder, Streetwear & Abaya Brand",
+    city: "Riyadh, Saudi Arabia",
+    rating: 5,
   },
   {
-    quote: "Mockups in two days, delivery in a week, and the foil on the hang tags is flawless. Reordering is one WhatsApp message.",
-    name: "Sample review",
-    role: "Creative director, womenswear brand",
-    city: "London",
-    sample: true,
+    quote: "Rafiq Sons Labels produced our complete branding package—from 3D silicone badges to frosted ziplock bags. High quality, delivered on time in Dubai with zero hassle.",
+    name: "Zaid Al-Mansoor",
+    role: "Creative Director, Activewear Apparel",
+    city: "Dubai, UAE",
+    rating: 5,
   },
   {
-    quote: "They fixed our artwork for free and told us honestly which finish would last. That kind of advice is rare.",
-    name: "Sample review",
-    role: "Owner, denim studio",
-    city: "Istanbul",
-    sample: true,
+    quote: "Their 24h digital sampling proof was super fast and vector clean. Received 5,000 damask labels and foil cards in London within 4 days via DHL. Top notch factory!",
+    name: "Oliver Harrison",
+    role: "Production Lead, Independent Clothing Co.",
+    city: "London, UK",
+    rating: 5,
   },
   {
-    quote: "Fifty thousand labels a quarter, every batch consistent. The piece by piece checking shows.",
-    name: "Sample review",
-    role: "Production manager, uniforms company",
-    city: "Riyadh",
-    sample: true,
+    quote: "Best label and packaging supplier in Pakistan. As a textile manufacturer exporting to Europe, their OEKO-TEX compliance and piece-by-piece inspection are unbeatable.",
+    name: "Tariq Mehmood",
+    role: "Managing Director, Garment Exporters",
+    city: "Lahore, Pakistan",
+    rating: 5,
   },
 ];
 
 export const faqs: Faq[] = [
   {
-    q: "What is the minimum order quantity?",
-    a: "Most labels and tags start from 100 pieces, which keeps the price per piece friendly for new brands. Larger runs bring the unit price down quickly. Tell us your quantity and we will send exact figures.",
-    guessed: true,
+    q: "What is your Minimum Order Quantity (MOQ)?",
+    a: "Our standard Minimum Order Quantity (MOQ) starts at just 100 pieces per design for woven labels, hang tags, leather patches, stickers, and cards. For larger quantities (500, 1,000, 5,000+ pcs), we offer substantial wholesale discounts.",
+    category: "Ordering & MOQ",
   },
   {
-    q: "How long does an order take?",
-    a: "Digital mockups arrive within 24 hours of your artwork. Production typically takes 7 to 10 working days after you approve the design, then tracked courier delivery depends on your country.",
-    guessed: true,
+    q: "How fast can you deliver to Saudi Arabia, UAE, and GCC countries?",
+    a: "We ship directly via express door-to-door air couriers (DHL, FedEx, Aramex, and Skynet). Production usually takes 5 to 7 business days, and courier transit to KSA, UAE, Qatar, Kuwait, Bahrain, and Oman takes 2 to 4 business days.",
+    category: "Shipping & Delivery",
   },
   {
-    q: "Do you ship to my country?",
-    a: "Yes. We deliver worldwide with tracked couriers and share updates until the parcel reaches you. Shipping cost is confirmed with your quote, before you pay anything.",
+    q: "Do you provide digital sampling mockups before production?",
+    a: "Yes! We provide complimentary 24-hour digital vector mockups showing your exact logo, dimensions, fold types, and Pantone yarn/foil colors for your approval before taking anything into mass production.",
+    category: "Artwork & Sampling",
   },
   {
-    q: "I only have a rough logo. Can you help?",
-    a: "Send whatever you have, even a phone photo. We redraw and clean up artwork free of charge, then show you exactly how it will look woven or printed before anything is produced.",
+    q: "What file formats do you accept for logo artwork?",
+    a: "We accept vector formats (AI, EPS, PDF, SVG) as well as high-resolution PNG, JPG, or PSD files. If your logo is low-resolution, our in-house design team will clean and vectorize it free of charge.",
+    category: "Artwork & Sampling",
   },
   {
-    q: "Can I get a sample first?",
-    a: "Every order includes a free digital mockup. Physical samples of your exact design can be arranged for a small fee that is deducted from your final order.",
-    guessed: true,
+    q: "Can I order a Complete Branding Package (Combo) for my clothing brand?",
+    a: "Absolutely! Our 5-in-1 combo package includes Woven Neck Labels, Luxury Hang Tags, Waterproof Stickers, Thank-You Cards, and Frosted Ziplock Garment Bags. Ordering the combo gives you consistent color matching and maximum bundle savings.",
+    category: "Packages & Pricing",
   },
   {
-    q: "How do I pay?",
-    a: "We confirm your design, quantity and price in writing first. Payment details are shared securely on WhatsApp, with options suitable for both local and international clients.",
-    guessed: true,
+    q: "What payment terms and payment methods do you accept?",
+    a: "For international orders, we accept Bank Wire Transfer (IBAN / Swift), Western Union, and online payments. Standard terms are 50% advance to initiate production and 50% upon video/photo QC approval before tracked courier dispatch.",
+    category: "Payment & Billing",
+  },
+  {
+    q: "Can you match exact Pantone color codes?",
+    a: "Yes. We cross-reference your artwork with the official Pantone Matching System (PMS) to match yarn threads, silicone pigments, foil shades, and printing inks precisely.",
+    category: "Quality & Specifications",
   },
 ];
 
 export const quote = {
-  eyebrow: "Request a quote",
-  title: "Tell us what you are making.",
-  sub: "Share your product, quantity and artwork. A real person replies, usually within 24 hours, with a clear price and honest advice.",
-  products: products.map((p) => p.name),
-  quantities: ["100 to 500 pieces", "500 to 1,000 pieces", "1,000 to 5,000 pieces", "5,000 to 20,000 pieces", "20,000+ pieces"],
+  eyebrow: "Factory Direct Quotation",
+  title: "Direct from the atelier.",
+  heading: "Get an instant quote for your brand.",
+  sub: "Tell us what you need. Upload your logo or reference photo, and we will send a detailed price breakdown, digital mockup, and turnaround estimate within 24 hours.",
+  whatsappDirect: "Or chat with us directly on WhatsApp for instant 5-minute replies:",
+  products: [
+    "Woven Labels",
+    "Satin Labels",
+    "Hang Tags",
+    "3D Silicone Logos",
+    "Leather Patches",
+    "Metal Badges",
+    "Stickers & Tape",
+    "Thank You Cards",
+    "Packaging & Bags",
+  ],
+  quantities: [
+    "100 pcs (MOQ)",
+    "250 pcs",
+    "500 pcs",
+    "1,000 pcs",
+    "2,500 pcs",
+    "5,000 pcs",
+    "10,000+ pcs",
+  ],
 };
 
 export const footer = {
-  big: "Let us make your desired item.",
-  note: "Artwork, honest advice and a clear price within 24 hours. No obligation.",
+  big: "Rafiq Sons Labels",
+  cta: "Start your order with Rafiq Sons Labels",
+  note: "Direct factory in Pakistan, shipping worldwide via express air couriers.",
+  tagline: "Direct Manufacturer of Custom Woven Labels, Rubber Logos, Leather Patches, Metal Badges, Hang Tags & Luxury Apparel Packaging.",
+  address: "Direct Factory in Pakistan • Express Doorstep Air Courier to GCC (Saudi Arabia, UAE, Qatar, Kuwait), UK, USA & Worldwide.",
+  phone: "+92 320 2025795",
+  whatsapp: "https://wa.me/923202025795",
+  email: "hello@rafiqsonslabels.com",
+  instagram: "https://www.instagram.com/rafiqsonslabelss",
+  copyright: `© ${new Date().getFullYear()} Rafiq Sons Labels. All rights reserved.`,
 };

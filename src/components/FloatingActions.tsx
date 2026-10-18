@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useState } from "react";
+import { useQuoteBasket } from "@/context/QuoteBasketContext";
 import { site } from "@/content/site";
 
 export default function FloatingActions() {
   const [showTop, setShowTop] = useState(false);
+  const { totalCount, openBasket, openQuoteModal } = useQuoteBasket();
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowTop(window.scrollY > 400);
+      setShowTop(window.scrollY > 300);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
@@ -19,75 +20,74 @@ export default function FloatingActions() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const goQuote = () => {
-    document.querySelector("#quote")?.scrollIntoView({ behavior: "smooth" });
-  };
+  const whatsappUrl = site.whatsapp || "https://wa.me/923202025795";
 
   return (
     <>
       {/* Floating Speed Dial on bottom right */}
-      <div className="fixed bottom-6 right-5 z-[99] flex flex-col items-end gap-3 sm:bottom-8 sm:right-8">
+      <div className="fixed bottom-6 right-5 z-40 flex flex-col items-end gap-2.5 sm:bottom-8 sm:right-8">
+        
         {/* Back to top button */}
-        <AnimatePresence>
-          {showTop && (
-            <motion.button
-              initial={{ opacity: 0, scale: 0.8, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: 10 }}
-              onClick={scrollToTop}
-              aria-label="Back to top"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-ivory/20 bg-coal/90 text-ivory/80 shadow-lg backdrop-blur-md transition-all hover:border-gold hover:text-gold"
-            >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-              </svg>
-            </motion.button>
-          )}
-        </AnimatePresence>
+        {showTop && (
+          <button
+            onClick={scrollToTop}
+            aria-label="Back to top"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 bg-white/95 text-slate-700 shadow-md backdrop-blur-md transition-all hover:bg-slate-100 hover:text-amber-700"
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+            </svg>
+          </button>
+        )}
+
+        {/* Floating Basket Shortcut */}
+        {totalCount > 0 && (
+          <button
+            onClick={openBasket}
+            className="relative flex items-center gap-2 rounded-full border border-amber-300 bg-amber-500 text-slate-950 px-4 py-2.5 shadow-lg transition-transform hover:scale-105 font-bold text-xs"
+          >
+            <span>🛒 Basket ({totalCount})</span>
+          </button>
+        )}
 
         {/* WhatsApp Direct Floating Button */}
-        <motion.a
-          href={site.whatsapp}
+        <a
+          href={whatsappUrl}
           target="_blank"
-          rel="noreferrer"
-          aria-label="Chat on WhatsApp"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="group relative flex items-center gap-2.5 rounded-full border border-[#25D366]/40 bg-[#0c0b09]/95 px-4 py-3 shadow-[0_10px_35px_-8px_rgba(37,211,102,0.4)] backdrop-blur-xl transition-colors hover:border-[#25D366]"
+          rel="noopener noreferrer"
+          aria-label="Chat with Rafiq Sons on WhatsApp"
+          className="group relative flex items-center gap-2 rounded-full border border-emerald-500 bg-emerald-600 px-4 py-3 shadow-lg shadow-emerald-600/30 transition-transform hover:scale-105 text-white"
         >
-          {/* Online green indicator pulse */}
-          <span className="relative flex h-3 w-3">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#25D366] opacity-75" />
-            <span className="relative inline-flex h-3 w-3 rounded-full bg-[#25D366]" />
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-white" />
           </span>
 
-          {/* WhatsApp Icon */}
-          <svg className="h-5 w-5 fill-[#25D366]" viewBox="0 0 24 24">
-            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+          <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.529 1.849.813 2.791.813h.005c3.18 0 5.767-2.586 5.768-5.766 0-3.181-2.587-5.767-5.768-5.767zm7.557 5.765c0 4.168-3.391 7.559-7.558 7.559-1.327 0-2.571-.347-3.66-1l-4.07 1.068 1.087-3.974c-.732-1.155-1.121-2.484-1.121-3.653 0-4.169 3.391-7.56 7.558-7.56 4.167 0 7.558 3.391 7.558 7.56zm-4.321 2.378c-.237-.118-1.403-.692-1.62-.771-.218-.079-.376-.118-.535.118-.158.237-.614.771-.752.929-.139.158-.277.178-.514.059-.237-.118-1.002-.369-1.908-1.177-.706-.629-1.183-1.406-1.321-1.644-.138-.237-.015-.365.104-.483.107-.106.237-.277.356-.415.119-.138.158-.237.237-.395.079-.158.04-.297-.02-.415-.059-.118-.535-1.286-.732-1.761-.193-.464-.389-.401-.535-.408-.138-.007-.297-.008-.455-.008-.158 0-.415.059-.633.297-.218.237-.831.812-.831 1.98 0 1.168.851 2.296.969 2.454.119.158 1.674 2.557 4.056 3.585.567.245 1.009.391 1.354.502.569.181 1.087.155 1.496.094.456-.068 1.403-.574 1.601-1.128.198-.554.198-1.029.139-1.128-.059-.099-.218-.158-.455-.277z" />
           </svg>
 
-          <span className="hidden text-xs font-semibold tracking-wide text-ivory group-hover:text-gold sm:inline-block">
-            Quick Chat
+          <span className="hidden text-xs font-bold tracking-wide sm:inline-block">
+            WhatsApp
           </span>
-        </motion.a>
+        </a>
       </div>
 
-      {/* Mobile Sticky Quick-Action Bar */}
-      <div className="fixed inset-x-0 bottom-0 z-[90] flex items-center justify-between gap-3 border-t border-ivory/15 bg-ink/95 px-4 py-3 backdrop-blur-xl sm:hidden">
+      {/* Mobile Sticky Quick-Action Bottom Bar */}
+      <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-3 border-t border-slate-200 bg-white/95 px-4 py-2.5 backdrop-blur-md sm:hidden shadow-lg">
         <a
-          href={site.whatsapp}
+          href={whatsappUrl}
           target="_blank"
-          rel="noreferrer"
-          className="flex flex-1 items-center justify-center gap-2 rounded-full border border-ivory/20 bg-coal py-2.5 text-xs font-semibold text-ivory"
+          rel="noopener noreferrer"
+          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-600 py-2.5 text-xs font-bold text-white shadow-sm"
         >
-          <span className="h-2 w-2 rounded-full bg-[#25D366]" />
-          WhatsApp Us
+          <span>💬 WhatsApp Us</span>
         </a>
         <button
-          onClick={goQuote}
-          className="btn-sheen flex flex-1 items-center justify-center rounded-full bg-gold py-2.5 text-xs font-bold text-ink"
+          onClick={() => openQuoteModal()}
+          className="flex flex-1 items-center justify-center rounded-xl bg-slate-900 py-2.5 text-xs font-bold text-white shadow-sm"
         >
-          Request a Quote
+          ⚡ Custom Quote
         </button>
       </div>
     </>
