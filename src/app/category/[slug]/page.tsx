@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { categories, products, defaultTechnicalSpecs } from "@/content/site";
+import { categories as defaultCategories, defaultTechnicalSpecs } from "@/content/site";
 import AnnouncementBar from "@/components/AnnouncementBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -12,20 +12,22 @@ import ProductQuickViewModal from "@/components/ProductQuickViewModal";
 import HowToOrder from "@/components/HowToOrder";
 import FaqSection from "@/components/FaqSection";
 import CategoryProductGrid from "@/components/CategoryProductGrid";
+import { loadContent } from "@/lib/content";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  return categories.map((cat) => ({
+  return defaultCategories.map((cat) => ({
     slug: cat.slug,
   }));
 }
 
 export async function generateMetadata({ params }: CategoryPageProps) {
   const { slug } = await params;
-  const category = categories.find((c) => c.slug === slug);
+  const content = await loadContent();
+  const category = content.categories.find((c) => c.slug === slug) || defaultCategories.find((c) => c.slug === slug);
   if (!category) return { title: "Category Not Found - Rafiq Sons Labels" };
 
   return {
@@ -36,19 +38,24 @@ export async function generateMetadata({ params }: CategoryPageProps) {
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = await params;
-  const category = categories.find((c) => c.slug === slug);
+  const content = await loadContent();
+  const category = content.categories.find((c) => c.slug === slug) || defaultCategories.find((c) => c.slug === slug);
 
   if (!category) {
     notFound();
   }
 
-  const categoryProducts = products.filter((p) => p.categorySlug === category.slug);
+  const categoryProducts = content.products.filter((p) => p.categorySlug === category.slug);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col justify-between">
       <div>
-        <AnnouncementBar />
-        <Header />
+        <AnnouncementBar
+          text={content.announcement?.text}
+          cta={content.announcement?.cta}
+          link={content.announcement?.link}
+        />
+        <Header site={content.site} />
 
         <main>
           {/* Breadcrumb */}
@@ -136,7 +143,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 </p>
               </div>
 
-              <CategoryProductGrid products={categoryProducts.length > 0 ? categoryProducts : products.slice(0, 4)} />
+              <CategoryProductGrid products={categoryProducts.length > 0 ? categoryProducts : content.products.slice(0, 4)} />
             </div>
           </section>
 
@@ -173,13 +180,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           </section>
 
           {/* How to Order & FAQs */}
-          <HowToOrder />
-          <FaqSection />
+          <HowToOrder steps={content.orderSteps} />
+          <FaqSection items={content.faqs} />
 
         </main>
       </div>
 
-      <Footer />
+      <Footer site={content.site} footer={content.footer} />
 
       {/* Interactive Global Modals */}
       <QuoteBasket />

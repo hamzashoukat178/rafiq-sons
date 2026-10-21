@@ -28,7 +28,11 @@ export default async function Home() {
     <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-amber-200 selection:text-slate-900 flex flex-col justify-between">
       <div>
         {/* Top Announcement Bar */}
-        <AnnouncementBar />
+        <AnnouncementBar
+          text={content.announcement?.text}
+          cta={content.announcement?.cta}
+          link={content.announcement?.link}
+        />
 
         {/* Sticky Light Header */}
         <Header site={content.site} />
@@ -38,19 +42,19 @@ export default async function Home() {
           <HeroSection hero={content.hero} />
 
           {/* Shop By Category (8 Core Pillars) */}
-          <CategoryGrid />
+          <CategoryGrid items={content.categories} />
 
           {/* Featured Products & Live Interactive Catalog */}
           <FeaturedCatalog items={content.products} />
 
           {/* Complete 5-in-1 Branding Combo Packages */}
-          <PackageBuilder />
+          <PackageBuilder packages={content.brandingPackages} />
 
           {/* Why Choose Us - 5 Trust Pillars */}
-          <WhyChooseUs />
+          <WhyChooseUs pillars={content.trustPillars} />
 
           {/* How to Order in 4 Simple Steps */}
-          <HowToOrder />
+          <HowToOrder steps={content.orderSteps} />
 
           {/* Real Finished Orders & Workbench Gallery */}
           <ShowcaseGallery items={content.gallery} />

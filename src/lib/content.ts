@@ -4,15 +4,27 @@ import { defaultCarouselItems, type ProductCarouselItem } from "@/components/Pro
 
 export type Overrides = {
   site?: Partial<typeof base.site>;
-  contact?: { phoneDisplay?: string; whatsapp?: string; email?: string; location?: string; instagram?: string; emailGuessed?: boolean };
+  contact?: {
+    phoneDisplay?: string;
+    whatsapp?: string;
+    email?: string;
+    location?: string;
+    instagram?: string;
+    emailGuessed?: boolean;
+  };
+  announcement?: Partial<typeof base.announcement>;
   hero?: Partial<typeof base.hero>;
+  categories?: base.ProductCategory[];
+  products?: base.Product[];
+  brandingPackages?: base.BrandingPackage[];
+  trustPillars?: typeof base.trustPillars;
+  orderSteps?: typeof base.orderSteps;
   trustBar?: {
     marquee1?: string[];
     marquee2?: string[];
     pillars?: { title: string; desc: string }[];
   };
   manifesto?: Partial<typeof base.manifesto>;
-  products?: base.Product[];
   carousel?: ProductCarouselItem[];
   globalExport?: Partial<base.GlobalExportContent>;
   seoSettings?: Partial<base.SeoSettings>;
@@ -35,14 +47,19 @@ export type Overrides = {
 
 export type SiteContent = {
   site: typeof base.site;
+  announcement: typeof base.announcement;
   hero: typeof base.hero;
+  categories: base.ProductCategory[];
+  products: base.Product[];
+  brandingPackages: base.BrandingPackage[];
+  trustPillars: typeof base.trustPillars;
+  orderSteps: typeof base.orderSteps;
   trustBar?: {
     marquee1?: string[];
     marquee2?: string[];
     pillars?: { title: string; desc: string }[];
   };
   manifesto: typeof base.manifesto;
-  products: base.Product[];
   carousel: ProductCarouselItem[];
   globalExport: base.GlobalExportContent;
   seoSettings: base.SeoSettings;
@@ -65,9 +82,14 @@ export type SiteContent = {
 
 export const defaultContent: SiteContent = {
   site: base.site,
+  announcement: base.announcement,
   hero: base.hero,
-  manifesto: base.manifesto,
+  categories: base.categories,
   products: base.products,
+  brandingPackages: base.brandingPackages,
+  trustPillars: base.trustPillars,
+  orderSteps: base.orderSteps,
+  manifesto: base.manifesto,
   carousel: defaultCarouselItems,
   globalExport: base.defaultGlobalExport,
   seoSettings: base.defaultSeoSettings,
@@ -96,14 +118,23 @@ export async function loadContent(): Promise<SiteContent> {
       ? rawSite.whatsapp
       : "https://wa.me/923202025795";
   const site = { ...rawSite, whatsapp };
+  const categories = ov.categories?.length ? ov.categories : base.categories;
   const products = ov.products?.length ? ov.products : base.products;
+  const brandingPackages = ov.brandingPackages?.length ? ov.brandingPackages : base.brandingPackages;
+  const trustPillars = ov.trustPillars?.length ? ov.trustPillars : base.trustPillars;
+  const orderSteps = ov.orderSteps?.length ? ov.orderSteps : base.orderSteps;
 
   return {
     site,
+    announcement: { ...base.announcement, ...(ov.announcement ?? {}) },
     hero: { ...base.hero, ...(ov.hero ?? {}) },
+    categories,
+    products,
+    brandingPackages,
+    trustPillars,
+    orderSteps,
     trustBar: ov.trustBar,
     manifesto: { ...base.manifesto, ...(ov.manifesto ?? {}) },
-    products,
     carousel: ov.carousel?.length ? ov.carousel : defaultCarouselItems,
     globalExport: {
       ...base.defaultGlobalExport,

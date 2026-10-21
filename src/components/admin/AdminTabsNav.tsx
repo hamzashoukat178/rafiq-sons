@@ -29,23 +29,13 @@ export const tabCategories: TabCategory[] = [
   },
   {
     id: "products-hub",
-    label: "Products & Media",
+    label: "Products & Catalog",
     icon: "📦",
     subTabs: [
+      { id: "Categories", label: "Shop by Category (8 Pillars)", icon: "🏛️" },
       { id: "Products", label: "Products Catalog", icon: "🏷️" },
-      { id: "Showcase Carousel", label: "Photo Carousel", icon: "📸" },
-      { id: "Showroom Gallery", label: "Showroom Gallery", icon: "🖼️" },
-      { id: "Workbench Videos", label: "Video Reels", icon: "🎬" },
-    ],
-  },
-  {
-    id: "global-hub",
-    label: "Global & SEO",
-    icon: "🌍",
-    subTabs: [
-      { id: "Worldwide Export", label: "Worldwide Export Hubs", icon: "🌐" },
-      { id: "SEO & Meta", label: "Global SEO & Meta", icon: "🚀" },
-      { id: "Trust Bar", label: "Trust Marquee", icon: "⚡" },
+      { id: "Combo Packages", label: "5-in-1 Combo Packages", icon: "🎁" },
+      { id: "Showroom Gallery", label: "Workbench Showcase Gallery", icon: "📸" },
     ],
   },
   {
@@ -53,13 +43,22 @@ export const tabCategories: TabCategory[] = [
     label: "Page Content",
     icon: "✍️",
     subTabs: [
-      { id: "Hero Section", label: "Hero Banner", icon: "👑" },
-      { id: "Manifesto", label: "Brand Story", icon: "📖" },
-      { id: "Philosophy", label: "Philosophy", icon: "🏛️" },
-      { id: "Process Steps", label: "Process Steps", icon: "⚙️" },
-      { id: "FAQs", label: "FAQs Accordion", icon: "❓" },
+      { id: "Hero Section", label: "Hero Banner & Badges", icon: "👑" },
+      { id: "Announcement Bar", label: "Top Announcement Bar", icon: "📢" },
+      { id: "Why Choose Us", label: "5 Trust Pillars", icon: "🛡️" },
+      { id: "Process Steps", label: "4-Step Order Guide", icon: "⚙️" },
       { id: "Reviews", label: "Client Reviews", icon: "⭐" },
-      { id: "Footer", label: "Footer", icon: "⚓" },
+      { id: "FAQs", label: "FAQs Accordion", icon: "❓" },
+      { id: "Footer", label: "Footer & Hubs", icon: "⚓" },
+    ],
+  },
+  {
+    id: "global-hub",
+    label: "Global & SEO",
+    icon: "🌍",
+    subTabs: [
+      { id: "SEO & Meta", label: "Global SEO & Meta", icon: "🚀" },
+      { id: "Worldwide Export", label: "Worldwide Export Hubs", icon: "🌐" },
     ],
   },
   {
@@ -95,18 +94,21 @@ export default function AdminTabsNav({
 
   return (
     <div className="mb-6 space-y-3">
-      {/* Level 1: Clean Category Pills */}
+      {/* Level 1: Category Pills */}
       <div className="flex items-center gap-1.5 overflow-x-auto rounded-2xl border border-gray-200/80 bg-white p-1.5 shadow-sm [scrollbar-width:none]">
         {tabCategories.map((cat) => {
           const isCatActive = cat.id === activeCategory.id;
-          const hasBadge = cat.id === "leads-hub" && newCount > 0;
           return (
             <button
               key={cat.id}
               type="button"
-              onClick={() => onSelectTab(cat.subTabs[0].id)}
+              onClick={() => {
+                if (cat.subTabs.length > 0) {
+                  onSelectTab(cat.subTabs[0].id);
+                }
+              }}
               className={cn(
-                "flex shrink-0 items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-200",
+                "relative flex shrink-0 items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all cursor-pointer",
                 isCatActive
                   ? "bg-slate-900 text-white shadow-sm"
                   : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
@@ -114,8 +116,8 @@ export default function AdminTabsNav({
             >
               <span>{cat.icon}</span>
               <span>{cat.label}</span>
-              {hasBadge && (
-                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-400 px-1 text-[10px] font-black text-slate-950">
+              {cat.id === "leads-hub" && newCount > 0 && (
+                <span className="rounded-full bg-emerald-500 px-1.5 py-0.2 text-[10px] font-bold text-white">
                   {newCount}
                 </span>
               )}
@@ -124,9 +126,9 @@ export default function AdminTabsNav({
         })}
       </div>
 
-      {/* Level 2: Sub-tabs (Only show if category has more than 1 subTab) */}
+      {/* Level 2: Sub-tabs */}
       {activeCategory.subTabs.length > 1 && (
-        <div className="flex items-center gap-2 overflow-x-auto rounded-xl bg-slate-100/80 p-1.5 [scrollbar-width:none]">
+        <div className="flex items-center gap-2 overflow-x-auto rounded-xl border border-gray-200/60 bg-slate-50 p-1.5 [scrollbar-width:none]">
           {activeCategory.subTabs.map((sub) => {
             const isSubActive = sub.id === activeTab;
             return (
@@ -135,10 +137,10 @@ export default function AdminTabsNav({
                 type="button"
                 onClick={() => onSelectTab(sub.id)}
                 className={cn(
-                  "flex shrink-0 items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all duration-150",
+                  "flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer",
                   isSubActive
-                    ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-900/10"
-                    : "text-slate-500 hover:text-slate-900 hover:bg-white/50"
+                    ? "bg-white text-amber-900 shadow-sm border border-amber-300 font-bold"
+                    : "text-slate-600 hover:bg-white/60 hover:text-slate-900"
                 )}
               >
                 <span>{sub.icon}</span>
