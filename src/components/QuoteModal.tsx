@@ -71,6 +71,13 @@ export default function QuoteModal() {
     ? items.map((i) => `${i.name} (${i.quantity})`).join(", ")
     : "Custom Garment Trims & Packaging";
 
+  // Preformatted WhatsApp message
+  const whatsappText = encodeURIComponent(
+    `Hello Rafiq Sons Labels,\n\nI just submitted a custom quotation request:\n• Name: ${name || "Client"}\n• Brand: ${brand || "Not provided"}\n• Products: ${activeProductSummary}\n• Country/City: ${city ? `${city}, ` : ""}${country}\n• Quantity: ${quantity}\n• Delivery: ${deliveryPreference}\n\nPlease share quotation & 24h digital mockup.`
+  );
+
+  const whatsappRedirectUrl = `https://wa.me/923202025795?text=${whatsappText}`;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !contact.trim()) {
@@ -112,6 +119,13 @@ export default function QuoteModal() {
 
       setSubmitted(true);
       clearBasket();
+
+      // AUTOMATICALLY REDIRECT TO WHATSAPP
+      try {
+        window.open(whatsappRedirectUrl, "_blank");
+      } catch (err) {
+        console.log("Auto-popup blocked, user can click the button", err);
+      }
     } catch (err: unknown) {
       console.error("Quote submission error:", err);
       const errMsg = err instanceof Error ? err.message : "An unexpected error occurred. Please try again or message on WhatsApp.";
@@ -120,11 +134,6 @@ export default function QuoteModal() {
       setSubmitting(false);
     }
   };
-
-  // Preformatted WhatsApp message
-  const whatsappText = encodeURIComponent(
-    `Hello Rafiq Sons Labels,\n\nI just submitted a custom quotation request:\n• Name: ${name || "Client"}\n• Brand: ${brand || "Not provided"}\n• Products: ${activeProductSummary}\n• Country/City: ${city ? `${city}, ` : ""}${country}\n• Quantity: ${quantity}\n• Delivery: ${deliveryPreference}\n\nPlease share quotation & 24h digital mockup.`
-  );
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
@@ -153,12 +162,12 @@ export default function QuoteModal() {
         <div className="p-6 max-h-[75vh] overflow-y-auto">
           {submitted ? (
             <div className="py-8 text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto animate-bounce">
                 ✓
               </div>
               <h4 className="text-2xl font-extrabold text-slate-900">Quotation Request Received!</h4>
               <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                Thank you, <strong>{name}</strong>! Our production team has received your specifications. We will review your artwork and reply with a detailed pricing breakdown and digital proof in under 24 hours.
+                Thank you, <strong>{name}</strong>! We have saved your request and automatically redirected you to WhatsApp. If WhatsApp did not open automatically, please click below:
               </p>
 
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left max-w-md mx-auto text-xs space-y-1.5">
@@ -169,16 +178,19 @@ export default function QuoteModal() {
 
               <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <a
-                  href={`https://wa.me/923202025795?text=${whatsappText}`}
+                  href={whatsappRedirectUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg flex items-center justify-center gap-2"
                 >
-                  <span>💬 Instant WhatsApp Confirmation</span>
+                  <svg className="w-4 h-4 fill-white" viewBox="0 0 24 24">
+                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.529 1.849.813 2.791.813h.005c3.18 0 5.767-2.586 5.768-5.766 0-3.181-2.587-5.767-5.768-5.767zm7.557 5.765c0 4.168-3.391 7.559-7.558 7.559-1.327 0-2.571-.347-3.66-1l-4.07 1.068 1.087-3.974c-.732-1.155-1.121-2.484-1.121-3.653 0-4.169 3.391-7.56 7.558-7.56 4.167 0 7.558 3.391 7.558 7.56zm-4.321 2.378c-.237-.118-1.403-.692-1.62-.771-.218-.079-.376-.118-.535.118-.158.237-.614.771-.752.929-.139.158-.277.178-.514.059-.237-.118-1.002-.369-1.908-1.177-.706-.629-1.183-1.406-1.321-1.644-.138-.237-.015-.365.104-.483.107-.106.237-.277.356-.415.119-.138.158-.237.237-.395.079-.158.04-.297-.02-.415-.059-.118-.535-1.286-.732-1.761-.193-.464-.389-.401-.535-.408-.138-.007-.297-.008-.455-.008-.158 0-.415.059-.633.297-.218.237-.831.812-.831 1.98 0 1.168.851 2.296.969 2.454.119.158 1.674 2.557 4.056 3.585.567.245 1.009.391 1.354.502.569.181 1.087.155 1.496.094.456-.068 1.403-.574 1.601-1.128.198-.554.198-1.029.139-1.128-.059-.099-.218-.158-.455-.277z" />
+                  </svg>
+                  <span>💬 Open WhatsApp Chat Directly</span>
                 </a>
                 <button
                   onClick={closeQuoteModal}
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs"
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs cursor-pointer"
                 >
                   Close Window
                 </button>
@@ -404,9 +416,9 @@ export default function QuoteModal() {
                   className="w-full py-3.5 px-6 rounded-xl bg-slate-900 hover:bg-amber-600 disabled:bg-slate-400 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {submitting ? (
-                    <span>Submitting Quotation Request...</span>
+                    <span>Submitting & Redirecting to WhatsApp...</span>
                   ) : (
-                    <span>⚡ Submit Custom Quotation Request</span>
+                    <span>⚡ Submit Quote & Chat on WhatsApp</span>
                   )}
                 </button>
               </div>
