@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useQuoteBasket } from "@/context/QuoteBasketContext";
 import { products, categories, type Product } from "@/content/site";
 
@@ -127,7 +128,7 @@ export default function FeaturedCatalog({ items = products }: FeaturedCatalogPro
               >
                 <div>
                   {/* Product Image Header */}
-                  <div className="relative aspect-4/3 overflow-hidden bg-slate-100">
+                  <Link href={`/product/${prod.slug}`} className="block relative aspect-4/3 overflow-hidden bg-slate-100">
                     <Image
                       src={prod.image}
                       alt={prod.name}
@@ -136,7 +137,7 @@ export default function FeaturedCatalog({ items = products }: FeaturedCatalogPro
                     />
                     
                     {/* Tag badge */}
-                    <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-lg shadow-sm border border-slate-200/60">
+                    <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-lg shadow-sm border border-slate-200/60 z-10">
                       <span className="text-[10px] font-bold text-slate-900">
                         {prod.tag}
                       </span>
@@ -144,8 +145,13 @@ export default function FeaturedCatalog({ items = products }: FeaturedCatalogPro
 
                     {/* Quick Specs Trigger Overlay */}
                     <button
-                      onClick={() => openQuickView(prod)}
-                      className="absolute top-3 right-3 p-1.5 rounded-lg bg-white/90 backdrop-blur-md text-slate-700 hover:bg-white hover:text-amber-700 shadow-sm transition-all"
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        openQuickView(prod);
+                      }}
+                      className="absolute top-3 right-3 p-1.5 rounded-lg bg-white/90 backdrop-blur-md text-slate-700 hover:bg-white hover:text-amber-700 shadow-sm transition-all z-10 cursor-pointer"
                       title="View Full Technical Specs"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -153,13 +159,15 @@ export default function FeaturedCatalog({ items = products }: FeaturedCatalogPro
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                       </svg>
                     </button>
-                  </div>
+                  </Link>
 
                   {/* Product Body */}
                   <div className="p-4 space-y-2.5">
-                    <h3 className="text-sm font-bold text-slate-900 line-clamp-1 group-hover:text-amber-700 transition-colors">
-                      {prod.name}
-                    </h3>
+                    <Link href={`/product/${prod.slug}`} className="block">
+                      <h3 className="text-sm font-bold text-slate-900 line-clamp-1 group-hover:text-amber-700 transition-colors">
+                        {prod.name}
+                      </h3>
+                    </Link>
                     
                     <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
                       {prod.description}

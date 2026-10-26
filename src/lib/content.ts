@@ -118,16 +118,24 @@ export async function loadContent(): Promise<SiteContent> {
       ? rawSite.whatsapp
       : "https://wa.me/923202025795";
   const site = { ...rawSite, whatsapp };
-  const categories = ov.categories?.length ? ov.categories : base.categories;
-  const products = ov.products?.length ? ov.products : base.products;
-  const brandingPackages = ov.brandingPackages?.length ? ov.brandingPackages : base.brandingPackages;
-  const trustPillars = ov.trustPillars?.length ? ov.trustPillars : base.trustPillars;
-  const orderSteps = ov.orderSteps?.length ? ov.orderSteps : base.orderSteps;
+  const categories = Array.isArray(ov.categories) ? ov.categories : base.categories;
+  const products = Array.isArray(ov.products) ? ov.products : base.products;
+  const brandingPackages = Array.isArray(ov.brandingPackages) ? ov.brandingPackages : base.brandingPackages;
+  const trustPillars = Array.isArray(ov.trustPillars) ? ov.trustPillars : base.trustPillars;
+  const orderSteps = Array.isArray(ov.orderSteps) ? ov.orderSteps : base.orderSteps;
+
+  const rawHero = ov.hero ?? {};
+  const hero = {
+    ...base.hero,
+    ...rawHero,
+    trustBadges: Array.isArray(rawHero.trustBadges) ? rawHero.trustBadges : base.hero.trustBadges,
+    thumbnails: Array.isArray(rawHero.thumbnails) ? rawHero.thumbnails : base.hero.thumbnails,
+  };
 
   return {
     site,
     announcement: { ...base.announcement, ...(ov.announcement ?? {}) },
-    hero: { ...base.hero, ...(ov.hero ?? {}) },
+    hero,
     categories,
     products,
     brandingPackages,
@@ -135,12 +143,12 @@ export async function loadContent(): Promise<SiteContent> {
     orderSteps,
     trustBar: ov.trustBar,
     manifesto: { ...base.manifesto, ...(ov.manifesto ?? {}) },
-    carousel: ov.carousel?.length ? ov.carousel : defaultCarouselItems,
+    carousel: Array.isArray(ov.carousel) ? ov.carousel : defaultCarouselItems,
     globalExport: {
       ...base.defaultGlobalExport,
       ...(ov.globalExport ?? {}),
-      regions: ov.globalExport?.regions?.length ? ov.globalExport.regions : base.defaultExportRegions,
-      technicalSpecs: ov.globalExport?.technicalSpecs?.length ? ov.globalExport.technicalSpecs : base.defaultTechnicalSpecs,
+      regions: Array.isArray(ov.globalExport?.regions) ? ov.globalExport.regions : base.defaultExportRegions,
+      technicalSpecs: Array.isArray(ov.globalExport?.technicalSpecs) ? ov.globalExport.technicalSpecs : base.defaultTechnicalSpecs,
     },
     seoSettings: {
       ...base.defaultSeoSettings,
@@ -151,11 +159,11 @@ export async function loadContent(): Promise<SiteContent> {
       ...defaultContent.philosophy,
       ...(ov.philosophy ?? {}),
     },
-    reels: ov.reels?.length ? ov.reels : base.reels,
-    stats: ov.stats?.length ? ov.stats : base.stats,
-    gallery: ov.gallery?.length ? ov.gallery : base.gallery,
-    testimonials: ov.testimonials?.length ? ov.testimonials : base.testimonials,
-    faqs: ov.faqs?.length ? ov.faqs : base.faqs,
+    reels: Array.isArray(ov.reels) ? ov.reels : base.reels,
+    stats: Array.isArray(ov.stats) ? ov.stats : base.stats,
+    gallery: Array.isArray(ov.gallery) ? ov.gallery : base.gallery,
+    testimonials: Array.isArray(ov.testimonials) ? ov.testimonials : base.testimonials,
+    faqs: Array.isArray(ov.faqs) ? ov.faqs : base.faqs,
     quote: {
       ...base.quote,
       ...(ov.quote ?? {}),

@@ -388,25 +388,31 @@ export default function AdminApp() {
       : "https://wa.me/923202025795";
   const site = { ...rawSite, whatsapp };
   const announcement = { ...defaultAnnouncement, ...(ov.announcement ?? {}) };
-  const hero = { ...defaultHero, ...(ov.hero ?? {}) };
-  const categoriesList = ov.categories?.length ? ov.categories : defaultCategories;
-  const products = ov.products?.length ? ov.products : defaultProducts;
-  const packageList = ov.brandingPackages?.length ? ov.brandingPackages : defaultPackages;
-  const pillarList = ov.trustPillars?.length ? ov.trustPillars : defaultPillars;
-  const stepList = ov.orderSteps?.length ? ov.orderSteps : defaultSteps;
+  const hero = {
+    ...defaultHero,
+    ...(ov.hero ?? {}),
+    showcaseImage: ov.hero?.showcaseImage || ov.hero?.poster || defaultHero.showcaseImage || defaultHero.poster,
+    trustBadges: Array.isArray(ov.hero?.trustBadges) ? ov.hero.trustBadges : defaultHero.trustBadges,
+    thumbnails: Array.isArray(ov.hero?.thumbnails) ? ov.hero.thumbnails : defaultHero.thumbnails,
+  };
+  const categoriesList = Array.isArray(ov.categories) ? ov.categories : defaultCategories;
+  const products = Array.isArray(ov.products) ? ov.products : defaultProducts;
+  const packageList = Array.isArray(ov.brandingPackages) ? ov.brandingPackages : defaultPackages;
+  const pillarList = Array.isArray(ov.trustPillars) ? ov.trustPillars : defaultPillars;
+  const stepList = Array.isArray(ov.orderSteps) ? ov.orderSteps : defaultSteps;
   const globalExport: GlobalExportContent = {
     ...defaultGlobalExport,
     ...(ov.globalExport ?? {}),
-    regions: ov.globalExport?.regions?.length ? ov.globalExport.regions : defaultGlobalExport.regions,
-    technicalSpecs: ov.globalExport?.technicalSpecs?.length ? ov.globalExport.technicalSpecs : defaultGlobalExport.technicalSpecs,
+    regions: Array.isArray(ov.globalExport?.regions) ? ov.globalExport.regions : defaultGlobalExport.regions,
+    technicalSpecs: Array.isArray(ov.globalExport?.technicalSpecs) ? ov.globalExport.technicalSpecs : defaultGlobalExport.technicalSpecs,
   };
   const seoSettings: SeoSettings = {
     ...defaultSeoSettings,
     ...(ov.seoSettings ?? {}),
   };
-  const gallery = ov.gallery?.length ? ov.gallery : defaultGallery;
-  const testimonialList = ov.testimonials?.length ? ov.testimonials : defaultTestimonials;
-  const faqList = ov.faqs?.length ? ov.faqs : defaultFaqs;
+  const gallery = Array.isArray(ov.gallery) ? ov.gallery : defaultGallery;
+  const testimonialList = Array.isArray(ov.testimonials) ? ov.testimonials : defaultTestimonials;
+  const faqList = Array.isArray(ov.faqs) ? ov.faqs : defaultFaqs;
   const footer = { ...defaultFooter, ...(ov.footer ?? {}) };
 
   const leads = useMemo(() => data?.leads ?? [], [data]);
@@ -1491,80 +1497,212 @@ export default function AdminApp() {
             <div>
               <SectionSaveBar
                 title="Hero Banner Section"
-                subtitle="Top headlines, trust badges, and CTA buttons"
+                subtitle="Top headlines, CTA buttons, floating badges, trust icons & visual showcase"
                 busy={busy}
                 onSave={() => saveOverrides({ ...ov, hero })}
               />
 
-              <div className="space-y-4 max-w-3xl">
-                <div>
-                  <label className={labelCls}>Eyebrow Badge</label>
-                  <input
-                    className={inputCls}
-                    value={hero.eyebrow}
-                    onChange={(e) => setOv({ ...ov, hero: { ...hero, eyebrow: e.target.value } })}
-                  />
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-6 max-w-4xl">
+                
+                {/* 1. Main Headlines & Text */}
+                <div className="rounded-2xl border border-gray-200/90 bg-white p-5 space-y-4 shadow-xs">
+                  <h3 className="text-sm font-bold text-slate-900 border-b border-gray-100 pb-2">
+                    1. Headlines & Calls to Action
+                  </h3>
+
                   <div>
-                    <label className={labelCls}>Headline Line 1</label>
+                    <label className={labelCls}>Eyebrow Pill Badge</label>
                     <input
                       className={inputCls}
-                      value={hero.line1}
-                      onChange={(e) => setOv({ ...ov, hero: { ...hero, line1: e.target.value } })}
+                      value={hero.eyebrow}
+                      onChange={(e) => setOv({ ...ov, hero: { ...hero, eyebrow: e.target.value } })}
+                      placeholder="e.g. Factory Direct Garment Trims & Packaging"
                     />
                   </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className={labelCls}>Headline Line 1</label>
+                      <input
+                        className={inputCls}
+                        value={hero.line1}
+                        onChange={(e) => setOv({ ...ov, hero: { ...hero, line1: e.target.value } })}
+                        placeholder="Custom Labels, Logos &"
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls}>Headline Line 2 (Highlighted Accent)</label>
+                      <input
+                        className={inputCls}
+                        value={hero.line2}
+                        onChange={(e) => setOv({ ...ov, hero: { ...hero, line2: e.target.value } })}
+                        placeholder="Packaging for Your Brand"
+                      />
+                    </div>
+                  </div>
+
                   <div>
-                    <label className={labelCls}>Headline Line 2 (Accent)</label>
-                    <input
-                      className={inputCls}
-                      value={hero.line2}
-                      onChange={(e) => setOv({ ...ov, hero: { ...hero, line2: e.target.value } })}
+                    <label className={labelCls}>Hero Subtitle / Description</label>
+                    <textarea
+                      className={cn(inputCls, "min-h-[4.5rem]")}
+                      value={hero.sub}
+                      onChange={(e) => setOv({ ...ov, hero: { ...hero, sub: e.target.value } })}
                     />
                   </div>
-                </div>
-                <div>
-                  <label className={labelCls}>Subtitle</label>
-                  <textarea
-                    className={cn(inputCls, "min-h-[4rem]")}
-                    value={hero.sub}
-                    onChange={(e) => setOv({ ...ov, hero: { ...hero, sub: e.target.value } })}
-                  />
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <label className={labelCls}>Primary CTA Button</label>
-                    <input
-                      className={inputCls}
-                      value={hero.ctaPrimary}
-                      onChange={(e) => setOv({ ...ov, hero: { ...hero, ctaPrimary: e.target.value } })}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>Secondary CTA Button</label>
-                    <input
-                      className={inputCls}
-                      value={hero.ctaSecondary}
-                      onChange={(e) => setOv({ ...ov, hero: { ...hero, ctaSecondary: e.target.value } })}
-                    />
+
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <div>
+                      <label className={labelCls}>Primary Button Text</label>
+                      <input
+                        className={inputCls}
+                        value={hero.ctaPrimary}
+                        onChange={(e) => setOv({ ...ov, hero: { ...hero, ctaPrimary: e.target.value } })}
+                        placeholder="Explore Products"
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls}>Secondary Button Text</label>
+                      <input
+                        className={inputCls}
+                        value={hero.ctaSecondary}
+                        onChange={(e) => setOv({ ...ov, hero: { ...hero, ctaSecondary: e.target.value } })}
+                        placeholder="⚡ Get Instant Quote"
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls}>WhatsApp Button Text</label>
+                      <input
+                        className={inputCls}
+                        value={hero.ctaWhatsapp || "💬 WhatsApp Quick Chat"}
+                        onChange={(e) => setOv({ ...ov, hero: { ...hero, ctaWhatsapp: e.target.value } })}
+                        placeholder="💬 WhatsApp Quick Chat"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <ImageUploadField
-                  label="Hero Featured Image"
-                  value={hero.poster}
-                  onChange={(val) => setOv({ ...ov, hero: { ...hero, poster: val } })}
-                />
+                {/* 2. Right Side Showcase Image & Floating Badges */}
+                <div className="rounded-2xl border border-gray-200/90 bg-white p-5 space-y-4 shadow-xs">
+                  <h3 className="text-sm font-bold text-slate-900 border-b border-gray-100 pb-2">
+                    2. Right-Side Featured Showcase & Floating Badges
+                  </h3>
+
+                  <ImageUploadField
+                    label="Main Featured Showcase Photo"
+                    value={hero.showcaseImage || hero.poster || "/photos/rs-092-02.jpg"}
+                    onChange={(val) => setOv({ ...ov, hero: { ...hero, showcaseImage: val, poster: val } })}
+                  />
+
+                  <div className="grid gap-3 sm:grid-cols-2 pt-2">
+                    <div>
+                      <label className={labelCls}>Top Floating Badge Text</label>
+                      <input
+                        className={inputCls}
+                        value={hero.showcaseBadgeTop || "50D High-Density Weave"}
+                        onChange={(e) => setOv({ ...ov, hero: { ...hero, showcaseBadgeTop: e.target.value } })}
+                        placeholder="50D High-Density Weave"
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls}>Bottom Floating Badge Text</label>
+                      <input
+                        className={inputCls}
+                        value={hero.showcaseBadgeBottom || "⭐ 4.9/5 Rating | 200+ Brands"}
+                        onChange={(e) => setOv({ ...ov, hero: { ...hero, showcaseBadgeBottom: e.target.value } })}
+                        placeholder="⭐ 4.9/5 Rating | 200+ Brands"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Four Trust Badges Strip */}
+                <div className="rounded-2xl border border-gray-200/90 bg-white p-5 space-y-4 shadow-xs">
+                  <h3 className="text-sm font-bold text-slate-900 border-b border-gray-100 pb-2">
+                    3. Trust Badges Strip (4 Pillars)
+                  </h3>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {(hero.trustBadges || [
+                      { icon: "🏭", label: "Direct Factory Manufacturing" },
+                      { icon: "📦", label: "Low MOQ Starts at 100 pcs" },
+                      { icon: "⚡", label: "24h Free Digital Proof" },
+                      { icon: "✈️", label: "Express Doorstep Delivery (GCC & Global)" },
+                    ]).map((badge, bIdx) => (
+                      <div key={bIdx} className="p-3 rounded-xl border border-gray-200 bg-slate-50/60 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <input
+                            className="w-12 text-center rounded-lg border border-gray-200 bg-white py-1.5 text-base"
+                            value={badge.icon}
+                            onChange={(e) => {
+                              const updated = [...(hero.trustBadges || [])];
+                              updated[bIdx] = { ...badge, icon: e.target.value };
+                              setOv({ ...ov, hero: { ...hero, trustBadges: updated } });
+                            }}
+                          />
+                          <input
+                            className={cn(inputCls, "flex-1")}
+                            value={badge.label}
+                            onChange={(e) => {
+                              const updated = [...(hero.trustBadges || [])];
+                              updated[bIdx] = { ...badge, label: e.target.value };
+                              setOv({ ...ov, hero: { ...hero, trustBadges: updated } });
+                            }}
+                            placeholder="Badge label"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 4. Three Bottom Showcase Thumbnails */}
+                <div className="rounded-2xl border border-gray-200/90 bg-white p-5 space-y-4 shadow-xs">
+                  <h3 className="text-sm font-bold text-slate-900 border-b border-gray-100 pb-2">
+                    4. Bottom Showcase Thumbnails (3 Visual Cards)
+                  </h3>
+
+                  <div className="grid gap-4 sm:grid-cols-3">
+                    {(hero.thumbnails || [
+                      { image: "/photos/rs-057-00.jpg", label: "Hang Tags" },
+                      { image: "/photos/rs-004-cover.jpg", label: "3D Rubber" },
+                      { image: "/photos/rs-032-00.jpg", label: "Frosted Bags" },
+                    ]).map((thumb, tIdx) => (
+                      <div key={tIdx} className="p-3 rounded-xl border border-gray-200 bg-slate-50/60 space-y-2">
+                        <label className={labelCls}>Card {tIdx + 1} Label</label>
+                        <input
+                          className={inputCls}
+                          value={thumb.label}
+                          onChange={(e) => {
+                            const updated = [...(hero.thumbnails || [])];
+                            updated[tIdx] = { ...thumb, label: e.target.value };
+                            setOv({ ...ov, hero: { ...hero, thumbnails: updated } });
+                          }}
+                          placeholder="e.g. Hang Tags"
+                        />
+                        <ImageUploadField
+                          label={`Card ${tIdx + 1} Photo`}
+                          value={thumb.image}
+                          onChange={(val) => {
+                            const updated = [...(hero.thumbnails || [])];
+                            updated[tIdx] = { ...thumb, image: val };
+                            setOv({ ...ov, hero: { ...hero, thumbnails: updated } });
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
               </div>
 
               <div className="mt-8 flex justify-end border-t border-gray-200/80 pt-4">
                 <button
                   type="button"
                   disabled={busy}
-                  onClick={() => saveOverrides({ ...ov, hero })}
+                  onClick={() => saveOverrides({ ...ov, hero }, "Hero Section updated successfully!")}
                   className="rounded-xl bg-amber-500 px-8 py-3 text-xs font-bold uppercase tracking-wider text-slate-950 shadow-sm active:scale-95 transition-all hover:bg-amber-400 cursor-pointer"
                 >
-                  {busy ? "Saving..." : "💾 Save Hero"}
+                  {busy ? "Saving..." : "💾 Save Hero Section"}
                 </button>
               </div>
             </div>

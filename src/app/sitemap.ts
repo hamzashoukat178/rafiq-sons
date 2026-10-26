@@ -1,26 +1,59 @@
 import type { MetadataRoute } from "next";
+import { categories, products } from "@/content/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://www.rafiqsonslabels.com";
   const now = new Date();
 
-  const sections = [
-    { path: "", priority: 1.0, freq: "daily" as const },
-    { path: "/#collections", priority: 0.95, freq: "daily" as const },
-    { path: "/#showcase", priority: 0.9, freq: "weekly" as const },
-    { path: "/#worldwide-export", priority: 0.9, freq: "weekly" as const },
-    { path: "/#process", priority: 0.85, freq: "monthly" as const },
-    { path: "/#gallery", priority: 0.85, freq: "weekly" as const },
-    { path: "/#reels", priority: 0.8, freq: "weekly" as const },
-    { path: "/#reviews", priority: 0.8, freq: "weekly" as const },
-    { path: "/#faq", priority: 0.85, freq: "monthly" as const },
-    { path: "/#quote", priority: 0.95, freq: "daily" as const },
+  // Core Static & Landing Pages
+  const mainPages: MetadataRoute.Sitemap = [
+    {
+      url: baseUrl,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/#catalog`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.95,
+    },
+    {
+      url: `${baseUrl}/#packages`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/#gallery`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/#faq`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
   ];
 
-  return sections.map((s) => ({
-    url: `${baseUrl}${s.path}`,
+  // Category Pages
+  const categoryPages: MetadataRoute.Sitemap = categories.map((cat) => ({
+    url: `${baseUrl}/category/${cat.slug}`,
     lastModified: now,
-    changeFrequency: s.freq,
-    priority: s.priority,
+    changeFrequency: "daily" as const,
+    priority: 0.9,
   }));
+
+  // Dedicated Product Pages
+  const productPages: MetadataRoute.Sitemap = products.map((prod) => ({
+    url: `${baseUrl}/product/${prod.slug}`,
+    lastModified: now,
+    changeFrequency: "daily" as const,
+    priority: 0.85,
+  }));
+
+  return [...mainPages, ...categoryPages, ...productPages];
 }

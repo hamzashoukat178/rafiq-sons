@@ -18,6 +18,7 @@ export type Product = {
   tag: string;
   description: string;
   image: string;
+  gallery?: string[];
   detail: string;
   from?: string;
   guessedPrice?: boolean;
@@ -78,6 +79,23 @@ export type GlobalExportContent = {
   ctaButton: string;
 };
 
+export type HeroContent = {
+  eyebrow: string;
+  line1: string;
+  line2: string;
+  sub: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
+  ctaWhatsapp?: string;
+  video?: string;
+  poster?: string;
+  showcaseImage?: string;
+  showcaseBadgeTop?: string;
+  showcaseBadgeBottom?: string;
+  trustBadges: { icon: string; label: string }[];
+  thumbnails?: { image: string; label: string }[];
+};
+
 export type SeoSettings = {
   metaTitle?: string;
   metaDescription?: string;
@@ -98,9 +116,9 @@ export const site = {
   phoneIntl: "+923202025795",
   email: "hello@rafiqsonslabels.com",
   emailGuessed: false,
-  location: "Direct Factory in Pakistan • Express Doorstep Courier to GCC & Worldwide",
+  location: "Direct Factory in Pakistan • Express Doorstep Courier to Saudi Arabia, UAE, GCC & Worldwide",
   followers: 16386,
-  bio: "All kinds of woven labels, rubber logos, leather patches, metal badges, hang tags, stickers, cards and packaging accessories. Delivery all over the world.",
+  bio: "All kinds of custom woven labels, 3D rubber logos, leather patches, metal badges, hang tags, stickers, thank-you cards and packaging bags. Direct factory delivery all over the world.",
 };
 
 export const announcement = {
@@ -109,20 +127,29 @@ export const announcement = {
   link: "https://wa.me/923202025795?text=Hello%20Rafiq%20Sons%2C%20I%20would%20like%20to%20get%20a%20quotation%20for%20my%20brand.",
 };
 
-export const hero = {
+export const hero: HeroContent = {
   eyebrow: "Factory Direct Garment Trims & Packaging",
   line1: "Custom Labels, Logos &",
   line2: "Packaging for Your Brand",
   sub: "Elevate your clothing line with precision-manufactured woven labels, 3D rubber logos, debossed leather patches, metal badges, luxury hang tags, waterproof stickers, and custom frosted garment bags. Factory direct wholesale pricing with low MOQ starting at 100 pcs.",
   ctaPrimary: "Explore Products",
   ctaSecondary: "Get Instant Quote",
+  ctaWhatsapp: "WhatsApp Quick Chat",
   video: "/videos/rs-003-video.mp4",
   poster: "/photos/rs-092-02.jpg",
+  showcaseImage: "/photos/rs-092-02.jpg",
+  showcaseBadgeTop: "50D High-Density Weave",
+  showcaseBadgeBottom: "⭐ 4.9/5 Rating | 200+ Brands",
   trustBadges: [
     { icon: "🏭", label: "100% Direct Factory Manufacturing" },
     { icon: "📦", label: "Low MOQ Starts at 100 pcs" },
     { icon: "⚡", label: "24h Free Digital Mockup Proof" },
     { icon: "✈️", label: "Express Doorstep Delivery (GCC & Global)" },
+  ],
+  thumbnails: [
+    { image: "/photos/rs-057-00.jpg", label: "Hang Tags" },
+    { image: "/photos/rs-004-cover.jpg", label: "3D Rubber" },
+    { image: "/photos/rs-032-00.jpg", label: "Frosted Bags" },
   ],
 };
 
@@ -250,7 +277,7 @@ export const categories: ProductCategory[] = [
   },
 ];
 
-// Rich Featured Catalog Products
+// Rich Featured Catalog Products with Multi-Image Galleries
 export const products: Product[] = [
   // Woven Labels
   {
@@ -260,6 +287,7 @@ export const products: Product[] = [
     tag: "Factory Flagship",
     description: "Ultra-fine 50-denier warp yarns for ultra-sharp typography, crisp lines, and a smooth touch that never irritates the skin.",
     image: "/photos/rs-092-02.jpg",
+    gallery: ["/photos/rs-092-02.jpg", "/photos/rs-016-00.jpg", "/photos/rs-085-00.jpg", "/photos/rs-055-00.jpg"],
     detail: "50D/75D weave, laser cut soft sealed borders, up to 8 thread colors, OEKO-TEX certified yarn.",
     material: "100% High-Density Polyester Damask Yarn",
     finishes: ["Center Fold", "End Fold", "Mitre Fold", "Laser Cut Flat"],
@@ -274,6 +302,7 @@ export const products: Product[] = [
     tag: "Luxury Edition",
     description: "Woven with sparkling gold, silver, or rose-gold metallic Lurex threads on a rich black or ivory damask base.",
     image: "/photos/rs-016-00.jpg",
+    gallery: ["/photos/rs-016-00.jpg", "/photos/rs-092-02.jpg", "/photos/rs-085-00.jpg"],
     detail: "Metallic thread weave, heat-resistant, high wash durability, custom width 10mm to 80mm.",
     material: "Metallic Lurex Yarn + Damask Base",
     finishes: ["Gold Metallic", "Silver Metallic", "Rose Gold", "Bronze"],
@@ -288,6 +317,7 @@ export const products: Product[] = [
     tag: "Ultra Soft",
     description: "Silky soft woven satin tape with high-resolution thermal or screen print for wash care instructions and size tagging.",
     image: "/photos/rs-070-03.jpg",
+    gallery: ["/photos/rs-070-03.jpg", "/photos/rs-096-01.jpg", "/photos/rs-061-00.jpg"],
     detail: "Single or double sided print, ultra-soft ultrasonic sealed edges, resistant to 50+ wash cycles.",
     material: "100% Double-Face Polyester Satin",
     finishes: ["Roll Form", "Single Cut", "Center Fold Loop"],
@@ -302,6 +332,7 @@ export const products: Product[] = [
     tag: "Eco Friendly",
     description: "Natural organic cotton twill or 100% GRS recycled polyester yarn labels for sustainable apparel collections.",
     image: "/photos/rs-080-00.jpg",
+    gallery: ["/photos/rs-080-00.jpg", "/photos/rs-092-02.jpg", "/photos/rs-070-03.jpg"],
     detail: "Natural unbleached cotton twill, screen printed or woven, soft raw edge or folded.",
     material: "100% Organic Cotton Twill or GRS Recycled rPET",
     finishes: ["Natural Off-White", "Bleached White", "Twill Weave", "Flat Cut"],
@@ -318,6 +349,7 @@ export const products: Product[] = [
     tag: "Tagless 3D",
     description: "Raised 3D silicone heat transfer badges that apply cleanly with an iron or heat press. Flexible, lightweight, and stretch-proof.",
     image: "/photos/rs-004-cover.jpg",
+    gallery: ["/photos/rs-004-cover.jpg", "/photos/rs-095-01.jpg", "/photos/rs-005-cover.jpg"],
     detail: "High-density silicone, wash-tested at 60°C, zero-feel interior, multi-color registration.",
     material: "Medical-grade Silicone + Hot Melt Adhesive",
     finishes: ["Matte 3D", "Gloss 3D", "Reflective 3D", "Multi-layered"],
@@ -332,6 +364,7 @@ export const products: Product[] = [
     tag: "All-Weather",
     description: "Durable waterproof PVC rubber patches with deep multi-level 3D embossing, sew-on perimeter groove, or velcro backing.",
     image: "/photos/rs-095-01.jpg",
+    gallery: ["/photos/rs-095-01.jpg", "/photos/rs-004-cover.jpg"],
     detail: "Soft flexible PVC, custom mold injection, pantone color matching, hook-and-loop velcro option.",
     material: "Soft Flexible PVC Compound",
     finishes: ["Sew-on Groove", "Velcro Hook & Loop", "Iron-on Backing", "3D Molded Relief"],
@@ -348,6 +381,7 @@ export const products: Product[] = [
     tag: "Heritage Craft",
     description: "Heavyweight genuine cowhide leather with crisp heat debossing and rich natural patina. Built to age gracefully on denim.",
     image: "/photos/rs-085-00.jpg",
+    gallery: ["/photos/rs-085-00.jpg", "/photos/rs-021-01.jpg", "/photos/rs-095-01.jpg"],
     detail: "Vegetable-tanned cowhide, hot metal die stamping, custom burnt edge, pre-punched stitch holes.",
     material: "100% Genuine Cowhide / Buffalo Leather",
     finishes: ["Tan Brown", "Vintage Dark Brown", "Jet Black", "Natural Raw"],
@@ -362,6 +396,7 @@ export const products: Product[] = [
     tag: "Denim & Knitwear",
     description: "100% machine-washable synthetic PU and faux suede leather patches with high-contrast laser engraved or hot-stamped branding.",
     image: "/photos/rs-021-01.jpg",
+    gallery: ["/photos/rs-021-01.jpg", "/photos/rs-085-00.jpg"],
     detail: "Water-resistant PU microfibre, laser cut, custom shapes, edge stitching channel.",
     material: "Microfiber PU Leather / Faux Suede",
     finishes: ["Laser Engraved", "Gold Foil Stamped", "Pre-Punched Stitch Holes"],
@@ -378,6 +413,7 @@ export const products: Product[] = [
     tag: "Jewelry Grade",
     description: "Solid zinc alloy metal badges with high-mirror gold, silver, or chrome plating. Equipped with dual back prongs or sew-on holes.",
     image: "/photos/rs-017-cover.jpg",
+    gallery: ["/photos/rs-017-cover.jpg", "/photos/rs-037-02.jpg"],
     detail: "Zinc alloy die casting, electroplated mirror finish, corrosion resistant, back prongs & backing plate.",
     material: "Die-Cast Zinc Alloy / Brass",
     finishes: ["24K Shiny Gold", "Polished Chrome Silver", "Matte Gunmetal", "Rose Gold"],
@@ -392,6 +428,7 @@ export const products: Product[] = [
     tag: "Stealth Luxury",
     description: "Tactile matte black electroplated or antique brass metal brand plates with recessed laser-engraved typography.",
     image: "/photos/rs-037-02.jpg",
+    gallery: ["/photos/rs-037-02.jpg", "/photos/rs-017-cover.jpg"],
     detail: "CNC engraved or cast, matte anodized coating, scratch resistant, secure rivet back.",
     material: "Stainless Steel & Zinc Alloy",
     finishes: ["Matte Black", "Antique Brass", "Brushed Titanium", "Antique Silver"],
@@ -408,6 +445,7 @@ export const products: Product[] = [
     tag: "Best Seller",
     description: "Heavy 600-800 GSM duplex art card laminated in tactile soft-touch velvet with gleaming metallic hot foil stamping.",
     image: "/photos/rs-057-00.jpg",
+    gallery: ["/photos/rs-057-00.jpg", "/photos/rs-043-00.jpg", "/photos/rs-047-00.jpg", "/photos/rs-090-00.jpg"],
     detail: "600-800 GSM board, gold/silver/holographic foil, matte velvet lamination, metal eyelet + waxed cord.",
     material: "600–800 GSM Heavy Duplex Art Board",
     finishes: ["Gold Foil", "Silver Foil", "Holographic Foil", "Spot UV Gloss", "Embossed"],
@@ -422,6 +460,7 @@ export const products: Product[] = [
     tag: "Creative Shape",
     description: "Unique custom shaped tags with sandwich duplex board, layered translucent vellum overlay, and custom brass safety pin seals.",
     image: "/photos/rs-043-00.jpg",
+    gallery: ["/photos/rs-043-00.jpg", "/photos/rs-057-00.jpg", "/photos/rs-047-00.jpg"],
     detail: "Precision steel die cutting, custom multi-tier card layering, tracing paper top layer, wax seal string.",
     material: "Multi-layered 700 GSM Card + Vellum Paper",
     finishes: ["Custom Die Cut Shape", "Vellum Overlay", "Debossed Logo", "Wax Seal Cord"],
@@ -438,6 +477,7 @@ export const products: Product[] = [
     tag: "Vibrant Print",
     description: "Heavy-duty waterproof vinyl stickers with UV-protective matte or gloss lamination. Scratch-resistant, weatherproof, and residue-free.",
     image: "/photos/rs-020-00.jpg",
+    gallery: ["/photos/rs-020-00.jpg", "/photos/rs-073-00.jpg"],
     detail: "Thick vinyl base, precision kiss cut / die cut, UV protected, waterproof adhesive.",
     material: "100µm Waterproof Outdoor Vinyl",
     finishes: ["Matte Velvet", "High Gloss", "Holographic Rainbow", "Clear Transparent"],
@@ -452,6 +492,7 @@ export const products: Product[] = [
     tag: "Secure Dispatch",
     description: "High-adhesion BOPP or eco-friendly water-activated reinforced kraft packing tape printed with your continuous brand pattern.",
     image: "/photos/rs-073-00.jpg",
+    gallery: ["/photos/rs-073-00.jpg", "/photos/rs-020-00.jpg"],
     detail: "50mm / 75mm width, 50m roll length, strong rubber adhesive, sharp 2-color flexographic print.",
     material: "Reinforced Kraft Paper or Heavy Duty BOPP",
     finishes: ["White Base Tape", "Brown Eco Kraft", "Clear Base", "Fragile Branding"],
@@ -468,6 +509,7 @@ export const products: Product[] = [
     tag: "Customer Love",
     description: "Heavy 450 GSM cards with velvet lamination, metallic hot foil typography, and dedicated space for custom notes and QR codes.",
     image: "/photos/rs-000-00.jpg",
+    gallery: ["/photos/rs-000-00.jpg", "/photos/rs-089-00.jpg", "/photos/rs-049-02.jpg", "/photos/rs-036-00.jpg"],
     detail: "450 GSM art board, double-sided full color print, gold/rose foil, velvet soft touch lamination.",
     material: "450 GSM Heavyweight Art Card",
     finishes: ["Gold Foil Accent", "Velvet Lamination", "Custom Socials & QR", "Rounded Corners"],
@@ -482,6 +524,7 @@ export const products: Product[] = [
     tag: "600 GSM Ultra-Thick",
     description: "Ultra-thick 600 GSM duplex board with gleaming mirror-gold or silver foil gilded edges. The card that commands immediate attention.",
     image: "/photos/rs-024-01.jpg",
+    gallery: ["/photos/rs-024-01.jpg", "/photos/rs-000-00.jpg"],
     detail: "600 GSM heavy duplex board, mirror foil edge painting, debossed lettering, spot gloss.",
     material: "600 GSM Double-Thick Pure Cotton Card",
     finishes: ["Gilded Gold Edges", "Gilded Silver Edges", "Deep Letterpress Deboss", "Matte Black Core"],
@@ -498,6 +541,7 @@ export const products: Product[] = [
     tag: "Essential Packaging",
     description: "Premium semi-translucent frosted EVA ziplock bags printed with your brand logo. Includes a micro air ventilation hole and secure slider.",
     image: "/photos/rs-032-00.jpg",
+    gallery: ["/photos/rs-032-00.jpg", "/photos/rs-051-00.jpg", "/photos/rs-073-00.jpg"],
     detail: "140µm heavy frosted EVA plastic, durable ziplock slider, single or double sided silk screen print.",
     material: "Eco Frosted EVA / CPE Waterproof Plastic",
     finishes: ["Frosted Translucent", "Solid Matte Black", "White Silk Screen", "Air Vent Hole"],
@@ -512,6 +556,7 @@ export const products: Product[] = [
     tag: "Courier Grade",
     description: "Heavy-duty waterproof courier shipping bags printed with your brand logo, featuring a tamper-proof permanent self-adhesive strip.",
     image: "/photos/rs-051-00.jpg",
+    gallery: ["/photos/rs-051-00.jpg", "/photos/rs-032-00.jpg"],
     detail: "3-layer co-extruded LDPE film, 100% opaque interior, tear-proof and waterproof, dual seal strip option.",
     material: "Heavy-Duty Co-Extruded LDPE Poly",
     finishes: ["Matte Black", "Pastel Shades", "All-Over Print", "Permanent Seal Strip"],
@@ -526,6 +571,7 @@ export const products: Product[] = [
     tag: "Luxury Wrapping",
     description: "Acid-free 17 GSM luxury translucent tissue paper printed with an all-over repeating pattern of your brand emblem.",
     image: "/photos/rs-027-00.jpg",
+    gallery: ["/photos/rs-027-00.jpg", "/photos/rs-032-00.jpg"],
     detail: "17 GSM acid-free luxury tissue, crisp flexo print, custom sheet size 50x70cm, bleed-proof ink.",
     material: "17 GSM Acid-Free Translucent Paper",
     finishes: ["White Translucent", "Black Tissue", "Metallic Gold Print", "Repeating Pattern"],
@@ -743,9 +789,9 @@ export const defaultGlobalExport: GlobalExportContent = {
 };
 
 export const defaultSeoSettings: SeoSettings = {
-  metaTitle: "Rafiq Sons Labels | Custom Woven Labels, Rubber Logos, Hang Tags & Packaging Manufacturer",
-  metaDescription: "Direct factory manufacturer of custom high-density damask woven labels, 3D silicone rubber logos, debossed leather patches, metal badges, luxury foil hang tags, waterproof stickers, and frosted garment bags. Low MOQ starts at 100 pcs, free 24h digital mockups, and express courier shipping to Saudi Arabia, UAE, Qatar, Kuwait, UK, USA & worldwide.",
-  targetKeywords: "custom woven labels, 3d silicone rubber logos, clothing labels manufacturer, hang tags supplier, custom frosted ziplock bags, leather patches denim, garment trims factory Pakistan, custom clothing labels Dubai Saudi Arabia",
+  metaTitle: "Custom Woven Labels, 3D Rubber Logos, Hang Tags & Packaging Manufacturer | Rafiq Sons Labels (Saudi Arabia, UAE, UK, USA)",
+  metaDescription: "Direct OEM factory manufacturer of 50D high-density custom damask woven labels, 3D silicone rubber logos, debossed leather patches, steel badges, luxury foil hang tags, thank-you cards, waterproof stickers & frosted ziplock garment bags. Fast express courier delivery to Riyadh, Jeddah, Dubai, Abu Dhabi, Doha, Kuwait, London, USA & worldwide with low MOQ starting at 100 pcs.",
+  targetKeywords: "custom woven labels Saudi Arabia, damask woven labels Riyadh Jeddah, custom labels Dubai UAE, 3d silicone rubber logos, clothing labels manufacturer low MOQ, luxury foil hang tags, custom frosted ziplock bags, leather patches denim, garment packaging supplier Kuwait Qatar, clothing accessories factory Pakistan export, تصنيع ليبل ملابس الرياض دبي",
   ratingValue: "4.9",
   reviewCount: "210",
   ogImage: "/photos/rs-092-02.jpg",

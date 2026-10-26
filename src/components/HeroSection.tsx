@@ -4,35 +4,46 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuoteBasket } from "@/context/QuoteBasketContext";
+import type { HeroContent } from "@/content/site";
 
 interface HeroSectionProps {
-  hero?: {
-    eyebrow?: string;
-    line1?: string;
-    line2?: string;
-    sub?: string;
-    ctaPrimary?: string;
-    ctaSecondary?: string;
-    trustBadges?: { icon: string; label: string }[];
-  };
+  hero?: Partial<HeroContent>;
 }
 
 export default function HeroSection({ hero }: HeroSectionProps) {
   const { openQuoteModal } = useQuoteBasket();
 
-  const eyebrow = hero?.eyebrow || "Direct Factory Manufacturer of Custom Garment Trims";
+  const eyebrow = hero?.eyebrow || "Factory Direct Garment Trims & Packaging";
   const line1 = hero?.line1 || "Custom Labels, Logos &";
   const line2 = hero?.line2 || "Packaging for Your Brand";
   const sub =
     hero?.sub ||
-    "Give your clothing brand a premium identity with custom-made woven labels, 3D rubber logos, debossed leather patches, metal badges, luxury hang tags, waterproof stickers, and frosted garment bags. Direct factory wholesale pricing with low MOQ starting at 100 pcs.";
+    "Elevate your clothing line with precision-manufactured woven labels, 3D rubber logos, debossed leather patches, metal badges, luxury hang tags, waterproof stickers, and custom frosted garment bags. Factory direct wholesale pricing with low MOQ starting at 100 pcs.";
 
-  const trustBadges = hero?.trustBadges || [
-    { icon: "🏭", label: "Direct Factory Manufacturing" },
-    { icon: "📦", label: "Low MOQ Starts at 100 pcs" },
-    { icon: "⚡", label: "24h Free Digital Proof" },
-    { icon: "✈️", label: "Express Doorstep Delivery (GCC & Global)" },
-  ];
+  const ctaPrimary = hero?.ctaPrimary || "Explore Products";
+  const ctaSecondary = hero?.ctaSecondary || "⚡ Get Instant Quote";
+  const ctaWhatsapp = hero?.ctaWhatsapp || "💬 WhatsApp Quick Chat";
+
+  const showcaseImage = hero?.showcaseImage || "/photos/rs-092-02.jpg";
+  const showcaseBadgeTop = hero?.showcaseBadgeTop || "50D High-Density Weave";
+  const showcaseBadgeBottom = hero?.showcaseBadgeBottom || "⭐ 4.9/5 Rating | 200+ Brands";
+
+  const trustBadges = hero?.trustBadges && hero.trustBadges.length > 0
+    ? hero.trustBadges
+    : [
+        { icon: "🏭", label: "Direct Factory Manufacturing" },
+        { icon: "📦", label: "Low MOQ Starts at 100 pcs" },
+        { icon: "⚡", label: "24h Free Digital Proof" },
+        { icon: "✈️", label: "Express Doorstep Delivery (GCC & Global)" },
+      ];
+
+  const thumbnails = hero?.thumbnails && hero.thumbnails.length > 0
+    ? hero.thumbnails
+    : [
+        { image: "/photos/rs-057-00.jpg", label: "Hang Tags" },
+        { image: "/photos/rs-004-cover.jpg", label: "3D Rubber" },
+        { image: "/photos/rs-032-00.jpg", label: "Frosted Bags" },
+      ];
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50 to-white pt-8 pb-16 lg:pt-14 lg:pb-24 border-b border-slate-200">
@@ -71,14 +82,14 @@ export default function HeroSection({ hero }: HeroSectionProps) {
                 href="/#catalog"
                 className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-slate-900 text-white font-bold text-sm hover:bg-amber-600 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
               >
-                <span>Explore Products</span>
+                <span>{ctaPrimary}</span>
                 <span aria-hidden="true">↓</span>
               </Link>
               <button
                 onClick={() => openQuoteModal()}
                 className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-amber-600 text-white font-bold text-sm hover:bg-amber-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>⚡ Get Instant Quote</span>
+                <span>{ctaSecondary}</span>
               </button>
               <a
                 href="https://wa.me/923202025795?text=Hello%20Rafiq%20Sons%2C%20I%20want%20to%20discuss%20custom%20labels%20and%20packaging%20for%20my%20brand."
@@ -86,7 +97,7 @@ export default function HeroSection({ hero }: HeroSectionProps) {
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 font-semibold text-xs transition-all flex items-center justify-center gap-2"
               >
-                <span>💬 WhatsApp Quick Chat</span>
+                <span>{ctaWhatsapp}</span>
               </a>
             </div>
 
@@ -116,63 +127,46 @@ export default function HeroSection({ hero }: HeroSectionProps) {
               {/* Main Featured Showcase Card */}
               <div className="relative rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-xl aspect-4/3 sm:aspect-square">
                 <Image
-                  src="/photos/rs-092-02.jpg"
-                  alt="High-Density Damask Woven Labels by Rafiq Sons Labels"
+                  src={showcaseImage}
+                  alt="Custom Clothing Labels and Packaging Manufacturing"
                   fill
                   className="object-cover"
                   priority
+                  sizes="(max-width: 768px) 100vw, 500px"
                 />
                 
                 {/* Floating Micro Badge 1 */}
-                <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-md border border-slate-200/80 flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-xs font-bold text-slate-800">50D High-Density Weave</span>
-                </div>
+                {showcaseBadgeTop && (
+                  <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl shadow-md border border-slate-200/80 flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-xs font-bold text-slate-800">{showcaseBadgeTop}</span>
+                  </div>
+                )}
 
                 {/* Floating Micro Badge 2 */}
-                <div className="absolute bottom-4 right-4 bg-slate-900/95 backdrop-blur-md text-white px-3.5 py-2 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2">
-                  <span className="text-amber-400 font-bold text-xs">⭐ 4.9/5 Rating</span>
-                  <span className="text-slate-300 text-[11px]">| 200+ Brands</span>
-                </div>
+                {showcaseBadgeBottom && (
+                  <div className="absolute bottom-4 right-4 bg-slate-900/95 backdrop-blur-md text-white px-3.5 py-2 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2">
+                    <span className="text-amber-400 font-bold text-xs">{showcaseBadgeBottom}</span>
+                  </div>
+                )}
               </div>
 
               {/* Secondary Overlapping Thumbnails */}
               <div className="grid grid-cols-3 gap-3 mt-3">
-                <div className="relative h-24 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm group">
-                  <Image
-                    src="/photos/rs-057-00.jpg"
-                    alt="Luxury Foil Hang Tags"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-2">
-                    <span className="text-[10px] font-bold text-white">Hang Tags</span>
+                {thumbnails.map((thumb, idx) => (
+                  <div key={idx} className="relative h-24 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm group">
+                    <Image
+                      src={thumb.image}
+                      alt={thumb.label}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="150px"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-2">
+                      <span className="text-[10px] font-bold text-white leading-tight">{thumb.label}</span>
+                    </div>
                   </div>
-                </div>
-
-                <div className="relative h-24 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm group">
-                  <Image
-                    src="/photos/rs-004-cover.jpg"
-                    alt="3D Silicone Rubber Logos"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-2">
-                    <span className="text-[10px] font-bold text-white">3D Rubber</span>
-                  </div>
-                </div>
-
-                <div className="relative h-24 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm group">
-                  <Image
-                    src="/photos/rs-032-00.jpg"
-                    alt="Frosted Ziplock Garment Bags"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-2">
-                    <span className="text-[10px] font-bold text-white">Frosted Bags</span>
-                  </div>
-                </div>
+                ))}
               </div>
 
             </div>
