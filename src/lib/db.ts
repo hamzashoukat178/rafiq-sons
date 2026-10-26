@@ -8,7 +8,8 @@ import {
   generateInvoiceNumber,
 } from "./invoice";
 
-const url = process.env.DATABASE_URL;
+const rawUrl = process.env.DATABASE_URL?.trim();
+const url = rawUrl && (rawUrl.startsWith("postgres://") || rawUrl.startsWith("postgresql://")) ? rawUrl : null;
 
 export const hasDb = Boolean(url);
 export const sql = url ? neon(url) : null;

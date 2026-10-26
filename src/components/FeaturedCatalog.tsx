@@ -4,16 +4,19 @@ import React, { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuoteBasket } from "@/context/QuoteBasketContext";
-import { products, categories, type Product } from "@/content/site";
+import { products, categories as defaultCategories, type Product, type ProductCategory } from "@/content/site";
 
 interface FeaturedCatalogProps {
   items?: Product[];
+  categories?: ProductCategory[];
 }
 
-export default function FeaturedCatalog({ items = products }: FeaturedCatalogProps) {
+export default function FeaturedCatalog({ items = products, categories: passedCategories }: FeaturedCatalogProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const { addItem, openQuickView } = useQuoteBasket();
+
+  const categoryList = passedCategories && passedCategories.length > 0 ? passedCategories : defaultCategories;
 
   // Filter products by category and search text
   const filteredProducts = useMemo(() => {
@@ -86,12 +89,12 @@ export default function FeaturedCatalog({ items = products }: FeaturedCatalogPro
           >
             All Products ({items.length})
           </button>
-          {categories.map((cat) => {
+          {categoryList.map((cat) => {
             const count = items.filter((p) => p.categorySlug === cat.slug).length;
             const active = selectedCategory === cat.slug;
             return (
               <button
-                key={cat.id}
+                key={cat.id || cat.slug}
                 onClick={() => setSelectedCategory(cat.slug)}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                   active

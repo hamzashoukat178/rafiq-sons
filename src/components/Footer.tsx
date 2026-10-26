@@ -3,10 +3,11 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { categories, site as defaultSite } from "@/content/site";
+import { categories as defaultCategories, site as defaultSite, type ProductCategory } from "@/content/site";
 
 interface FooterProps {
   site?: typeof defaultSite;
+  categories?: ProductCategory[];
   footer?: {
     tagline?: string;
     address?: string;
@@ -18,11 +19,12 @@ interface FooterProps {
   };
 }
 
-export default function Footer({ site = defaultSite, footer }: FooterProps) {
+export default function Footer({ site = defaultSite, categories: passedCategories, footer }: FooterProps) {
   const currentYear = new Date().getFullYear();
   const phone = footer?.phone || site.phoneDisplay || "+92 320 2025795";
   const whatsappUrl = footer?.whatsapp || site.whatsapp || "https://wa.me/923202025795";
   const instagramUrl = footer?.instagram || site.instagram || "https://www.instagram.com/rafiqsonslabelss";
+  const categoryList = passedCategories && passedCategories.length > 0 ? passedCategories : defaultCategories;
 
   return (
     <footer className="bg-slate-900 text-slate-300 pt-16 pb-12 border-t border-slate-800">
@@ -80,8 +82,8 @@ export default function Footer({ site = defaultSite, footer }: FooterProps) {
               Core Categories
             </h4>
             <ul className="space-y-2 text-xs">
-              {categories.slice(0, 4).map((cat) => (
-                <li key={cat.id}>
+              {categoryList.slice(0, 4).map((cat) => (
+                <li key={cat.id || cat.slug}>
                   <Link
                     href={`/category/${cat.slug}`}
                     className="hover:text-amber-400 transition-colors"
@@ -99,8 +101,8 @@ export default function Footer({ site = defaultSite, footer }: FooterProps) {
               More Products
             </h4>
             <ul className="space-y-2 text-xs">
-              {categories.slice(4).map((cat) => (
-                <li key={cat.id}>
+              {categoryList.slice(4).map((cat) => (
+                <li key={cat.id || cat.slug}>
                   <Link
                     href={`/category/${cat.slug}`}
                     className="hover:text-amber-400 transition-colors"

@@ -2,9 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import { useQuoteBasket } from "@/context/QuoteBasketContext";
-import { site } from "@/content/site";
+import { site as defaultSite } from "@/content/site";
 
-export default function FloatingActions() {
+interface FloatingActionsProps {
+  site?: {
+    whatsapp?: string;
+  };
+}
+
+export default function FloatingActions({ site = defaultSite }: FloatingActionsProps) {
   const [showTop, setShowTop] = useState(false);
   const { totalCount, openBasket, openQuoteModal } = useQuoteBasket();
 
@@ -20,7 +26,7 @@ export default function FloatingActions() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const whatsappUrl = site.whatsapp || "https://wa.me/923202025795";
+  const whatsappUrl = site?.whatsapp || defaultSite.whatsapp || "https://wa.me/923202025795";
 
   return (
     <>

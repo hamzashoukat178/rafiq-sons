@@ -12,6 +12,7 @@ import ProductQuickViewModal from "@/components/ProductQuickViewModal";
 import HowToOrder from "@/components/HowToOrder";
 import FaqSection from "@/components/FaqSection";
 import CategoryProductGrid from "@/components/CategoryProductGrid";
+import FloatingActions from "@/components/FloatingActions";
 import { loadContent } from "@/lib/content";
 
 interface CategoryPageProps {
@@ -55,7 +56,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           cta={content.announcement?.cta}
           link={content.announcement?.link}
         />
-        <Header site={content.site} />
+        <Header site={content.site} categories={content.categories} />
 
         <main>
           {/* Breadcrumb */}
@@ -186,12 +187,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         </main>
       </div>
 
-      <Footer site={content.site} footer={content.footer} />
+      <Footer site={content.site} categories={content.categories} footer={content.footer} />
 
       {/* Interactive Global Modals */}
       <QuoteBasket />
       <QuoteModal />
       <ProductQuickViewModal />
+      <FloatingActions site={content.site} />
     </div>
   );
 }

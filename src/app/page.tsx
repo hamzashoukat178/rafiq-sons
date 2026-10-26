@@ -35,7 +35,7 @@ export default async function Home() {
         />
 
         {/* Sticky Light Header */}
-        <Header site={content.site} />
+        <Header site={content.site} categories={content.categories} />
 
         <main>
           {/* Hero Section */}
@@ -45,7 +45,7 @@ export default async function Home() {
           <CategoryGrid items={content.categories} />
 
           {/* Featured Products & Live Interactive Catalog */}
-          <FeaturedCatalog items={content.products} />
+          <FeaturedCatalog items={content.products} categories={content.categories} />
 
           {/* Complete 5-in-1 Branding Combo Packages */}
           <PackageBuilder packages={content.brandingPackages} />
@@ -68,13 +68,13 @@ export default async function Home() {
       </div>
 
       {/* Footer */}
-      <Footer site={content.site} footer={content.footer} />
+      <Footer site={content.site} categories={content.categories} footer={content.footer} />
 
       {/* Interactive Global Drawers & Modals */}
       <QuoteBasket />
       <QuoteModal />
       <ProductQuickViewModal />
-      <FloatingActions />
+      <FloatingActions site={content.site} />
     </div>
   );
 }

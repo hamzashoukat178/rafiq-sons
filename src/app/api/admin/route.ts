@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createHash } from "crypto";
+import { revalidatePath } from "next/cache";
 import {
   sql,
   ensureTables,
@@ -107,6 +108,15 @@ export async function POST(req: Request) {
       const { overrides } = body as { overrides: Overrides };
       try {
         await setContent("overrides", overrides || {}, false);
+        try {
+          revalidatePath("/", "layout");
+          revalidatePath("/admin", "layout");
+          revalidatePath("/category/[slug]", "page");
+          revalidatePath("/product/[slug]", "page");
+          revalidatePath("/sitemap.xml");
+        } catch (revErr) {
+          console.warn("Revalidation warning:", revErr);
+        }
         return NextResponse.json({ ok: true, stored: "db" });
       } catch (saveErr) {
         console.error("Save overrides database error:", saveErr);

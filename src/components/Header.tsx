@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useQuoteBasket } from "@/context/QuoteBasketContext";
-import { categories } from "@/content/site";
+import { categories as defaultCategories, type ProductCategory } from "@/content/site";
 
 interface HeaderProps {
   site?: {
@@ -12,13 +12,16 @@ interface HeaderProps {
     phoneDisplay?: string;
     whatsapp?: string;
   };
+  categories?: ProductCategory[];
 }
 
-export default function Header({ site }: HeaderProps) {
+export default function Header({ site, categories: passedCategories }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesDropdownOpen, setCategoriesDropdownOpen] = useState(false);
   const { totalCount, openBasket, openQuoteModal } = useQuoteBasket();
+
+  const categories = passedCategories && passedCategories.length > 0 ? passedCategories : defaultCategories;
 
   useEffect(() => {
     const handleScroll = () => {

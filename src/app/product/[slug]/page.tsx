@@ -161,7 +161,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           cta={content.announcement?.cta}
           link={content.announcement?.link}
         />
-        <Header site={content.site} />
+        <Header site={content.site} categories={content.categories} />
 
         <main>
           {/* Breadcrumb Bar */}
@@ -268,12 +268,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </main>
       </div>
 
-      <Footer site={content.site} footer={content.footer} />
+      <Footer site={content.site} categories={content.categories} footer={content.footer} />
 
       <QuoteBasket />
       <QuoteModal />
       <ProductQuickViewModal />
-      <FloatingActions />
+      <FloatingActions site={content.site} />
     </div>
   );
 }
