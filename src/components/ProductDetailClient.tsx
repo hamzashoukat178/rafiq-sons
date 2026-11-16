@@ -16,17 +16,29 @@ const QUANTITY_PRESETS = ["100 pcs", "250 pcs", "500 pcs", "1,000 pcs", "2,500 p
 export default function ProductDetailClient({ product, category }: ProductDetailClientProps) {
   const { addItem, openQuoteModal } = useQuoteBasket();
 
-  // Multi-image gallery logic
+  // Multi-image gallery logic (supports up to 5 photos)
   const galleryImages = product.gallery && product.gallery.length > 0
     ? product.gallery
     : [product.image];
 
-  const [activeImage, setActiveImage] = useState(galleryImages[0]);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const activeImage = galleryImages[activeIdx] || galleryImages[0] || product.image;
+
   const [selectedQty, setSelectedQty] = useState("500 pcs");
   const [selectedFinish, setSelectedFinish] = useState(
     product.finishes && product.finishes.length > 0 ? product.finishes[0] : ""
   );
   const [activeTab, setActiveTab] = useState<"specs" | "shipping" | "artwork">("specs");
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveIdx((prev) => (prev + 1) % galleryImages.length);
+  };
+
+  const handlePrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveIdx((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+  };
 
   const handleAddToBasket = () => {
     const specsString = [
@@ -63,10 +75,10 @@ Please share pricing and production timeline.`
       <div className="lg:col-span-7 space-y-4">
         
         {/* Main Display Image */}
-        <div className="relative aspect-4/3 sm:aspect-square w-full rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-md">
+        <div className="relative aspect-4/3 sm:aspect-square w-full rounded-3xl overflow-hidden bg-white border border-slate-200 shadow-md group">
           <Image
             src={activeImage}
-            alt={product.name}
+            alt={`${product.name} - Photo ${activeIdx + 1}`}
             fill
             className="object-cover transition-all duration-300"
             priority
@@ -74,29 +86,56 @@ Please share pricing and production timeline.`
           />
 
           {/* Floating Tag */}
-          <div className="absolute top-4 left-4 bg-slate-900/90 text-white backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-md">
+          <div className="absolute top-4 left-4 bg-slate-900/90 text-white backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-md z-10">
             ★ {product.tag}
           </div>
 
           {/* Low MOQ Badge */}
           {product.moq && (
-            <div className="absolute bottom-4 left-4 bg-white/95 text-slate-900 backdrop-blur-md px-3.5 py-1.5 rounded-xl text-xs font-extrabold border border-slate-200/80 shadow-md flex items-center gap-1.5">
+            <div className="absolute bottom-4 left-4 bg-white/95 text-slate-900 backdrop-blur-md px-3.5 py-1.5 rounded-xl text-xs font-extrabold border border-slate-200/80 shadow-md flex items-center gap-1.5 z-10">
               <span>📦 MOQ:</span>
               <span className="text-amber-800">{product.moq}</span>
             </div>
           )}
+
+          {/* Carousel Next / Prev Controls */}
+          {galleryImages.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={handlePrev}
+                aria-label="Previous photo"
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-900 shadow-md flex items-center justify-center text-lg font-bold z-10 transition-transform active:scale-95 cursor-pointer"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                onClick={handleNext}
+                aria-label="Next photo"
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-900 shadow-md flex items-center justify-center text-lg font-bold z-10 transition-transform active:scale-95 cursor-pointer"
+              >
+                ›
+              </button>
+
+              {/* Photo Counter Pill */}
+              <div className="absolute top-4 right-4 bg-slate-900/80 text-white text-xs font-mono font-bold px-3 py-1 rounded-full backdrop-blur-md z-10">
+                {activeIdx + 1} / {galleryImages.length}
+              </div>
+            </>
+          )}
         </div>
 
-        {/* Thumbnails Strip */}
+        {/* Thumbnails Strip (Up to 5 Photos) */}
         {galleryImages.length > 1 && (
           <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none">
             {galleryImages.map((img, idx) => {
-              const isSelected = activeImage === img;
+              const isSelected = activeIdx === idx;
               return (
                 <button
                   key={idx}
                   type="button"
-                  onClick={() => setActiveImage(img)}
+                  onClick={() => setActiveIdx(idx)}
                   className={`relative flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 transition-all cursor-pointer ${
                     isSelected
                       ? "border-amber-500 ring-2 ring-amber-400/30 scale-105"
@@ -110,6 +149,9 @@ Please share pricing and production timeline.`
                     className="object-cover"
                     sizes="100px"
                   />
+                  <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] font-mono px-1 rounded">
+                    #{idx + 1}
+                  </div>
                 </button>
               );
             })}

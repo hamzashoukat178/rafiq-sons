@@ -248,6 +248,156 @@ function ImageUploadField({
   );
 }
 
+// 5-Photo Carousel Gallery Uploader for Catalog Products
+function ProductGalleryUploader({
+  gallery,
+  primaryImage,
+  onChange,
+}: {
+  productName?: string;
+  gallery?: string[];
+  primaryImage?: string;
+  onChange: (gallery: string[], primaryImage: string) => void;
+}) {
+  const initialList = gallery && gallery.length > 0
+    ? gallery
+    : primaryImage
+    ? [primaryImage]
+    : [];
+
+  const [images, setImages] = useState<string[]>(initialList);
+
+  useEffect(() => {
+    const list = gallery && gallery.length > 0
+      ? gallery
+      : primaryImage
+      ? [primaryImage]
+      : [];
+    setImages(list);
+  }, [gallery, primaryImage]);
+
+  const updateList = (newList: string[]) => {
+    const cleanList = newList.filter(Boolean);
+    setImages(cleanList);
+    onChange(cleanList, cleanList[0] || "");
+  };
+
+  const handleUpdateSlot = (idx: number, url: string) => {
+    const updated = [...images];
+    updated[idx] = url;
+    updateList(updated);
+  };
+
+  const handleAddSlot = () => {
+    if (images.length >= 5) return;
+    const updated = [...images, "/photos/rs-092-02.jpg"];
+    updateList(updated);
+  };
+
+  const handleRemoveSlot = (idx: number) => {
+    const updated = images.filter((_, i) => i !== idx);
+    updateList(updated);
+  };
+
+  const handleMakeCover = (idx: number) => {
+    if (idx === 0) return;
+    const item = images[idx];
+    const rest = images.filter((_, i) => i !== idx);
+    const updated = [item, ...rest];
+    updateList(updated);
+  };
+
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-4 space-y-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-2.5">
+        <div>
+          <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+            <span>📸 Multi-Image Carousel Gallery</span>
+            <span className="text-[10px] font-normal text-slate-500">(Up to 5 Photos per item)</span>
+          </span>
+          <p className="text-[11px] text-slate-500">
+            Slide and showcase multiple angles, fabric closeups, and packaging. Photo 1 is the main catalog cover.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full">
+            {images.length} / 5 Photos
+          </span>
+          {images.length < 5 && (
+            <button
+              type="button"
+              onClick={handleAddSlot}
+              className="rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-1 text-xs font-bold shadow-xs transition-colors cursor-pointer"
+            >
+              + Add Photo {images.length + 1}
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {images.map((imgUrl, idx) => (
+          <div
+            key={idx}
+            className={`rounded-xl border p-3 space-y-2 relative transition-all ${
+              idx === 0
+                ? "border-amber-400 bg-amber-50/40 ring-1 ring-amber-400/40"
+                : "border-gray-200 bg-slate-50/60"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-slate-800 flex items-center gap-1.5">
+                {idx === 0 ? "★ Photo 1 (Main Cover)" : `Photo ${idx + 1}`}
+              </span>
+              <div className="flex items-center gap-1.5">
+                {idx > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => handleMakeCover(idx)}
+                    className="text-[10px] font-bold text-amber-700 hover:text-amber-900 hover:underline cursor-pointer"
+                    title="Make Main Cover"
+                  >
+                    Set as Cover
+                  </button>
+                )}
+                {images.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveSlot(idx)}
+                    className="text-[10px] text-red-600 hover:underline cursor-pointer"
+                    title="Delete photo"
+                  >
+                    ✕ Delete
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <ImageUploadField
+              label={`Photo ${idx + 1}`}
+              value={imgUrl}
+              onChange={(val) => handleUpdateSlot(idx, val)}
+            />
+          </div>
+        ))}
+      </div>
+
+      {images.length === 0 && (
+        <div className="text-center py-6 border-2 border-dashed border-gray-200 rounded-xl p-4">
+          <p className="text-xs text-slate-500">No photos uploaded for this product yet.</p>
+          <button
+            type="button"
+            onClick={handleAddSlot}
+            className="mt-2 rounded-lg bg-slate-900 text-white px-4 py-2 text-xs font-semibold hover:bg-amber-600 transition-colors cursor-pointer"
+          >
+            + Add First Photo
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Section Header with Save Button
 function SectionSaveBar({
   title,
@@ -1292,12 +1442,17 @@ export default function AdminApp() {
                     </div>
 
                     <div className="mt-4">
-                      <ImageUploadField
-                        label={`Photo for ${p.name}`}
-                        value={p.image}
-                        onChange={(val) => {
+                      <ProductGalleryUploader
+                        productName={p.name}
+                        gallery={p.gallery}
+                        primaryImage={p.image}
+                        onChange={(newGallery, newPrimary) => {
                           const updated = [...products];
-                          updated[idx] = { ...p, image: val };
+                          updated[idx] = {
+                            ...p,
+                            image: newPrimary,
+                            gallery: newGallery,
+                          };
                           setOv({ ...ov, products: updated });
                         }}
                       />
