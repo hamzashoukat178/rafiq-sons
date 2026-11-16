@@ -147,11 +147,8 @@ export default function Footer({ site = defaultSite, categories: passedCategorie
             <Link href="/#how-to-order" className="hover:text-slate-400 transition-colors">
               Ordering Guide
             </Link>
-            <Link
-              href="/admin"
-              className="text-slate-500 hover:text-amber-400 transition-colors"
-            >
-              🔐 Admin CMS Studio
+            <Link href="/#catalog" className="hover:text-slate-400 transition-colors">
+              Catalog
             </Link>
           </div>
         </div>
